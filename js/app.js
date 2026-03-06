@@ -90,7 +90,7 @@ function construirMapaButacas() {
         const filaContenedor = document.createElement('div');
         filaContenedor.className = 'flex gap-6 md:gap-10 justify-center items-center w-max';
         
-        filaContenedor.insertAdjacentHTML('beforeend', `<div class="w-6 text-center text-gray-600 font-black text-sm">${letraFila}</div>`);
+        filaContenedor.insertAdjacentHTML('beforeend', `<div class="w-6 text-center text-cinegold font-serif font-black text-base drop-shadow-[1px_1px_0px_rgba(0,0,0,0.8)]">${letraFila}</div>`);
 
         let numeroAsiento = 1;
 
@@ -107,10 +107,10 @@ function construirMapaButacas() {
                 btn.title = `Asiento ${idAsiento}`;
                 
                 if (ocupado) {
-                    btn.className = 'w-[32px] h-[36px] md:w-[40px] md:h-[45px] rounded-t-lg transition-all flex items-center justify-center bg-red-900/30 border-2 border-red-900/50 cursor-not-allowed shadow-[inset_0_-4px_0_rgba(0,0,0,0.4)]';
-                    btn.innerHTML = `<i class="fa-solid fa-xmark text-[10px] md:text-sm text-red-500/40"></i>`;
+                    btn.className = 'w-[32px] h-[36px] md:w-[40px] md:h-[45px] rounded-t-md transition-all flex items-center justify-center bg-cinered/60 border-2 border-cinered cursor-not-allowed shadow-[inset_0_-4px_0_rgba(0,0,0,0.6)]';
+                    btn.innerHTML = `<i class="fa-solid fa-xmark text-[10px] md:text-sm text-cinedark"></i>`;
                 } else {
-                    btn.className = 'seat w-[32px] h-[36px] md:w-[40px] md:h-[45px] rounded-t-lg bg-gray-800 border-2 border-white/10 text-[10px] md:text-xs font-bold text-gray-400 cursor-pointer shadow-[inset_0_-4px_0_rgba(0,0,0,0.4)] transition-all z-10';
+                    btn.className = 'seat w-[32px] h-[36px] md:w-[40px] md:h-[45px] rounded-t-md bg-[#3d2c1f] border-2 border-[#574433] text-[10px] md:text-xs font-sans font-bold text-[#a69b8d] cursor-pointer shadow-[inset_0_-4px_0_rgba(0,0,0,0.6)] transition-all z-10';
                     btn.innerText = numeroAsiento;
                     
                     btn.onclick = function() {
@@ -124,10 +124,51 @@ function construirMapaButacas() {
             filaContenedor.appendChild(bloqueDiv);
         });
 
-        filaContenedor.insertAdjacentHTML('beforeend', `<div class="w-6 text-center text-gray-600 font-black text-sm">${letraFila}</div>`);
+        filaContenedor.insertAdjacentHTML('beforeend', `<div class="w-6 text-center text-cinegold font-serif font-black text-base drop-shadow-[1px_1px_0px_rgba(0,0,0,0.8)]">${letraFila}</div>`);
         
         grid.appendChild(filaContenedor);
     });
+}
+
+function procesarClicAsiento(btnElemento, idAsiento) {
+    if (asientosSeleccionados.includes(idAsiento)) {
+        asientosSeleccionados = asientosSeleccionados.filter(a => a !== idAsiento);
+        btnElemento.classList.remove('bg-cinegold', 'border-[#b8860b]', 'text-cinedark', 'scale-110', 'shadow-[2px_2px_0px_rgba(0,0,0,0.5)]');
+        btnElemento.classList.add('bg-[#3d2c1f]', 'border-[#574433]', 'text-[#a69b8d]');
+    } else {
+        if (asientosSeleccionados.length >= 7) {
+            alert('Has alcanzado el límite máximo de 7 localidades por transacción.');
+            return;
+        }
+        asientosSeleccionados.push(idAsiento);
+        btnElemento.classList.remove('bg-[#3d2c1f]', 'border-[#574433]', 'text-[#a69b8d]');
+        btnElemento.classList.add('bg-cinegold', 'border-[#b8860b]', 'text-cinedark', 'scale-110', 'shadow-[2px_2px_0px_rgba(0,0,0,0.5)]');
+    }
+    
+    refrescarBarraFooter();
+}
+
+function refrescarBarraFooter() {
+    const btnContinuar = document.getElementById('btn-continuar');
+    const lblAsientos = document.getElementById('texto-asientos');
+    const lblPrecio = document.getElementById('texto-precio');
+    
+    const precioUnitario = typeof cineData !== 'undefined' ? cineData.precioBoleto : 50; 
+    const total = asientosSeleccionados.length * precioUnitario;
+    
+    if (asientosSeleccionados.length > 0) {
+        lblAsientos.innerText = `${asientosSeleccionados.length} Asientos: ${asientosSeleccionados.join(', ')}`;
+        lblPrecio.innerText = total;
+        
+        btnContinuar.disabled = false;
+        btnContinuar.className = 'bg-cinered hover:bg-[#5a0000] text-cinegold border-2 border-dashed border-cinegold font-serif font-black py-3 md:py-4 px-6 md:px-12 transition-colors shadow-[4px_4px_0px_rgba(0,0,0,0.6)] uppercase tracking-widest md:text-lg cursor-pointer flex-shrink-0';
+    } else {
+        lblAsientos.innerText = "0 Asientos";
+        lblPrecio.innerText = "0";
+        
+        btnContinuar.disabled = true;
+        btnContinuar.className = 'bg-[#3d2c1f] text-[#a69b8d] border-2 border-dashed border-[#574433] font-serif font-black py-3 md:py-4 px-6 md:px-12 transition-all uppercase tracking-widest cursor-not-allowed shadow-[4px_4px_0px_rgba(0,0,0,0.4)] md:text-lg flex-shrink-0';
+    }
 }
 
 function procesarClicAsiento(btnElemento, idAsiento) {
@@ -276,51 +317,76 @@ function renderPerfil() {
 
     if (historial.length === 0) {
         contenedor.innerHTML = `
-            <div class="col-span-full flex flex-col items-center justify-center py-20 text-gray-500">
-                <i class="fa-solid fa-ticket text-6xl mb-4 opacity-30"></i>
-                <p class="text-xl font-bold uppercase tracking-widest">Aún no tienes boletos</p>
-                <a href="index.html" class="mt-8 bg-white/10 hover:bg-cinered border border-white/20 text-white px-8 py-4 rounded-xl font-black uppercase tracking-widest transition-all">Ir a Cartelera</a>
+            <div class="flex flex-col items-center justify-center py-20 text-cinegold/50">
+                <i class="fa-solid fa-ticket text-6xl mb-6 drop-shadow-[2px_2px_0px_rgba(0,0,0,0.8)]"></i>
+                <p class="text-xl font-serif font-black uppercase tracking-widest text-cinegold mb-8">Aún no tienes boletos</p>
+                <a href="index.html" class="bg-cinegold text-cinedark px-8 py-3 border-2 border-dashed border-cinedark font-serif font-bold uppercase tracking-widest hover:bg-[#eec071] transition-colors shadow-[6px_6px_0px_rgba(0,0,0,0.6)]">Ir a Cartelera</a>
             </div>
         `;
         return;
     }
 
     contenedor.innerHTML = historial.map(boleto => `
-        <div class="bg-white/5 border border-white/10 rounded-2xl p-6 flex flex-col md:flex-row gap-6 relative overflow-hidden group hover:border-cinegold/50 transition-all duration-300">
-            <div class="absolute -right-10 -top-10 w-32 h-32 bg-cinegold/10 rounded-full blur-3xl group-hover:bg-cinegold/20 transition-all duration-500"></div>
+        <div onclick="abrirModalBoleto('${boleto.idBoleto}')" class="cursor-pointer bg-[#e8dbce] text-cinedark border-4 border-double border-[#574433] p-6 md:p-8 flex flex-col md:flex-row gap-6 relative shadow-[8px_8px_0px_rgba(0,0,0,0.6)] transform transition-transform hover:-translate-y-2 hover:shadow-[12px_12px_0px_rgba(0,0,0,0.8)] group">
             
-            <div class="flex-grow z-10">
-                <p class="text-cinegold font-bold text-xs md:text-sm tracking-widest mb-1">TICKET #${boleto.idBoleto}</p>
-                <h3 class="text-xl md:text-2xl font-black uppercase text-white mb-4">${boleto.pelicula}</h3>
+            <div class="absolute -left-4 top-1/2 -translate-y-1/2 w-8 h-8 bg-[#2a1e14] rounded-full border-r-4 border-double border-[#574433] hidden md:block"></div>
+            <div class="absolute -right-4 top-1/2 -translate-y-1/2 w-8 h-8 bg-[#2a1e14] rounded-full border-l-4 border-double border-[#574433] hidden md:block"></div>
+
+            <div class="absolute top-4 right-4 bg-cinered text-cinegold font-serif font-bold text-[10px] px-2 py-1 shadow-md opacity-0 group-hover:opacity-100 transition-opacity">Ver Detalles</div>
+
+            <div class="flex-grow z-10 border-b md:border-b-0 md:border-r border-dashed border-[#574433] pb-6 md:pb-0 md:pr-8">
+                <p class="text-cinered font-bold text-xs md:text-sm tracking-[0.2em] mb-2 uppercase font-sans">TICKET N° ${boleto.idBoleto}</p>
+                <h3 class="text-2xl md:text-3xl font-serif font-black uppercase text-cinedark mb-6 leading-none">${boleto.pelicula}</h3>
                 
-                <div class="grid grid-cols-2 gap-y-4 gap-x-2">
+                <div class="grid grid-cols-2 gap-y-6 gap-x-4 font-sans">
                     <div>
-                        <p class="text-gray-500 text-[10px] md:text-xs font-bold uppercase tracking-wider mb-1">Horario</p>
-                        <p class="text-white font-bold text-sm md:text-base">${boleto.horario}</p>
+                        <p class="text-[#574433] text-[10px] md:text-xs font-bold uppercase tracking-widest mb-1">Función</p>
+                        <p class="text-cinedark font-black text-sm md:text-base">${boleto.horario}</p>
                     </div>
                     <div>
-                        <p class="text-gray-500 text-[10px] md:text-xs font-bold uppercase tracking-wider mb-1">Fecha de Compra</p>
-                        <p class="text-white font-bold text-sm md:text-base">${boleto.fecha}</p>
+                        <p class="text-[#574433] text-[10px] md:text-xs font-bold uppercase tracking-widest mb-1">Emisión</p>
+                        <p class="text-cinedark font-black text-sm md:text-base">${boleto.fecha}</p>
                     </div>
                     <div class="col-span-2">
-                        <p class="text-gray-500 text-[10px] md:text-xs font-bold uppercase tracking-wider mb-1">Asientos (${boleto.asientos.length})</p>
-                        <p class="text-white font-bold tracking-widest text-sm md:text-base break-words">${boleto.asientos.join(', ')}</p>
+                        <p class="text-[#574433] text-[10px] md:text-xs font-bold uppercase tracking-widest mb-1">Localidades (${boleto.asientos.length})</p>
+                        <p class="text-cinedark font-black tracking-widest text-sm md:text-base break-words">${boleto.asientos.join(', ')}</p>
                     </div>
                 </div>
             </div>
 
-            <div class="flex flex-row md:flex-col justify-between md:justify-center items-center md:items-end border-t md:border-t-0 md:border-l border-white/10 pt-4 md:pt-0 md:pl-6 z-10 shrink-0">
-                <div class="bg-white p-1 rounded-lg hidden md:block mb-4">
-                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${boleto.idBoleto}" class="w-16 h-16 md:w-20 md:h-20 opacity-90" alt="QR Boleto">
+            <div class="flex flex-row md:flex-col justify-between md:justify-center items-center gap-6 z-10 shrink-0 md:pl-4">
+                <div class="border-4 border-cinedark p-1 bg-white">
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${boleto.idBoleto}" class="w-20 h-20 sepia-[.5] contrast-125" alt="QR Boleto">
                 </div>
-                <div class="text-left md:text-right">
-                    <p class="text-gray-400 text-[10px] md:text-xs font-bold uppercase tracking-wider mb-1">Total Pagado</p>
-                    <p class="text-xl md:text-2xl font-black text-white">$${boleto.total} <span class="text-xs text-cinegold">MXN</span></p>
-                </div>
-                <div class="bg-white p-1 rounded-lg md:hidden">
-                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${boleto.idBoleto}" class="w-12 h-12 opacity-90" alt="QR Boleto">
+                <div class="text-right md:text-center">
+                    <p class="text-[#574433] text-[10px] md:text-xs font-bold uppercase tracking-widest mb-1">Importe</p>
+                    <p class="text-2xl md:text-3xl font-serif font-black text-cinered">$${boleto.total} <span class="text-xs text-cinedark font-sans font-bold">MXN</span></p>
                 </div>
             </div>
         </div>
     `).reverse().join('');
+}
+
+function abrirModalBoleto(idBoleto) {
+    const historial = Store.get('historial') || [];
+    const boleto = historial.find(b => b.idBoleto === idBoleto);
+    
+    if (!boleto) return;
+
+    document.getElementById('modal-id').innerText = boleto.idBoleto;
+    document.getElementById('modal-peli').innerText = boleto.pelicula;
+    document.getElementById('modal-horario').innerText = boleto.horario;
+    document.getElementById('modal-asientos').innerText = boleto.asientos.join(', ');
+    document.getElementById('modal-total').innerText = boleto.total;
+    
+    const qrImg = document.getElementById('modal-qr');
+    qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${boleto.idBoleto}`;
+
+    const modal = document.getElementById('modal-boleto');
+    modal.classList.remove('hidden');
+}
+
+function cerrarModalBoleto() {
+    const modal = document.getElementById('modal-boleto');
+    modal.classList.add('hidden');
 }

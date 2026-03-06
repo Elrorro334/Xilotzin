@@ -3,36 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Perfil | Cine Xilotzin</title>
+    <title>Mi Perfil | Cine Tradicional Xilotzin</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        tailwind.config = { theme: { extend: { colors: { cinedark: '#0a0a0a', cinered: '#b20710', cinegold: '#fbbf24' }, fontFamily: { sans: ['Montserrat', 'sans-serif'] } } } }
+        tailwind.config = { 
+            theme: { 
+                extend: { 
+                    colors: { 
+                        cinedark: '#1c140d', 
+                        cinered: '#780000', 
+                        cinegold: '#dca54c' 
+                    }, 
+                    fontFamily: { 
+                        sans: ['Montserrat', 'sans-serif'],
+                        serif: ['"Playfair Display"', 'serif'] 
+                    } 
+                } 
+            } 
+        }
     </script>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/styles.css">
 </head>
-<body class="bg-cinedark text-white antialiased min-h-screen flex flex-col">
+<body class="bg-cinedark text-[#e8dbce] antialiased selection:bg-cinered selection:text-cinegold border-x-[12px] border-cinered max-w-[1600px] mx-auto min-h-screen shadow-[0_0_50px_rgba(0,0,0,0.8)] flex flex-col relative">
 
-    <header class="border-b border-white/10 px-6 py-4 bg-black/95 backdrop-blur z-40 shadow-xl sticky top-0">
-        <div class="max-w-7xl mx-auto flex items-center justify-between">
-            <div class="flex items-center gap-4 md:gap-6">
-                <a href="index.html" class="text-gray-400 hover:text-white transition bg-white/5 w-10 h-10 flex items-center justify-center rounded-full border border-white/10">
-                    <i class="fa-solid fa-house"></i>
+    <header class="bg-cinered border-b-8 border-double border-cinegold sticky top-0 z-50 shadow-[0_10px_20px_rgba(0,0,0,0.6)]">
+        <div class="max-w-6xl mx-auto px-4 h-24 flex items-center justify-between">
+            <div class="flex items-center gap-6">
+                <a href="index.html" class="bg-cinegold text-cinedark w-12 h-12 flex items-center justify-center border-2 border-dashed border-cinedark hover:bg-[#eec071] transition-colors shadow-[4px_4px_0px_rgba(0,0,0,0.4)]">
+                    <i class="fa-solid fa-house text-xl"></i>
                 </a>
-                <div>
-                    <h1 class="text-xl md:text-2xl font-black uppercase tracking-wide">Mi Perfil</h1>
-                    <p class="text-cinegold font-bold text-xs md:text-sm tracking-widest">HISTORIAL DE BOLETOS</p>
+                <div class="flex flex-col">
+                    <h1 class="text-2xl md:text-4xl font-serif font-black tracking-wider text-cinegold drop-shadow-[2px_2px_0px_rgba(0,0,0,0.6)] uppercase">Mi Perfil</h1>
+                    <span class="text-[10px] md:text-xs font-sans tracking-[0.4em] text-[#e8dbce] uppercase">Historial de Boletos</span>
                 </div>
             </div>
         </div>
     </header>
 
-    <main class="flex-grow w-full bg-[#050505] p-6 md:p-12">
-        <div id="historial-boletos" class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
+    <main class="flex-grow w-full bg-[#2a1e14] p-6 md:p-12 relative border-b-4 border-cinegold">
+        <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1519114056088-b877fe073a5e?q=80&w=2069&auto=format&fit=crop')] bg-cover bg-center bg-no-repeat opacity-10 sepia contrast-150"></div>
+        
+        <div id="historial-boletos" class="max-w-4xl mx-auto grid grid-cols-1 gap-10 relative z-10">
             
         </div>
     </main>
+
+    <div id="modal-boleto" class="fixed inset-0 z-[100] bg-cinedark/95 hidden flex items-center justify-center p-4 backdrop-blur-sm transition-opacity duration-300">
+        <div class="bg-[#e8dbce] text-cinedark border-8 border-double border-[#574433] p-8 max-w-sm w-full relative shadow-[16px_16px_0px_rgba(0,0,0,0.9)] mt-10">
+            <button onclick="cerrarModalBoleto()" class="absolute -top-6 -right-6 w-12 h-12 bg-cinered text-cinegold border-2 border-cinegold rounded-full font-black text-xl flex items-center justify-center shadow-[4px_4px_0px_rgba(0,0,0,0.5)] hover:bg-[#5a0000] transition-colors z-10"><i class="fa-solid fa-xmark"></i></button>
+            
+            <p class="text-cinered font-bold text-sm tracking-[0.2em] mb-2 uppercase font-sans text-center">TICKET N° <span id="modal-id"></span></p>
+            <h3 id="modal-peli" class="text-3xl font-serif font-black uppercase text-center mb-6 leading-tight border-b-2 border-dashed border-[#574433] pb-4"></h3>
+            
+            <div class="border-4 border-cinedark p-2 bg-white w-64 h-64 mx-auto mb-6 shadow-inner">
+                <img id="modal-qr" src="" class="w-full h-full sepia-[.5] contrast-125" alt="QR Boleto Grande">
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4 font-sans text-center bg-[#2a1e14]/10 p-4 border border-[#574433]">
+                <div>
+                    <p class="text-[#574433] text-[10px] font-bold uppercase tracking-widest mb-1">Función</p>
+                    <p id="modal-horario" class="text-cinedark font-black text-base"></p>
+                </div>
+                <div>
+                    <p class="text-[#574433] text-[10px] font-bold uppercase tracking-widest mb-1">Localidades</p>
+                    <p id="modal-asientos" class="text-cinedark font-black text-base"></p>
+                </div>
+            </div>
+            <div class="text-center mt-4">
+                <p class="text-[#574433] text-[10px] font-bold uppercase tracking-widest mb-1">Total Pagado</p>
+                <p class="text-xl font-serif font-black text-cinered">$<span id="modal-total"></span> MXN</p>
+            </div>
+        </div>
+    </div>
 
     <script src="js/data.js"></script>
     <script src="js/app.js"></script>
