@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selección de Butacas | Cine Xilotzin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { theme: { extend: { colors: { cinedark: '#0a0a0a', cinered: '#b20710', cinegold: '#fbbf24' }, fontFamily: { sans: ['Montserrat', 'sans-serif'] } } } }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="bg-cinedark text-white antialiased pb-32 h-screen flex flex-col overflow-hidden">
+
+    <header class="border-b border-white/10 px-6 py-4 bg-black/95 backdrop-blur z-40 shrink-0 shadow-xl">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-4 md:gap-6">
+                <a href="index.html" class="text-gray-400 hover:text-white transition bg-white/5 w-10 h-10 flex items-center justify-center rounded-full border border-white/10"><i class="fa-solid fa-arrow-left"></i></a>
+                <div>
+                    <h1 id="titulo-peli" class="text-xl md:text-2xl font-black uppercase tracking-wide truncate max-w-[200px] md:max-w-md">Cargando...</h1>
+                    <p id="horario-peli" class="text-cinegold font-bold text-xs md:text-sm tracking-widest"></p>
+                </div>
+            </div>
+            <div class="text-right bg-white/5 py-2 px-4 rounded-lg border border-white/10 hidden md:block">
+                <p class="text-xs font-bold text-gray-400 uppercase tracking-widest">Admisión General</p>
+                <p class="text-xl font-black text-white">$50.00 <span class="text-xs text-cinegold">MXN</span></p>
+            </div>
+        </div>
+    </header>
+
+    <div class="bg-cinedark border-b border-white/5 py-3 shrink-0 z-30">
+        <div class="flex justify-center gap-6 md:gap-12 text-xs md:text-sm font-bold text-gray-400">
+            <div class="flex items-center gap-2 md:gap-3"><div class="w-6 h-6 border-2 border-white/20 rounded-t-lg bg-gray-800"></div> Disponible</div>
+            <div class="flex items-center gap-2 md:gap-3"><div class="w-6 h-6 bg-cinegold shadow-[0_0_10px_rgba(251,191,36,0.5)] rounded-t-lg"></div> Tu Selección</div>
+            <div class="flex items-center gap-2 md:gap-3"><div class="w-6 h-6 bg-red-900/40 border border-red-900/50 rounded-t-lg flex items-center justify-center"><i class="fa-solid fa-xmark text-[10px] text-red-500"></i></div> Ocupado</div>
+        </div>
+    </div>
+
+    <main class="relative flex-grow w-full bg-[#050505] overflow-hidden">
+        <div class="absolute right-4 md:right-8 top-8 z-20 flex flex-col gap-2 bg-black/60 p-2 rounded-xl border border-white/10 backdrop-blur-md shadow-2xl">
+            <button onclick="zoomIn()" class="w-10 h-10 bg-white/10 hover:bg-cinegold hover:text-black rounded-lg text-white font-bold transition"><i class="fa-solid fa-plus"></i></button>
+            <button onclick="resetZoom()" class="w-10 h-10 bg-white/10 hover:bg-cinegold hover:text-black rounded-lg text-white font-bold transition text-sm"><i class="fa-solid fa-expand"></i></button>
+            <button onclick="zoomOut()" class="w-10 h-10 bg-white/10 hover:bg-cinegold hover:text-black rounded-lg text-white font-bold transition"><i class="fa-solid fa-minus"></i></button>
+        </div>
+
+        <div id="map-scroll" class="w-full h-full overflow-auto grab hide-scroll relative">
+            <div id="map-content" class="min-w-[1000px] md:min-w-[1200px] p-10 mx-auto transform origin-top transition-transform duration-300 ease-out flex flex-col items-center">
+                
+                <div class="w-3/4 max-w-3xl h-16 border-t-4 border-blue-500/40 rounded-t-[50%] mb-20 relative screen-curve bg-gradient-to-b from-blue-500/10 to-transparent flex justify-center">
+                    <span class="absolute -top-7 bg-[#050505] px-6 py-1 border border-white/5 rounded-full text-xs font-black text-gray-500 tracking-[0.4em] uppercase shadow-lg">Pantalla Xilotzin</span>
+                </div>
+
+                <div id="seating-grid" class="flex flex-col gap-3 md:gap-4 items-center pb-20"></div>
+
+            </div>
+        </div>
+    </main>
+
+    <div class="fixed bottom-0 left-0 w-full bg-black/95 backdrop-blur-xl border-t border-white/10 p-4 md:p-6 shadow-[0_-20px_50px_rgba(0,0,0,0.9)] z-50">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div>
+                <p id="texto-asientos" class="text-xs md:text-sm font-bold text-gray-400 uppercase tracking-widest mb-1">0 Asientos</p>
+                <p class="text-2xl md:text-4xl font-black text-white leading-none">$<span id="texto-precio">0</span> <span class="text-sm text-cinegold">MXN</span></p>
+            </div>
+            <button id="btn-continuar" onclick="avanzarPago()" disabled class="bg-gray-800 text-gray-500 font-black py-4 px-8 md:px-16 rounded-xl transition-all uppercase tracking-widest cursor-not-allowed shadow-lg md:text-lg">
+                Pagar Boletos
+            </button>
+        </div>
+    </div>
+
+    <script src="js/data.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

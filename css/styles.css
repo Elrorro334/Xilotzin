@@ -1,0 +1,24 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800;900&display=swap');
+
+body { font-family: 'Montserrat', sans-serif; }
+
+.neon-gold { text-shadow: 0 0 10px rgba(251,191,36,0.8), 0 0 20px rgba(251,191,36,0.4); }
+
+.ticket-cutout {
+    mask-image: radial-gradient(circle at top left, transparent 20px, black 21px),
+                radial-gradient(circle at top right, transparent 20px, black 21px),
+                radial-gradient(circle at bottom left, transparent 20px, black 21px),
+                radial-gradient(circle at bottom right, transparent 20px, black 21px);
+    mask-position: top left, top right, bottom left, bottom right;
+    mask-size: 51% 51%;
+    mask-repeat: no-repeat;
+}
+
+.seat { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; }
+.seat:hover:not(.occupied) { transform: scale(1.15); background-color: #fbbf24; border-color: #fbbf24; color: black; }
+.seat-selected { background-color: #fbbf24; border-color: #fbbf24; color: black; transform: scale(1.10); box-shadow: 0 0 15px rgba(251,191,36,0.5); }
+.screen-curve { box-shadow: 0 15px 50px -10px rgba(255,255,255,0.05); }
+
+/* Ocultar flechas de los inputs numericos */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
