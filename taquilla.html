@@ -3,24 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Punto de Venta | Taquilla Xilotzin</title>
+    <title>Punto de Venta VIP | Taquilla Xilotzin</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        tailwind.config = { 
-            theme: { 
-                extend: { 
-                    colors: { 
-                        cinedark: '#1c140d', 
-                        cinered: '#780000', 
-                        cinegold: '#dca54c' 
-                    }, 
-                    fontFamily: { 
-                        sans: ['Montserrat', 'sans-serif'],
-                        serif: ['"Playfair Display"', 'serif'] 
-                    } 
-                } 
-            } 
-        }
+        tailwind.config = { theme: { extend: { colors: { cinedark: '#1c140d', cinered: '#780000', cinegold: '#dca54c' }, fontFamily: { sans: ['Montserrat', 'sans-serif'], serif: ['"Playfair Display"', 'serif'] } } } }
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -28,7 +14,8 @@
     <style>
         .hide-scroll::-webkit-scrollbar { display: none; }
         .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
-        html { scroll-behavior: smooth; }
+        .tab-active { color: #dca54c; border-top-color: #dca54c; background-color: #261c14; }
+        .tab-inactive { color: #a69b8d; border-top-color: transparent; }
     </style>
 </head>
 <body class="bg-cinedark text-[#e8dbce] antialiased h-screen flex flex-col overflow-hidden selection:bg-cinered selection:text-cinegold">
@@ -39,8 +26,8 @@
                 <i class="fa-solid fa-desktop text-sm md:text-base"></i>
             </div>
             <div>
-                <h1 class="text-lg md:text-xl font-serif font-black uppercase text-cinegold tracking-widest leading-none drop-shadow-md">Terminal POS</h1>
-                <p class="text-[8px] md:text-[10px] font-sans font-bold uppercase tracking-[0.2em] text-[#e8dbce]">Cine Teatro Xilotzin • Taquilla 1</p>
+                <h1 class="text-lg md:text-xl font-serif font-black uppercase text-cinegold tracking-widest leading-none drop-shadow-md">Taquilla POS</h1>
+                <p class="text-[8px] md:text-[10px] font-sans font-bold uppercase tracking-[0.2em] text-[#e8dbce]">Cine Teatro Xilotzin</p>
             </div>
         </div>
         <a href="index.html" class="bg-cinedark text-cinegold px-3 py-2 md:px-4 border border-cinegold font-sans font-bold text-[10px] md:text-xs uppercase tracking-widest hover:bg-cinegold hover:text-cinedark transition-colors shadow-[2px_2px_0px_rgba(0,0,0,0.5)]">
@@ -49,45 +36,45 @@
         </a>
     </header>
 
-    <main class="flex-grow flex flex-col lg:flex-row overflow-y-auto lg:overflow-hidden relative pb-10 lg:pb-0">
+    <main class="flex-grow flex flex-col lg:flex-row overflow-hidden relative pb-[70px] lg:pb-0">
         
-        <section class="w-full lg:w-1/3 bg-[#2a1e14] border-b-4 lg:border-b-0 lg:border-r-4 border-double border-[#574433] flex flex-col shrink-0 lg:h-full z-30 shadow-[0_4px_10px_rgba(0,0,0,0.5)] lg:shadow-none">
+        <section id="sec-cartelera" class="w-full lg:w-1/3 bg-[#2a1e14] border-r-4 border-double border-[#574433] flex flex-col h-full z-30 lg:flex">
             <div class="p-4 border-b border-[#574433] bg-[#261c14] shrink-0">
-                <h2 class="text-[10px] md:text-xs font-sans font-bold uppercase tracking-[0.3em] text-[#a69b8d]">1. Seleccionar Función</h2>
+                <h2 class="text-xs font-sans font-bold uppercase tracking-[0.3em] text-[#a69b8d]">1. Función</h2>
             </div>
-            <div id="pos-cartelera" class="flex flex-row lg:flex-col gap-4 overflow-x-auto lg:overflow-y-auto p-4 hide-scroll snap-x shrink-0"></div>
+            <div id="pos-cartelera" class="flex flex-col gap-4 overflow-y-auto p-4 hide-scroll h-full"></div>
         </section>
 
-        <section id="pos-seccion-asientos" class="w-full lg:w-1/3 bg-cinedark flex flex-col flex-grow min-h-[450px] relative border-b-4 lg:border-b-0 lg:border-r-4 border-double border-[#574433] z-20">
+        <section id="sec-asientos" class="w-full lg:w-1/3 bg-cinedark flex flex-col h-full relative border-r-4 border-double border-[#574433] z-20 hidden lg:flex">
             <div class="p-4 border-b border-[#574433] shrink-0 bg-[#261c14] sticky top-0 z-10 shadow-md">
-                <h2 class="text-[10px] md:text-xs font-sans font-bold uppercase tracking-[0.3em] text-[#a69b8d] mb-1 md:mb-2">2. Asignar Localidades</h2>
-                <h3 id="pos-titulo-peli" class="text-base md:text-lg font-serif font-black text-cinegold uppercase truncate">Seleccione una función</h3>
+                <h2 class="text-xs font-sans font-bold uppercase tracking-[0.3em] text-[#a69b8d] mb-1">2. Localidades</h2>
+                <h3 id="pos-titulo-peli" class="text-base md:text-lg font-serif font-black text-cinegold uppercase truncate">Seleccione función</h3>
                 <p id="pos-horario-peli" class="text-[10px] font-sans font-bold text-cinered uppercase tracking-widest"></p>
             </div>
             
-            <div class="flex-grow overflow-x-auto overflow-y-auto p-4 flex flex-col items-center justify-start md:justify-center relative hide-scroll">
-                <div id="pos-pantalla" class="w-[280px] md:w-3/4 h-6 md:h-8 border-t-4 border-cinegold rounded-t-[50%] mb-8 relative flex justify-center hidden shrink-0 mt-4 md:mt-0">
+            <div class="flex-grow overflow-auto p-4 flex flex-col items-center justify-center relative hide-scroll">
+                <div id="pos-pantalla" class="w-3/4 h-6 md:h-8 border-t-4 border-cinegold rounded-t-[50%] mb-8 relative flex justify-center hidden shrink-0">
                     <span class="absolute -top-4 bg-cinedark px-4 py-1 border border-cinegold text-[8px] font-serif font-black text-cinegold tracking-widest uppercase">Pantalla</span>
                 </div>
-                <div id="pos-asientos" class="flex flex-col gap-2 items-center shrink-0 pb-8 md:pb-0">
-                    <p class="text-[#574433] text-sm font-serif italic text-center mt-10">Esperando selección...</p>
+                <div id="pos-asientos" class="flex flex-col gap-2 items-center shrink-0">
+                    <p class="text-[#574433] text-sm font-serif italic text-center">Esperando selección...</p>
                 </div>
             </div>
         </section>
 
-        <section id="pos-seccion-pago" class="w-full lg:w-1/3 bg-[#e8dbce] text-cinedark flex flex-col shrink-0 lg:h-full shadow-[inset_0_10px_20px_rgba(0,0,0,0.2)] lg:shadow-[inset_10px_0_20px_rgba(0,0,0,0.5)] z-10">
-            <div class="p-4 md:p-6 border-b-4 border-double border-[#574433] shrink-0 bg-[#d5c5b3]">
-                <h2 class="text-[10px] md:text-xs font-sans font-black uppercase tracking-[0.3em] text-[#574433]">3. Resumen de Venta</h2>
+        <section id="sec-pago" class="w-full lg:w-1/3 bg-[#e8dbce] text-cinedark flex flex-col h-full shadow-[inset_10px_0_20px_rgba(0,0,0,0.5)] z-10 hidden lg:flex">
+            <div class="p-4 border-b-4 border-double border-[#574433] shrink-0 bg-[#d5c5b3]">
+                <h2 class="text-xs font-sans font-black uppercase tracking-[0.3em] text-[#574433]">3. Cobro</h2>
             </div>
             
-            <div class="flex-grow p-4 md:p-6 flex flex-col">
-                <div class="bg-white border-2 border-dashed border-[#574433] p-4 flex-grow relative shadow-[4px_4px_0px_rgba(0,0,0,0.2)] mb-6">
-                    <p class="text-center font-serif font-black text-lg md:text-xl mb-4 border-b-2 border-cinedark pb-2 uppercase text-cinered">Ticket de Venta</p>
+            <div class="flex-grow p-4 flex flex-col overflow-y-auto">
+                <div class="bg-white border-2 border-dashed border-[#574433] p-4 flex-grow relative shadow-[4px_4px_0px_rgba(0,0,0,0.2)] mb-4">
+                    <p class="text-center font-serif font-black text-lg mb-4 border-b-2 border-cinedark pb-2 uppercase text-cinered">Ticket de Venta</p>
                     
                     <div class="space-y-3 font-sans text-xs md:text-sm font-bold">
                         <div class="flex justify-between border-b border-gray-200 pb-2">
                             <span class="text-gray-500 uppercase">Película</span>
-                            <span id="ticket-peli" class="text-right truncate max-w-[140px] md:max-w-[150px]">-</span>
+                            <span id="ticket-peli" class="text-right truncate max-w-[140px]">-</span>
                         </div>
                         <div class="flex justify-between border-b border-gray-200 pb-2">
                             <span class="text-gray-500 uppercase">Horario</span>
@@ -99,14 +86,14 @@
                         </div>
                         <div class="flex justify-between border-b border-gray-200 pb-2">
                             <span class="text-gray-500 uppercase">Asientos</span>
-                            <span id="ticket-asientos" class="text-right max-w-[140px] md:max-w-[150px] break-words text-cinered">-</span>
+                            <span id="ticket-asientos" class="text-right max-w-[140px] break-words text-cinered">-</span>
                         </div>
                     </div>
 
                     <div class="mt-4 pt-4 border-t-4 border-double border-cinedark">
                         <div class="flex justify-between items-end">
                             <span class="font-sans font-black uppercase text-gray-500 tracking-widest text-xs">Total</span>
-                            <span class="text-3xl md:text-4xl font-serif font-black text-cinedark drop-shadow-sm">$<span id="ticket-total">0</span></span>
+                            <span class="text-3xl font-serif font-black text-cinedark drop-shadow-sm">$<span id="ticket-total">0</span></span>
                         </div>
                     </div>
                 </div>
@@ -124,6 +111,22 @@
 
     </main>
 
+    <nav class="lg:hidden fixed bottom-0 w-full bg-cinedark border-t-2 border-[#574433] flex justify-between z-50 h-[70px] shadow-[0_-4px_10px_rgba(0,0,0,0.5)]">
+        <button onclick="cambiarTab('sec-cartelera', this)" class="tab-btn tab-active flex-1 flex flex-col items-center justify-center gap-1 border-t-4 transition-all">
+            <i class="fa-solid fa-film text-lg"></i>
+            <span class="text-[9px] font-sans font-bold uppercase tracking-widest">Cartelera</span>
+        </button>
+        <button onclick="cambiarTab('sec-asientos', this)" class="tab-btn tab-inactive flex-1 flex flex-col items-center justify-center gap-1 border-t-4 transition-all">
+            <i class="fa-solid fa-chair text-lg"></i>
+            <span class="text-[9px] font-sans font-bold uppercase tracking-widest">Asientos</span>
+        </button>
+        <button onclick="cambiarTab('sec-pago', this)" class="tab-btn tab-inactive flex-1 flex flex-col items-center justify-center gap-1 border-t-4 transition-all relative">
+            <i class="fa-solid fa-receipt text-lg"></i>
+            <span class="text-[9px] font-sans font-bold uppercase tracking-widest">Cobrar</span>
+            <div id="badge-pago" class="absolute top-1 right-4 w-3 h-3 bg-cinered rounded-full hidden"></div>
+        </button>
+    </nav>
+
     <script src="js/data.js"></script>
     <script>
         let posSeleccion = { pelicula: null, horario: null, asientos: [], total: 0 };
@@ -133,19 +136,36 @@
             renderCarteleraPOS();
         });
 
+        function cambiarTab(idSeccion, btnElement) {
+            if (window.innerWidth >= 1024) return;
+            
+            document.getElementById('sec-cartelera').classList.add('hidden');
+            document.getElementById('sec-asientos').classList.add('hidden');
+            document.getElementById('sec-pago').classList.add('hidden');
+            
+            document.getElementById(idSeccion).classList.remove('hidden');
+            
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('tab-active');
+                btn.classList.add('tab-inactive');
+            });
+            btnElement.classList.remove('tab-inactive');
+            btnElement.classList.add('tab-active');
+        }
+
         function renderCarteleraPOS() {
             const contenedor = document.getElementById('pos-cartelera');
             if (typeof cineData === 'undefined') return;
 
             contenedor.innerHTML = cineData.peliculas.map(p => `
-                <div class="bg-cinedark border-2 border-[#574433] p-3 flex gap-3 md:gap-4 cursor-pointer hover:border-cinegold transition-colors min-w-[280px] lg:min-w-0 snap-center shrink-0 shadow-[4px_4px_0px_rgba(0,0,0,0.4)]" onclick="activarFuncionPOS(${p.id})">
+                <div class="bg-[#1c140d] border-2 border-[#574433] p-3 flex gap-3 cursor-pointer hover:border-cinegold transition-colors shadow-[4px_4px_0px_rgba(0,0,0,0.4)]" onclick="activarFuncionPOS(${p.id})">
                     <img src="${p.poster}" class="w-16 h-24 object-cover sepia-[.3] border border-[#574433]">
                     <div class="flex flex-col flex-grow">
                         <h3 class="font-serif font-black text-cinegold uppercase text-xs md:text-sm mb-1 leading-tight">${p.titulo}</h3>
                         <p class="text-[9px] md:text-[10px] font-sans font-bold text-[#a69b8d] mb-2 uppercase tracking-widest">${p.clasificacion} • ${p.duracion}</p>
                         <div class="flex flex-wrap gap-2 mt-auto" id="btn-group-${p.id}">
                             ${p.horarios.map(h => `
-                                <button onclick="event.stopPropagation(); setFuncionPOS('${p.titulo}', '${h}')" class="bg-[#3d2c1f] hover:bg-cinered text-[#e8dbce] text-[9px] md:text-[10px] font-bold px-2 py-1 uppercase border border-[#574433] shadow-sm">
+                                <button onclick="event.stopPropagation(); setFuncionPOS('${p.titulo}', '${h}')" class="bg-[#3d2c1f] hover:bg-cinered text-[#e8dbce] text-[9px] font-bold px-2 py-1 uppercase border border-[#574433] shadow-sm">
                                     ${h}
                                 </button>
                             `).join('')}
@@ -156,7 +176,7 @@
         }
 
         function activarFuncionPOS(id) {
-            document.querySelectorAll('[id^="btn-group-"]').forEach(el => el.classList.remove('ring-2', 'ring-cinegold', 'bg-[#3d2c1f]'));
+            document.querySelectorAll('[id^="btn-group-"]').forEach(el => el.classList.remove('ring-2', 'ring-cinegold', 'bg-[#261c14]'));
             document.getElementById(`btn-group-${id}`).classList.add('ring-2', 'ring-cinegold', 'bg-[#261c14]');
         }
 
@@ -174,7 +194,7 @@
             actualizarTicketPOS();
 
             if (window.innerWidth < 1024) {
-                document.getElementById('pos-seccion-asientos').scrollIntoView({ behavior: 'smooth' });
+                cambiarTab('sec-asientos', document.querySelectorAll('.tab-btn')[1]);
             }
         }
 
@@ -187,8 +207,8 @@
 
             filas.forEach(letra => {
                 const filaDiv = document.createElement('div');
-                filaDiv.className = 'flex gap-2 md:gap-3 justify-center items-center';
-                filaDiv.insertAdjacentHTML('beforeend', `<span class="w-4 text-center text-cinegold font-serif font-black text-xs md:text-sm drop-shadow-md">${letra}</span>`);
+                filaDiv.className = 'flex gap-2 justify-center items-center';
+                filaDiv.insertAdjacentHTML('beforeend', `<span class="w-4 text-center text-cinegold font-serif font-black text-xs drop-shadow-md">${letra}</span>`);
 
                 let num = 1;
                 distribucion.forEach(bloque => {
@@ -200,10 +220,10 @@
                         
                         const btn = document.createElement('button');
                         if(ocupado) {
-                            btn.className = 'w-6 h-7 md:w-8 md:h-9 bg-cinered/50 border-2 border-cinered cursor-not-allowed text-[8px] md:text-[10px] flex items-center justify-center text-cinedark shadow-[inset_0_-2px_0_rgba(0,0,0,0.5)]';
+                            btn.className = 'w-6 h-7 md:w-8 md:h-9 bg-cinered/50 border-2 border-cinered cursor-not-allowed text-[8px] flex items-center justify-center text-cinedark shadow-[inset_0_-2px_0_rgba(0,0,0,0.5)]';
                             btn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
                         } else {
-                            btn.className = 'w-6 h-7 md:w-8 md:h-9 bg-[#3d2c1f] border-2 border-[#574433] text-[8px] md:text-[10px] font-sans font-bold text-[#a69b8d] hover:border-cinegold transition-colors shadow-[inset_0_-2px_0_rgba(0,0,0,0.5)]';
+                            btn.className = 'w-6 h-7 md:w-8 md:h-9 bg-[#3d2c1f] border-2 border-[#574433] text-[8px] font-sans font-bold text-[#a69b8d] hover:border-cinegold transition-colors shadow-[inset_0_-2px_0_rgba(0,0,0,0.5)]';
                             btn.innerText = num;
                             btn.onclick = function() { toggleAsientoPOS(this, idAsiento); };
                         }
@@ -212,7 +232,7 @@
                     }
                     filaDiv.appendChild(bloqueDiv);
                 });
-                filaDiv.insertAdjacentHTML('beforeend', `<span class="w-4 text-center text-cinegold font-serif font-black text-xs md:text-sm drop-shadow-md">${letra}</span>`);
+                filaDiv.insertAdjacentHTML('beforeend', `<span class="w-4 text-center text-cinegold font-serif font-black text-xs drop-shadow-md">${letra}</span>`);
                 grid.appendChild(filaDiv);
             });
         }
@@ -243,8 +263,11 @@
             document.getElementById('btn-efectivo').disabled = !habilitarPago;
             document.getElementById('btn-tarjeta').disabled = !habilitarPago;
 
-            if (habilitarPago && window.innerWidth < 1024 && posSeleccion.asientos.length === 1) {
-                document.getElementById('pos-seccion-pago').scrollIntoView({ behavior: 'smooth' });
+            const badge = document.getElementById('badge-pago');
+            if (habilitarPago) {
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
             }
         }
 
@@ -252,213 +275,9 @@
             alert(`TRANSACCIÓN APROBADA EN TAQUILLA\nMétodo: ${metodoPago}\nTotal Cobrado: $${posSeleccion.total} MXN\nImprimiendo boletos físicos...`);
             setFuncionPOS(posSeleccion.pelicula, posSeleccion.horario);
             if (window.innerWidth < 1024) {
-                document.getElementById('pos-cartelera').scrollIntoView({ behavior: 'smooth' });
+                cambiarTab('sec-cartelera', document.querySelectorAll('.tab-btn')[0]);
+                document.getElementById('badge-pago').classList.add('hidden');
             }
-        }
-    </script>
-</body>
-</html>
-                <h1 class="text-xl font-serif font-black uppercase text-cinegold tracking-widest leading-none">Terminal POS</h1>
-                <p class="text-[10px] font-sans font-bold uppercase tracking-[0.2em] text-[#e8dbce]">Cine Teatro Xilotzin • Taquilla 1</p>
-            </div>
-        </div>
-        <a href="index.html" class="bg-cinedark text-cinegold px-4 py-2 border border-cinegold font-sans font-bold text-xs uppercase tracking-widest hover:bg-cinegold hover:text-cinedark transition-colors">
-            Cerrar Sesión
-        </a>
-    </header>
-
-    <main class="flex-grow flex flex-col lg:flex-row overflow-hidden">
-        
-        <section class="w-full lg:w-1/3 bg-[#2a1e14] border-r-4 border-double border-[#574433] flex flex-col h-full overflow-y-auto custom-scrollbar p-4">
-            <h2 class="text-xs font-sans font-bold uppercase tracking-[0.3em] text-[#a69b8d] mb-4 border-b border-[#574433] pb-2">1. Seleccionar Función</h2>
-            <div id="pos-cartelera" class="flex flex-col gap-4"></div>
-        </section>
-
-        <section class="w-full lg:w-1/3 bg-cinedark flex flex-col h-full relative border-r-4 border-double border-[#574433]">
-            <div class="p-4 border-b border-[#574433] shrink-0 bg-[#261c14]">
-                <h2 class="text-xs font-sans font-bold uppercase tracking-[0.3em] text-[#a69b8d] mb-2">2. Asignar Localidades</h2>
-                <h3 id="pos-titulo-peli" class="text-lg font-serif font-black text-cinegold uppercase truncate">Seleccione una función</h3>
-                <p id="pos-horario-peli" class="text-[10px] font-sans font-bold text-cinered uppercase tracking-widest"></p>
-            </div>
-            
-            <div class="flex-grow overflow-auto p-4 flex flex-col items-center justify-center relative">
-                <div id="pos-pantalla" class="w-3/4 h-8 border-t-4 border-cinegold rounded-t-[50%] mb-8 relative flex justify-center hidden">
-                    <span class="absolute -top-4 bg-cinedark px-4 py-1 border border-cinegold text-[8px] font-serif font-black text-cinegold tracking-widest uppercase">Pantalla</span>
-                </div>
-                <div id="pos-asientos" class="flex flex-col gap-2 items-center">
-                    <p class="text-[#574433] text-sm font-serif italic text-center">Esperando selección de película...</p>
-                </div>
-            </div>
-        </section>
-
-        <section class="w-full lg:w-1/3 bg-[#e8dbce] text-cinedark flex flex-col h-full shadow-[inset_10px_0_20px_rgba(0,0,0,0.5)]">
-            <div class="p-6 border-b-4 border-double border-[#574433] shrink-0 bg-[#d5c5b3]">
-                <h2 class="text-xs font-sans font-black uppercase tracking-[0.3em] text-[#574433] mb-1">3. Resumen de Venta</h2>
-            </div>
-            
-            <div class="flex-grow p-6 flex flex-col">
-                <div class="bg-white border-2 border-dashed border-[#574433] p-4 flex-grow relative shadow-sm">
-                    <p class="text-center font-serif font-black text-xl mb-4 border-b-2 border-cinedark pb-2 uppercase text-cinered">Ticket de Venta</p>
-                    
-                    <div class="space-y-4 font-sans text-sm font-bold">
-                        <div class="flex justify-between border-b border-gray-200 pb-2">
-                            <span class="text-gray-500 uppercase">Película</span>
-                            <span id="ticket-peli" class="text-right truncate max-w-[150px]">-</span>
-                        </div>
-                        <div class="flex justify-between border-b border-gray-200 pb-2">
-                            <span class="text-gray-500 uppercase">Horario</span>
-                            <span id="ticket-horario">-</span>
-                        </div>
-                        <div class="flex justify-between border-b border-gray-200 pb-2">
-                            <span class="text-gray-500 uppercase">Cant. Boletos</span>
-                            <span id="ticket-cantidad">0</span>
-                        </div>
-                        <div class="flex justify-between border-b border-gray-200 pb-2">
-                            <span class="text-gray-500 uppercase">Asientos</span>
-                            <span id="ticket-asientos" class="text-right max-w-[150px] break-words text-cinered">-</span>
-                        </div>
-                    </div>
-
-                    <div class="absolute bottom-4 left-4 right-4 border-t-4 border-double border-cinedark pt-4">
-                        <div class="flex justify-between items-end">
-                            <span class="font-sans font-black uppercase text-gray-500 tracking-widest text-xs">Total</span>
-                            <span class="text-3xl font-serif font-black text-cinedark">$<span id="ticket-total">0</span></span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="mt-6 flex flex-col gap-3 shrink-0">
-                    <button id="btn-efectivo" onclick="procesarVentaPOS('EFECTIVO')" disabled class="w-full bg-green-700 hover:bg-green-800 disabled:bg-gray-400 text-white font-sans font-black py-4 uppercase tracking-widest transition-colors shadow-md flex items-center justify-center gap-3">
-                        <i class="fa-solid fa-money-bill-wave"></i> Cobrar Efectivo
-                    </button>
-                    <button id="btn-tarjeta" onclick="procesarVentaPOS('TARJETA')" disabled class="w-full bg-blue-700 hover:bg-blue-800 disabled:bg-gray-400 text-white font-sans font-black py-4 uppercase tracking-widest transition-colors shadow-md flex items-center justify-center gap-3">
-                        <i class="fa-solid fa-credit-card"></i> Terminal Bancaria
-                    </button>
-                </div>
-            </div>
-        </section>
-
-    </main>
-
-    <script src="js/data.js"></script>
-    <script>
-        let posSeleccion = { pelicula: null, horario: null, asientos: [], total: 0 };
-        const precioTaquilla = typeof cineData !== 'undefined' ? cineData.precioBoleto : 50;
-
-        document.addEventListener('DOMContentLoaded', () => {
-            renderCarteleraPOS();
-        });
-
-        function renderCarteleraPOS() {
-            const contenedor = document.getElementById('pos-cartelera');
-            if (typeof cineData === 'undefined') return;
-
-            contenedor.innerHTML = cineData.peliculas.map(p => `
-                <div class="bg-cinedark border border-[#574433] p-3 flex gap-4 cursor-pointer hover:border-cinegold transition-colors" onclick="activarFuncionPOS(${p.id})">
-                    <img src="${p.poster}" class="w-16 h-24 object-cover sepia-[.3]">
-                    <div class="flex flex-col flex-grow">
-                        <h3 class="font-serif font-black text-cinegold uppercase text-sm mb-1">${p.titulo}</h3>
-                        <p class="text-[10px] font-sans text-[#a69b8d] mb-2 uppercase">${p.clasificacion}</p>
-                        <div class="flex flex-wrap gap-2 mt-auto" id="btn-group-${p.id}">
-                            ${p.horarios.map(h => `
-                                <button onclick="event.stopPropagation(); setFuncionPOS('${p.titulo}', '${h}')" class="bg-[#3d2c1f] hover:bg-cinered text-[#e8dbce] text-[10px] font-bold px-2 py-1 uppercase border border-[#574433]">
-                                    ${h}
-                                </button>
-                            `).join('')}
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function activarFuncionPOS(id) {
-            document.querySelectorAll('[id^="btn-group-"]').forEach(el => el.classList.remove('ring-2', 'ring-cinegold'));
-            document.getElementById(`btn-group-${id}`).classList.add('ring-2', 'ring-cinegold');
-        }
-
-        function setFuncionPOS(titulo, horario) {
-            posSeleccion.pelicula = titulo;
-            posSeleccion.horario = horario;
-            posSeleccion.asientos = [];
-            posSeleccion.total = 0;
-
-            document.getElementById('pos-titulo-peli').innerText = titulo;
-            document.getElementById('pos-horario-peli').innerText = `HOY • ${horario}`;
-            document.getElementById('pos-pantalla').classList.remove('hidden');
-
-            renderMapaPOS();
-            actualizarTicketPOS();
-        }
-
-        function renderMapaPOS() {
-            const grid = document.getElementById('pos-asientos');
-            grid.innerHTML = '';
-            
-            const filas = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
-            const distribucion = [4, 6, 4]; 
-
-            filas.forEach(letra => {
-                const filaDiv = document.createElement('div');
-                filaDiv.className = 'flex gap-3 justify-center items-center';
-                filaDiv.insertAdjacentHTML('beforeend', `<span class="w-4 text-center text-cinegold font-serif font-black text-xs">${letra}</span>`);
-
-                let num = 1;
-                distribucion.forEach(bloque => {
-                    const bloqueDiv = document.createElement('div');
-                    bloqueDiv.className = 'flex gap-1';
-                    for(let i=0; i<bloque; i++) {
-                        const idAsiento = `${letra}${num}`;
-                        const ocupado = Math.random() < 0.2;
-                        
-                        const btn = document.createElement('button');
-                        if(ocupado) {
-                            btn.className = 'w-6 h-7 bg-cinered/50 border border-cinered cursor-not-allowed text-[8px] flex items-center justify-center text-cinedark';
-                            btn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
-                        } else {
-                            btn.className = 'w-6 h-7 bg-[#3d2c1f] border border-[#574433] text-[8px] font-bold text-[#a69b8d] hover:border-cinegold transition-colors';
-                            btn.innerText = num;
-                            btn.onclick = function() { toggleAsientoPOS(this, idAsiento); };
-                        }
-                        bloqueDiv.appendChild(btn);
-                        num++;
-                    }
-                    filaDiv.appendChild(bloqueDiv);
-                });
-                filaDiv.insertAdjacentHTML('beforeend', `<span class="w-4 text-center text-cinegold font-serif font-black text-xs">${letra}</span>`);
-                grid.appendChild(filaDiv);
-            });
-        }
-
-        function toggleAsientoPOS(btn, id) {
-            if(posSeleccion.asientos.includes(id)) {
-                posSeleccion.asientos = posSeleccion.asientos.filter(a => a !== id);
-                btn.classList.remove('bg-cinegold', 'text-cinedark', 'border-white');
-                btn.classList.add('bg-[#3d2c1f]', 'text-[#a69b8d]', 'border-[#574433]');
-            } else {
-                posSeleccion.asientos.push(id);
-                btn.classList.remove('bg-[#3d2c1f]', 'text-[#a69b8d]', 'border-[#574433]');
-                btn.classList.add('bg-cinegold', 'text-cinedark', 'border-white');
-            }
-            actualizarTicketPOS();
-        }
-
-        function actualizarTicketPOS() {
-            posSeleccion.total = posSeleccion.asientos.length * precioTaquilla;
-            
-            document.getElementById('ticket-peli').innerText = posSeleccion.pelicula || '-';
-            document.getElementById('ticket-horario').innerText = posSeleccion.horario || '-';
-            document.getElementById('ticket-cantidad').innerText = posSeleccion.asientos.length;
-            document.getElementById('ticket-asientos').innerText = posSeleccion.asientos.length > 0 ? posSeleccion.asientos.join(', ') : '-';
-            document.getElementById('ticket-total').innerText = posSeleccion.total;
-
-            const habilitarPago = posSeleccion.asientos.length > 0;
-            document.getElementById('btn-efectivo').disabled = !habilitarPago;
-            document.getElementById('btn-tarjeta').disabled = !habilitarPago;
-        }
-
-        function procesarVentaPOS(metodoPago) {
-            alert(`TRANSACCIÓN APROBADA EN TAQUILLA\nMétodo: ${metodoPago}\nTotal Cobrado: $${posSeleccion.total} MXN\nImprimiendo boletos físicos...`);
-            setFuncionPOS(posSeleccion.pelicula, posSeleccion.horario);
         }
     </script>
 </body>
