@@ -130,7 +130,7 @@ function aplicarTema(tema, guardar = true) {
             'traditional': 'Cine Tradicional',
             'halloween': 'Noches de Terror 🎃',
             'christmas': 'Especial Navideño 🎄',
-            'mexican': 'Noches Mexicanas 🇲🇽'
+            'mexican': 'Fiestas Mexicanas 🇲🇽'
         };
         headerSub.innerText = subTitles[tema] || 'Cine Tradicional';
     }
@@ -162,7 +162,7 @@ function aplicarTema(tema, guardar = true) {
             heroDesc.innerText = 'Vive historias inolvidables, estrenos familiares y la magia de siempre en estas fiestas navideñas.';
             if (heroOverlay) heroOverlay.className = 'absolute inset-0 bg-gradient-to-r from-emerald-600/35 via-red-900/40 to-black/80';
         } else if (tema === 'mexican') {
-            heroBadge.innerHTML = '<i class="fa-solid fa-flag text-emerald-400"></i> 🇲🇽 ¡FIESTAS PATRIAS & NOCHES MEXICANAS! • CINE Y TRADICIÓN';
+            heroBadge.innerHTML = '<i class="fa-solid fa-flag text-emerald-400"></i> 🇲🇽 ¡FIESTAS PATRIAS & TRADICIÓN MEXICANA! • CINE Y TRADICIÓN';
             heroTitle.innerHTML = '¡Viva el Cine! en <br><span class="text-gradient">Cine Xilotzin</span>';
             heroDesc.innerText = 'Grandes funciones patrias, cine nacional y lo mejor de la cartelera familiar con el sabor y orgullo de Jilotepec.';
             if (heroOverlay) heroOverlay.className = 'absolute inset-0 bg-gradient-to-r from-emerald-700/35 via-red-800/35 to-black/85';
