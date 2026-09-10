@@ -351,11 +351,9 @@ body.theme-blockbuster .mexican-papel-picado {
     clip-path: polygon(0 0, 100% 0, 100% 75%, 50% 100%, 0 75%);
     animation: papelSway 2.5s ease-in-out infinite alternate;
 }
-.banderin-picado:nth-child(5n+1) { background: #00843D; box-shadow: 0 0 8px #00843D; animation-delay: 0s; }
-.banderin-picado:nth-child(5n+2) { background: #FFFFFF; box-shadow: 0 0 8px #FFFFFF; animation-delay: 0.5s; }
-.banderin-picado:nth-child(5n+3) { background: #CE1126; box-shadow: 0 0 8px #CE1126; animation-delay: 1s; }
-.banderin-picado:nth-child(5n+4) { background: #E4007C; box-shadow: 0 0 8px #E4007C; animation-delay: 1.5s; }
-.banderin-picado:nth-child(5n+5) { background: #FFD700; box-shadow: 0 0 8px #FFD700; animation-delay: 2s; }
+.banderin-picado:nth-child(3n+1) { background: #00843D; box-shadow: 0 0 8px rgba(0, 132, 61, 0.85); animation-delay: 0s; }
+.banderin-picado:nth-child(3n+2) { background: #FFFFFF; box-shadow: 0 0 8px rgba(255, 255, 255, 0.85); animation-delay: 0.35s; }
+.banderin-picado:nth-child(3n+3) { background: #CE1126; box-shadow: 0 0 8px rgba(206, 17, 38, 0.85); animation-delay: 0.7s; }
 
 @keyframes papelSway {
     0% { transform: rotate(-4deg) translateY(0); }
