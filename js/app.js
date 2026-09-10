@@ -452,24 +452,12 @@ function closeModal() {
 // ==========================================================
 function abrirPreorden(idPeli, horario) {
     closeModal();
-    const peli = cineData.peliculas.find(p => p.id === idPeli) || peliculaModalActual;
-    if (!peli) return;
-
-    preordenEnCurso = {
-        pelicula: peli.titulo,
-        horario: horario || peli.horarios[0],
-        boletosGeneral: 2,
-        precioBoleto: 50,
-        combosSeleccionados: {}
-    };
-
-    actualizarResumenPreordenUI();
-
-    const modalPreorden = document.getElementById('modal-preorden');
-    if (modalPreorden) {
-        modalPreorden.classList.remove('hidden');
-        document.body.style.overflow = 'hidden';
-    }
+    const peli = (typeof cineData !== 'undefined' && cineData.peliculas) 
+        ? (cineData.peliculas.find(p => p.id === idPeli) || peliculaModalActual)
+        : null;
+    const idParam = peli ? peli.id : (idPeli || 1);
+    const horParam = horario || (peli && peli.horarios ? peli.horarios[0] : '');
+    window.location.href = `preorden.html?peli=${idParam}&horario=${encodeURIComponent(horParam)}`;
 }
 
 function cerrarModalPreorden() {
