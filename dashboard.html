@@ -175,6 +175,9 @@
             <button onclick="cambiarVista('marketing')" class="w-full text-left px-4 py-3 rounded-xl font-sans font-bold text-xs uppercase tracking-widest transition-all text-pmtext hover:bg-pmdark hover:text-white flex items-center gap-3" id="nav-marketing">
                 <i class="fa-solid fa-envelope-open-text w-4"></i> Marketing & News
             </button>
+            <button onclick="cambiarVista('tematicas')" class="w-full text-left px-4 py-3 rounded-xl font-sans font-bold text-xs uppercase tracking-widest transition-all text-pmtext hover:bg-pmdark hover:text-white flex items-center gap-3" id="nav-tematicas">
+                <i class="fa-solid fa-palette w-4"></i> Temáticas del Sitio
+            </button>
             
             <div class="mt-auto border-t border-pmborder pt-4">
                 <a href="taquilla.html" target="_blank" class="w-full text-center px-4 py-3 rounded-xl font-sans font-bold text-xs uppercase tracking-widest transition-all text-pmorange border border-pmorange/50 hover:bg-pmorange hover:text-white flex items-center justify-center gap-2 shadow-sm">
@@ -524,6 +527,26 @@
                 </div>
             </div>
 
+            <!-- ========================================== -->
+            <!-- VISTA 5: MOTOR DE TEMÁTICAS ESTACIONALES (CONTROL EXCLUSIVO ADMIN) -->
+            <!-- ========================================== -->
+            <div id="vista-tematicas" class="hidden animate-[fadeInUp_0.3s_ease-out] max-w-5xl space-y-8">
+                <div class="flex flex-wrap items-center justify-between gap-4">
+                    <div>
+                        <h3 class="text-sm font-sans font-bold uppercase text-white tracking-widest">Motor de Temáticas Estacionales del Sitio Web</h3>
+                        <p class="text-xs text-pmtext">Como Administrador, selecciona la plantilla visual que verán todos los clientes al entrar al sitio público de Cine Xilotzin.</p>
+                    </div>
+                    <a href="index.html" target="_blank" class="bg-pmcard hover:bg-pmdark text-white border border-pmborder px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider flex items-center gap-2 shadow">
+                        <i class="fa-solid fa-arrow-up-right-from-square text-pmmagenta"></i> Ver Sitio Público
+                    </a>
+                </div>
+
+                <!-- Grid de las 4 Temáticas con Tarjetas Interactivas -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="grid-tematicas-admin">
+                    <!-- Inyectado dinámicamente por renderTematicasAdmin() -->
+                </div>
+            </div>
+
         </div>
     </main>
 
@@ -538,13 +561,14 @@
             renderEntradasMercancia();
             renderSuscriptores();
             sincronizarControlesSeguridad();
+            renderTematicasAdmin();
         });
 
         // ==========================================================
         // CONTROL DE VISTAS (TABS)
         // ==========================================================
         function cambiarVista(vista) {
-            ['dashboard', 'inventario', 'seguridad', 'marketing'].forEach(v => {
+            ['dashboard', 'inventario', 'seguridad', 'marketing', 'tematicas'].forEach(v => {
                 const btn = document.getElementById(`nav-${v}`);
                 const panel = document.getElementById(`vista-${v}`);
 
@@ -565,7 +589,8 @@
                 'dashboard': 'Reporte de Ventas & Cortes Cinematográficos',
                 'inventario': 'Inventario Maestro, Insumos & Entradas',
                 'seguridad': 'Control de Accesos, Roles, IP & Horarios',
-                'marketing': 'Marketing Digital, Newsletter & Campañas'
+                'marketing': 'Marketing Digital, Newsletter & Campañas',
+                'tematicas': 'Motor de Temáticas Estacionales (Plantillas)'
             };
             document.getElementById('titulo-seccion').innerText = titulos[vista] || 'Administración';
         }
@@ -921,6 +946,114 @@
 
             alert(`CORREO ENVIADO A GERENCIA\n----------------------------------------\nDestinatario: ${correoGerencia}\nAsunto: Corte de Caja y Taquilla Cine Xilotzin - Semana Oficial\nTotal Reportado: $${total}.00 MXN\nTransacciones: ${ventas.length}\nEstado: Entregado en bandeja de entrada.`);
             mostrarToast("Corte enviado a gerencia@cinexilotzin.com");
+        }
+
+        // ==========================================================
+        // 5. MOTOR DE TEMÁTICAS ESTACIONALES (ADMINISTRADOR)
+        // ==========================================================
+        const TEMATICAS_CONFIG = [
+            {
+                id: 'traditional',
+                nombre: 'Cine Tradicional (Xilotzin Clásico)',
+                icono: 'fa-film',
+                tag: 'Cartelera Regular',
+                tipografia: 'Playfair Display (Serif Clásico)',
+                colores: 'Rojo Carmesí (#E11D2F), Negro Carbón y Oro Vintage',
+                efectos: '✨ Destellos dorados, marquesina vintage y alfombra roja',
+                desc: 'La elegancia atemporal del cine clásico de arte y tradición. Diseño por defecto para cartelera habitual.',
+                previewBorder: 'border-red-600/60',
+                previewBg: 'from-red-950/50 via-neutral-950 to-neutral-950',
+                badgeColor: 'bg-red-600'
+            },
+            {
+                id: 'halloween',
+                nombre: 'Noche de Terror (Halloween)',
+                icono: 'fa-ghost',
+                tag: 'Temporada Octubre / Noviembre',
+                tipografia: 'Creepster (Gótico Sangriento)',
+                colores: 'Naranja Calabaza (#FF5500), Púrpura Sombrío y Verde Tóxico',
+                efectos: '🦇 Murciélagos y calaveras flotantes, telarañas góticas y niebla morada',
+                desc: 'Atmósfera espeluznante diseñada para ciclos de cine de terror, estrenos macabros y celebraciones de Día de Muertos.',
+                previewBorder: 'border-orange-500/60',
+                previewBg: 'from-orange-950/60 via-purple-950/50 to-neutral-950',
+                badgeColor: 'bg-orange-500'
+            },
+            {
+                id: 'christmas',
+                nombre: 'Especial Navideño e Invernal',
+                icono: 'fa-snowflake',
+                tag: 'Temporada Diciembre / Enero',
+                tipografia: 'Mountains of Christmas (Cursive Festivo)',
+                colores: 'Rojo Pascuero (#DC2626), Verde Pino y Dorado',
+                efectos: '❄️ Nieve copiosa cayendo, guirnalda de luces parpadeantes y destellos dorados',
+                desc: 'Ambiente cálido y festivo con destellos navideños, ideal para vacaciones familiares y películas de fin de año.',
+                previewBorder: 'border-emerald-600/60',
+                previewBg: 'from-emerald-950/60 via-red-950/40 to-neutral-950',
+                badgeColor: 'bg-emerald-600'
+            },
+            {
+                id: 'blockbuster',
+                nombre: 'Verano Blockbuster (Cyber Neón)',
+                icono: 'fa-fire',
+                tag: 'Grandes Estrenos & Vacaciones',
+                tipografia: 'Orbitron (Futurista Sci-Fi)',
+                colores: 'Cyan Eléctrico (#00F0FF), Magenta Láser y Azul Espacial',
+                efectos: '⚡ Escáner láser neón, cuadrícula synthwave y rayos de energía',
+                desc: 'Estética futurista de alto impacto visual para sagas de acción, superhéroes y estrenos de verano.',
+                previewBorder: 'border-cyan-500/60',
+                previewBg: 'from-cyan-950/60 via-pink-950/40 to-neutral-950',
+                badgeColor: 'bg-cyan-500 text-black font-bold'
+            }
+        ];
+
+        function renderTematicasAdmin() {
+            const cont = document.getElementById('grid-tematicas-admin');
+            if (!cont) return;
+
+            const temaActivo = XilotzinDB.get('tema_activo') || 'traditional';
+
+            cont.innerHTML = TEMATICAS_CONFIG.map(t => {
+                const esActivo = t.id === temaActivo;
+                return `
+                <div class="bg-gradient-to-br ${t.previewBg} border-2 ${esActivo ? 'border-green-500 shadow-[0_0_30px_rgba(34,197,94,0.35)]' : t.previewBorder} rounded-3xl p-6 flex flex-col justify-between transition-all duration-300">
+                    <div>
+                        <div class="flex items-center justify-between gap-3 mb-3">
+                            <span class="${t.badgeColor} text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full shadow">
+                                ${t.tag}
+                            </span>
+                            ${esActivo ? '<span class="bg-green-500 text-black text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full shadow flex items-center gap-1"><i class="fa-solid fa-check"></i> Activo en el Sitio</span>' : ''}
+                        </div>
+                        <h4 class="text-xl font-serif font-black uppercase text-white mb-2 flex items-center gap-2">
+                            <i class="fa-solid ${t.icono}"></i> ${t.nombre}
+                        </h4>
+                        <p class="text-xs text-pmtext leading-relaxed mb-3 font-sans">
+                            ${t.desc}
+                        </p>
+                        <div class="space-y-1 text-[10px] text-white/80 font-mono mb-6 bg-black/40 p-3 rounded-xl border border-white/10">
+                            <p>🔤 <strong class="text-white">Tipografía:</strong> ${t.tipografia}</p>
+                            <p>🎨 <strong class="text-white">Paleta:</strong> ${t.colores}</p>
+                            <p>✨ <strong class="text-white">Ambiente:</strong> ${t.efectos}</p>
+                        </div>
+                    </div>
+
+                    <div class="pt-4 border-t border-white/10 flex items-center justify-between gap-3">
+                        <button onclick="activarTemaAdmin('${t.id}')" class="flex-1 ${esActivo ? 'bg-green-600/30 text-green-400 border border-green-500/60 cursor-default' : 'bg-white text-black hover:bg-neutral-200'} font-sans font-bold text-xs uppercase tracking-widest py-3 px-4 rounded-xl transition-all shadow flex items-center justify-center gap-2">
+                            ${esActivo ? '<i class="fa-solid fa-circle-check"></i> Plantilla Activa' : '<i class="fa-solid fa-wand-magic-sparkles"></i> Activar en el Sitio Público'}
+                        </button>
+                        <a href="index.html" target="_blank" class="bg-white/10 hover:bg-white/20 text-white p-3 rounded-xl transition-all border border-white/20 flex items-center justify-center" title="Abrir index.html y previsualizar">
+                            <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
+                        </a>
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+
+        function activarTemaAdmin(temaId) {
+            XilotzinDB.set('tema_activo', temaId);
+            renderTematicasAdmin();
+            const config = TEMATICAS_CONFIG.find(t => t.id === temaId);
+            mostrarToast(`Temática activada: ${config ? config.nombre : temaId}. Ya se visualiza en index.html.`);
         }
 
         // Toast de retroalimentación

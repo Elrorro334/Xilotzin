@@ -46,13 +46,33 @@
             }
         }
     </script>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Montserrat:wght@400;500;600;700;800;900&family=Mountains+of+Christmas:wght@700&family=Orbitron:wght@700;900&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/styles.css">
     <script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.9.10/dist/dotlottie-wc.js" type="module"></script>
 </head>
 
 <body class="theme-traditional bg-cneDark text-cneLight antialiased selection:bg-cneRed selection:text-white max-w-[1600px] mx-auto min-h-screen shadow-2xl pb-20 md:pb-0 flex flex-col relative overflow-x-hidden">
+
+    <!-- Telarañas Decorativas para Noche de Terror / Halloween -->
+    <svg class="halloween-corner-web halloween-web-tl" id="web-tl" viewBox="0 0 100 100" fill="none" stroke="#FF5500" stroke-width="1.5">
+        <path d="M0,0 Q50,0 100,0 Q65,35 0,100 Z" opacity="0.2" fill="#FF5500"/>
+        <line x1="0" y1="0" x2="100" y2="0" />
+        <line x1="0" y1="0" x2="80" y2="25" />
+        <line x1="0" y1="0" x2="60" y2="50" />
+        <line x1="0" y1="0" x2="35" y2="80" />
+        <line x1="0" y1="0" x2="0" y2="100" />
+        <path d="M20,0 Q18,18 0,20 M40,0 Q36,36 0,40 M65,0 Q58,58 0,65 M90,0 Q80,80 0,90" />
+    </svg>
+    <svg class="halloween-corner-web halloween-web-tr" id="web-tr" viewBox="0 0 100 100" fill="none" stroke="#FF5500" stroke-width="1.5">
+        <path d="M0,0 Q50,0 100,0 Q65,35 0,100 Z" opacity="0.2" fill="#FF5500"/>
+        <line x1="0" y1="0" x2="100" y2="0" />
+        <line x1="0" y1="0" x2="80" y2="25" />
+        <line x1="0" y1="0" x2="60" y2="50" />
+        <line x1="0" y1="0" x2="35" y2="80" />
+        <line x1="0" y1="0" x2="0" y2="100" />
+        <path d="M20,0 Q18,18 0,20 M40,0 Q36,36 0,40 M65,0 Q58,58 0,65 M90,0 Q80,80 0,90" />
+    </svg>
 
     <!-- Loader Cinemático -->
     <div id="premium-loader" class="fixed inset-0 z-[99999] bg-[#050505] flex flex-col items-center justify-center transition-all duration-700 ease-out overflow-hidden">
@@ -67,43 +87,56 @@
         </p>
     </div>
 
-    <!-- Barra de Selección de Temática Estacional y Avisos -->
-    <div class="bg-black/90 border-b border-cneBorder/60 px-4 py-2 text-xs flex flex-wrap items-center justify-between gap-3 relative z-50">
-        <div class="flex items-center gap-2">
-            <span id="theme-current-badge" class="bg-cneRed/20 text-cneRed border border-cneRed/40 text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full flex items-center gap-1.5">
-                <i class="fa-solid fa-wand-magic-sparkles"></i> 🎬 Cine Tradicional
-            </span>
-            <span class="hidden sm:inline text-cneMuted text-[11px]">Sistema de Plantillas Estacionales</span>
+    <!-- Barra Superior Marquee y Selector Rápido de Temática -->
+    <div class="theme-marquee-bar" id="theme-marquee-container">
+        <div class="flex items-center gap-3 overflow-hidden">
+            <span id="theme-marquee-icon" class="text-sm shrink-0">🎬</span>
+            <div class="overflow-hidden whitespace-nowrap">
+                <p id="theme-marquee-text" class="text-[11px] md:text-xs font-bold tracking-wider truncate">
+                    🎬 CINE XILOTZIN • LA TRADICIÓN CINEMATOGRÁFICA DE JILOTEPEC DESDE 1998 • BOLETOS GENERALES $50 • CARTELERA EN VIVO 🍿
+                </p>
+            </div>
         </div>
 
-        <div class="flex items-center gap-3">
-            <label for="theme-selector" class="text-[10px] uppercase font-bold text-cneMuted tracking-wider hidden md:inline">
-                <i class="fa-solid fa-palette mr-1 text-cneRed"></i> Motor de Temáticas:
-            </label>
-            <select id="theme-selector" onchange="aplicarTema(this.value, true)" class="bg-cneCard text-white text-[11px] font-bold uppercase tracking-wider py-1 px-3 rounded-lg border border-cneBorder focus:border-cneRed outline-none cursor-pointer">
-                <option value="traditional">🎬 Tradicional (Xilotzin Clásico)</option>
-                <option value="halloween">🎃 Noche de Terror (Halloween)</option>
-                <option value="christmas">🎄 Especial Navideño (Invierno)</option>
-                <option value="blockbuster">🍿 Verano Blockbuster (Neón)</option>
-            </select>
+        <div class="flex items-center gap-2 shrink-0">
+            <!-- Selector Rápido de Temática (Enjundia 1-Click Demo) -->
+            <div class="flex items-center gap-1 bg-black/40 p-1 rounded-lg border border-white/15 shadow-inner" title="Selector rápido para previsualizar temáticas en tiempo real">
+                <span class="text-[9px] text-white/70 uppercase font-black px-1.5 hidden md:inline"><i class="fa-solid fa-palette text-amber-400"></i> Tema:</span>
+                <button type="button" onclick="aplicarTema('traditional', true)" id="btn-theme-traditional" class="theme-switch-btn active-theme">🎬 Clásico</button>
+                <button type="button" onclick="aplicarTema('halloween', true)" id="btn-theme-halloween" class="theme-switch-btn">🎃 Terror</button>
+                <button type="button" onclick="aplicarTema('christmas', true)" id="btn-theme-christmas" class="theme-switch-btn">🎄 Navidad</button>
+                <button type="button" onclick="aplicarTema('blockbuster', true)" id="btn-theme-blockbuster" class="theme-switch-btn">🚀 Neón</button>
+            </div>
 
-            <a href="login.html" class="bg-white/10 hover:bg-cneRed text-white hover:text-white px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-colors flex items-center gap-1.5 border border-white/20">
-                <i class="fa-solid fa-lock text-[9px]"></i> Acceso POS
+            <a href="login.html" class="bg-white/10 hover:bg-cneRed text-white px-2.5 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-colors flex items-center gap-1.5 border border-white/20">
+                <i class="fa-solid fa-lock text-[9px]"></i> <span class="hidden lg:inline">Acceso</span> POS
             </a>
         </div>
     </div>
 
     <!-- Header Principal -->
-    <header class="bg-cneDark/95 backdrop-blur-md border-b border-cneBorder sticky top-0 z-40 shadow-xl">
+    <header class="bg-cneDark/95 backdrop-blur-md border-b border-cneBorder sticky top-0 z-40 shadow-xl transition-colors duration-500 relative">
+        <!-- Guirnalda de Luces Navideñas (visible en tema navideño) -->
+        <div class="christmas-lights" id="christmas-lights-bar">
+            <span class="light-bulb"></span><span class="light-bulb"></span><span class="light-bulb"></span><span class="light-bulb"></span>
+            <span class="light-bulb"></span><span class="light-bulb"></span><span class="light-bulb"></span><span class="light-bulb"></span>
+            <span class="light-bulb"></span><span class="light-bulb"></span><span class="light-bulb"></span><span class="light-bulb"></span>
+            <span class="light-bulb"></span><span class="light-bulb"></span><span class="light-bulb"></span><span class="light-bulb"></span>
+            <span class="light-bulb"></span><span class="light-bulb"></span><span class="light-bulb"></span><span class="light-bulb"></span>
+            <span class="light-bulb"></span><span class="light-bulb"></span><span class="light-bulb"></span><span class="light-bulb"></span>
+        </div>
+        <!-- Escáner Láser Cyber Neón (visible en blockbuster) -->
+        <div class="blockbuster-laser"></div>
+
         <div class="max-w-7xl mx-auto px-4 h-20 md:h-24 flex items-center justify-between">
             <a href="index.html" class="flex items-center gap-4 cursor-pointer group">
                 <div class="flex items-center gap-3 relative">
                     <div class="absolute inset-0 bg-cneRed blur-xl opacity-20 group-hover:opacity-40 transition-opacity"></div>
-                    <i class="fa-solid fa-film text-white text-3xl relative z-10"></i>
+                    <i class="fa-solid fa-film text-white text-3xl relative z-10" id="header-logo-icon"></i>
                 </div>
                 <div class="flex flex-col">
                     <h1 class="text-2xl md:text-4xl font-serif font-black tracking-widest uppercase leading-none text-white drop-shadow-[0_0_15px_rgba(225,29,47,0.3)]">Xilotzin</h1>
-                    <span class="text-[9px] md:text-xs font-sans font-bold tracking-[0.3em] text-gradient uppercase mt-1">Cine Tradicional</span>
+                    <span class="text-[9px] md:text-xs font-sans font-bold tracking-[0.3em] text-gradient uppercase mt-1" id="header-subtitle">Cine Tradicional</span>
                 </div>
             </a>
 
@@ -123,20 +156,23 @@
         </div>
     </header>
 
-    <!-- Hero Section -->
-    <div class="relative w-full h-[40vh] md:h-[50vh] flex items-center justify-center overflow-hidden bg-cneDark border-b border-cneBorder">
-        <div class="absolute inset-0 bg-[url('./CINE.png')] bg-cover bg-center bg-no-repeat opacity-50 bg-fixed"></div>
+    <!-- Contenedor de Partículas Ambientales Estacionales (Nieve, Murciélagos, Destellos) -->
+    <div id="theme-ambient-decorations" class="pointer-events-none fixed inset-0 z-30 overflow-hidden"></div>
+
+    <!-- Hero Section con Adaptación Dinámica según la Temática -->
+    <div class="relative w-full h-[42vh] md:h-[52vh] flex items-center justify-center overflow-hidden bg-cneDark border-b border-cneBorder transition-colors duration-500">
+        <div class="absolute inset-0 bg-[url('./CINE.png')] bg-cover bg-center bg-no-repeat opacity-45 bg-fixed"></div>
         <div class="absolute inset-0 bg-gradient-to-t from-cneDark via-cneDark/60 to-transparent"></div>
-        <div class="absolute inset-0 bg-gradient-to-r from-cneRed/25 via-transparent to-white/10"></div>
+        <div class="absolute inset-0 bg-gradient-to-r from-cneRed/25 via-transparent to-white/10" id="hero-gradient-overlay"></div>
 
         <div class="relative z-10 text-center px-6 max-w-4xl mx-auto flex flex-col items-center">
-            <span class="bg-cneRed/30 border border-cneRed/50 text-white font-sans font-bold text-[10px] md:text-xs uppercase tracking-[0.3em] px-4 py-1.5 rounded-full mb-4 shadow-lg flex items-center gap-2">
+            <span id="hero-badge" class="bg-cneRed/30 border border-cneRed/50 text-white font-sans font-bold text-[10px] md:text-xs uppercase tracking-[0.3em] px-4 py-1.5 rounded-full mb-4 shadow-lg flex items-center gap-2 transition-all">
                 <i class="fa-solid fa-sparkles text-cneGold"></i> Pantalla Gigante • Sonido Digital • Jilotepec
             </span>
-            <h2 class="text-4xl md:text-6xl lg:text-7xl font-serif font-black uppercase tracking-tight text-white mb-3 leading-none drop-shadow-[0_4px_10px_rgba(0,0,0,0.8)]">
+            <h2 id="hero-title" class="text-4xl md:text-6xl lg:text-7xl font-serif font-black uppercase tracking-tight text-white mb-3 leading-none drop-shadow-[0_4px_10px_rgba(0,0,0,0.8)] transition-all">
                 La Magia del <br><span class="text-gradient bg-gradient-to-r from-white to-cneRed bg-clip-text text-transparent">Cine Tradicional</span>
             </h2>
-            <p class="text-white/90 text-xs md:text-sm font-sans tracking-widest uppercase max-w-xl mx-auto mt-2 font-bold leading-relaxed drop-shadow-[0_2px_5px_rgba(0,0,0,0.8)]">
+            <p id="hero-desc" class="text-white/90 text-xs md:text-sm font-sans tracking-widest uppercase max-w-xl mx-auto mt-2 font-bold leading-relaxed drop-shadow-[0_2px_5px_rgba(0,0,0,0.8)] transition-all">
                 Consulta cartelera oficial en tiempo real, genera tu Pre-orden con código QR y canjéala directamente en caja sin hacer fila.
             </p>
         </div>

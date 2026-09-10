@@ -1,88 +1,581 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Space+Mono:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Space+Mono:wght@400;700&family=Creepster&family=Mountains+of+Christmas:wght@700&family=Orbitron:wght@700;900&display=swap');
 
+/* ==========================================================
+   MOTOR DE TEMÁTICAS ESTACIONALES - VARIABLES MAESTRAS
+   ========================================================== */
 :root {
     --theme-primary: #E11D2F;
     --theme-primary-hover: #B91423;
     --theme-bg: #0A0A0A;
-    --theme-card: #111111;
-    --theme-border: #2A2A2A;
+    --theme-card: #121212;
+    --theme-border: #262626;
     --theme-text: #E0E0E0;
+    --theme-muted: #A0A0A0;
     --theme-accent: #DCA54C;
     --theme-glow: rgba(225, 29, 47, 0.4);
-    --theme-badge: #E11D2F;
-}
-
-body.theme-traditional {
-    --theme-primary: #E11D2F;
-    --theme-primary-hover: #b91423;
-    --theme-bg: #0A0A0A;
-    --theme-card: #121212;
-    --theme-border: #2A2A2A;
-    --theme-text: #E0E0E0;
-    --theme-accent: #DCA54C;
-    --theme-glow: rgba(225, 29, 47, 0.35);
-    --theme-badge: #E11D2F;
-}
-
-body.theme-halloween {
-    --theme-primary: #FF6600;
-    --theme-primary-hover: #e05500;
-    --theme-bg: #0B0612;
-    --theme-card: #140C20;
-    --theme-border: #3A1E54;
-    --theme-text: #EADCF8;
-    --theme-accent: #A855F7;
-    --theme-glow: rgba(255, 102, 0, 0.45);
-    --theme-badge: #9333EA;
-}
-
-body.theme-christmas {
-    --theme-primary: #C41E3A;
-    --theme-primary-hover: #9E152C;
-    --theme-bg: #08110D;
-    --theme-card: #0F1C16;
-    --theme-border: #1B4D3E;
-    --theme-text: #F1F7F4;
-    --theme-accent: #E5A93C;
-    --theme-glow: rgba(196, 30, 58, 0.4);
-    --theme-badge: #1B4D3E;
-}
-
-body.theme-blockbuster {
-    --theme-primary: #00E5FF;
-    --theme-primary-hover: #00B4D8;
-    --theme-bg: #040914;
-    --theme-card: #0A1326;
-    --theme-border: #1E3A5F;
-    --theme-text: #E0F2FE;
-    --theme-accent: #FF007F;
-    --theme-glow: rgba(0, 229, 255, 0.45);
-    --theme-badge: #FF007F;
 }
 
 body {
     font-family: 'Montserrat', sans-serif;
-    background-color: var(--theme-bg);
-    color: var(--theme-text);
+    background-color: var(--theme-bg) !important;
+    color: var(--theme-text) !important;
     transition: background-color 0.4s ease, color 0.4s ease;
 }
 
-.theme-dynamic-primary {
-    background-color: var(--theme-primary) !important;
+/* ==========================================================
+   1. 🎃 TEMÁTICA: NOCHE DE TERROR / HALLOWEEN (MÁXIMA ENJUNDIA)
+   ========================================================== */
+body.theme-halloween {
+    --theme-primary: #FF5500;
+    --theme-primary-hover: #CC4400;
+    --theme-bg: #0C0217;
+    --theme-card: #18072E;
+    --theme-border: #7E22CE;
+    --theme-text: #F3E8FF;
+    --theme-muted: #D8B4FE;
+    --theme-accent: #22C55E;
+    --theme-glow: rgba(255, 85, 0, 0.6);
+    background-color: #0C0217 !important;
+    background-image: 
+        radial-gradient(circle at 15% 15%, rgba(147, 51, 234, 0.5) 0%, transparent 45%),
+        radial-gradient(circle at 85% 20%, rgba(255, 85, 0, 0.35) 0%, transparent 45%),
+        radial-gradient(circle at 50% 85%, rgba(34, 197, 94, 0.2) 0%, transparent 50%),
+        linear-gradient(180deg, #090112 0%, #17042C 100%) !important;
 }
 
-.theme-dynamic-text {
-    color: var(--theme-primary) !important;
+/* Tipografía de Terror para Encabezados */
+body.theme-halloween .font-serif,
+body.theme-halloween h1,
+body.theme-halloween h2,
+body.theme-halloween h3,
+body.theme-halloween .theme-heading {
+    font-family: 'Creepster', cursive !important;
+    letter-spacing: 0.08em !important;
+    text-shadow: 0 0 10px #FF5500, 0 0 25px rgba(147, 51, 234, 0.9), 2px 2px 0px #000 !important;
 }
 
-.theme-dynamic-border {
-    border-color: var(--theme-border) !important;
+body.theme-halloween header {
+    background-color: rgba(12, 2, 23, 0.97) !important;
+    border-bottom: 2px solid #FF5500 !important;
+    box-shadow: 0 10px 30px rgba(126, 34, 206, 0.5), 0 0 20px rgba(255, 85, 0, 0.3) !important;
 }
 
-.theme-dynamic-card {
-    background-color: var(--theme-card) !important;
+body.theme-halloween .bg-cneDark {
+    background-color: #0C0217 !important;
 }
 
+body.theme-halloween .bg-cneCard {
+    background-color: #18072E !important;
+    border-color: #7E22CE !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.85), inset 0 0 15px rgba(147, 51, 234, 0.2) !important;
+}
+
+body.theme-halloween .border-cneBorder {
+    border-color: #6B21A8 !important;
+}
+
+body.theme-halloween .bg-cneRed {
+    background-color: #FF5500 !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 0 25px rgba(255, 85, 0, 0.6) !important;
+}
+
+body.theme-halloween [class*="bg-cneRed/"] {
+    background-color: rgba(255, 85, 0, 0.25) !important;
+    border-color: #FF5500 !important;
+}
+
+body.theme-halloween .text-cneRed {
+    color: #FF5500 !important;
+    text-shadow: 0 0 12px rgba(255, 85, 0, 0.6);
+}
+
+body.theme-halloween .border-cneRed {
+    border-color: #FF5500 !important;
+}
+
+body.theme-halloween .text-gradient {
+    background: linear-gradient(to right, #FF7700, #A855F7, #22C55E) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    text-shadow: 0 0 25px rgba(255, 85, 0, 0.5);
+}
+
+body.theme-halloween .bg-gradient-to-r.from-cneRed {
+    background-image: linear-gradient(to right, #FF5500, #7E22CE) !important;
+    box-shadow: 0 0 30px rgba(255, 85, 0, 0.5) !important;
+}
+
+body.theme-halloween .group:hover {
+    border-color: #FF5500 !important;
+    box-shadow: 0 20px 45px rgba(255, 85, 0, 0.45), 0 0 30px rgba(147, 51, 234, 0.5) !important;
+}
+
+body.theme-halloween footer {
+    background-color: #0A0214 !important;
+    border-top: 3px solid #7E22CE !important;
+}
+
+/* Telarañas de esquina en Halloween */
+.halloween-corner-web {
+    position: fixed;
+    width: 140px;
+    height: 140px;
+    pointer-events: none;
+    z-index: 35;
+    opacity: 0.45;
+}
+.halloween-web-tl { top: 0; left: 0; }
+.halloween-web-tr { top: 0; right: 0; transform: scaleX(-1); }
+
+/* Partículas animadas de Halloween */
+@keyframes floatSpooky {
+    0%, 100% { transform: translateY(0) rotate(0deg) scale(1); }
+    50% { transform: translateY(-16px) rotate(6deg) scale(1.1); }
+}
+.spooky-float {
+    animation: floatSpooky 4s ease-in-out infinite;
+}
+
+/* ==========================================================
+   2. 🎄 TEMÁTICA: ESPECIAL NAVIDEÑO / INVERNAL (MÁXIMA ENJUNDIA)
+   ========================================================== */
+body.theme-christmas {
+    --theme-primary: #DC2626;
+    --theme-primary-hover: #B91C1C;
+    --theme-bg: #03140C;
+    --theme-card: #0A2B1A;
+    --theme-border: #15803D;
+    --theme-text: #FFFFFF;
+    --theme-muted: #86EFAC;
+    --theme-accent: #FACC15;
+    --theme-glow: rgba(220, 38, 38, 0.6);
+    background-color: #03140C !important;
+    background-image: 
+        radial-gradient(circle at 20% 15%, rgba(22, 101, 52, 0.6) 0%, transparent 45%),
+        radial-gradient(circle at 80% 25%, rgba(220, 38, 38, 0.4) 0%, transparent 45%),
+        radial-gradient(circle at 50% 90%, rgba(250, 204, 21, 0.25) 0%, transparent 50%),
+        linear-gradient(180deg, #020E08 0%, #082D1B 100%) !important;
+}
+
+/* Tipografía Festiva Navideña */
+body.theme-christmas .font-serif,
+body.theme-christmas h1,
+body.theme-christmas h2,
+body.theme-christmas h3,
+body.theme-christmas .theme-heading {
+    font-family: 'Mountains of Christmas', cursive !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.04em !important;
+    text-shadow: 0 0 15px rgba(250, 204, 21, 0.8), 0 0 25px rgba(220, 38, 38, 0.7) !important;
+}
+
+body.theme-christmas header {
+    background-color: rgba(3, 20, 12, 0.97) !important;
+    border-bottom: 2px solid #EAB308 !important;
+    box-shadow: 0 10px 30px rgba(22, 101, 52, 0.5), 0 0 20px rgba(220, 38, 38, 0.3) !important;
+}
+
+body.theme-christmas .bg-cneDark {
+    background-color: #03140C !important;
+}
+
+body.theme-christmas .bg-cneCard {
+    background-color: #0A2B1A !important;
+    border-color: #15803D !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.85), inset 0 0 15px rgba(250, 204, 21, 0.15) !important;
+}
+
+body.theme-christmas .border-cneBorder {
+    border-color: #166534 !important;
+}
+
+body.theme-christmas .bg-cneRed {
+    background-color: #DC2626 !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 0 25px rgba(220, 38, 38, 0.6) !important;
+}
+
+body.theme-christmas [class*="bg-cneRed/"] {
+    background-color: rgba(220, 38, 38, 0.25) !important;
+    border-color: #DC2626 !important;
+}
+
+body.theme-christmas .text-cneRed {
+    color: #DC2626 !important;
+    text-shadow: 0 0 12px rgba(220, 38, 38, 0.6);
+}
+
+body.theme-christmas .border-cneRed {
+    border-color: #DC2626 !important;
+}
+
+body.theme-christmas .text-gradient {
+    background: linear-gradient(to right, #FACC15, #FFFFFF, #DC2626) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    text-shadow: 0 0 25px rgba(250, 204, 21, 0.5);
+}
+
+body.theme-christmas .bg-gradient-to-r.from-cneRed {
+    background-image: linear-gradient(to right, #DC2626, #15803D) !important;
+    box-shadow: 0 0 30px rgba(220, 38, 38, 0.5) !important;
+}
+
+body.theme-christmas .group:hover {
+    border-color: #FACC15 !important;
+    box-shadow: 0 20px 45px rgba(22, 101, 52, 0.5), 0 0 30px rgba(250, 204, 21, 0.4) !important;
+}
+
+body.theme-christmas footer {
+    background-color: #020C07 !important;
+    border-top: 3px solid #15803D !important;
+}
+
+/* Guirnalda de luces navideñas parpadeantes */
+.christmas-lights {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 10px;
+    z-index: 55;
+    pointer-events: none;
+    overflow: hidden;
+    white-space: nowrap;
+}
+body.theme-christmas .christmas-lights {
+    display: flex;
+    justify-content: space-around;
+}
+
+.light-bulb {
+    width: 9px;
+    height: 13px;
+    border-radius: 50% 50% 35% 35%;
+    display: inline-block;
+    animation: twinkle 1.5s infinite alternate;
+}
+.light-bulb:nth-child(4n+1) { background: #E50914; box-shadow: 0 0 10px #E50914, 0 0 20px #E50914; animation-delay: 0s; }
+.light-bulb:nth-child(4n+2) { background: #10B981; box-shadow: 0 0 10px #10B981, 0 0 20px #10B981; animation-delay: 0.35s; }
+.light-bulb:nth-child(4n+3) { background: #FBBF24; box-shadow: 0 0 10px #FBBF24, 0 0 20px #FBBF24; animation-delay: 0.7s; }
+.light-bulb:nth-child(4n+4) { background: #38BDF8; box-shadow: 0 0 10px #38BDF8, 0 0 20px #38BDF8; animation-delay: 1.05s; }
+
+@keyframes twinkle {
+    0% { opacity: 0.3; transform: scale(0.85); }
+    100% { opacity: 1; transform: scale(1.15); }
+}
+
+/* Nieve cayendo en temática navideña */
+@keyframes snowfall {
+    0% { transform: translateY(-10px) translateX(0); opacity: 1; }
+    100% { transform: translateY(100vh) translateX(35px); opacity: 0.15; }
+}
+.snowflake {
+    position: fixed;
+    top: -20px;
+    color: #FFFFFF;
+    font-size: 1.2rem;
+    pointer-events: none;
+    z-index: 9999;
+    user-select: none;
+    animation: snowfall 8s linear infinite;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+}
+
+/* ==========================================================
+   3. 🍿 TEMÁTICA: VERANO BLOCKBUSTER / CYBER NEÓN (MÁXIMA ENJUNDIA)
+   ========================================================== */
+body.theme-blockbuster {
+    --theme-primary: #00F0FF;
+    --theme-primary-hover: #00B4D8;
+    --theme-bg: #020617;
+    --theme-card: #0A193D;
+    --theme-border: #1D4ED8;
+    --theme-text: #E0F2FE;
+    --theme-muted: #7DD3FC;
+    --theme-accent: #FF007F;
+    --theme-glow: rgba(0, 240, 255, 0.7);
+    background-color: #020617 !important;
+    background-image: 
+        linear-gradient(rgba(0, 240, 255, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 240, 255, 0.08) 1px, transparent 1px),
+        radial-gradient(circle at 50% 20%, rgba(255, 0, 127, 0.35) 0%, transparent 60%),
+        radial-gradient(circle at 15% 75%, rgba(0, 240, 255, 0.35) 0%, transparent 50%),
+        linear-gradient(180deg, #020713 0%, #071536 100%) !important;
+    background-size: 35px 35px, 35px 35px, 100% 100%, 100% 100%, 100% 100% !important;
+}
+
+/* Tipografía Futurista y Cyberpunk */
+body.theme-blockbuster .font-serif,
+body.theme-blockbuster h1,
+body.theme-blockbuster h2,
+body.theme-blockbuster h3,
+body.theme-blockbuster .theme-heading {
+    font-family: 'Orbitron', sans-serif !important;
+    letter-spacing: 0.12em !important;
+    text-transform: uppercase !important;
+    text-shadow: 0 0 12px #00F0FF, 0 0 25px #00F0FF, 0 0 45px #FF007F !important;
+}
+
+body.theme-blockbuster header {
+    background-color: rgba(2, 7, 19, 0.97) !important;
+    border-bottom: 2px solid #00F0FF !important;
+    box-shadow: 0 10px 35px rgba(0, 240, 255, 0.45) !important;
+    position: relative;
+}
+
+/* Escáner láser cyber neón */
+.blockbuster-laser {
+    display: none;
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #00F0FF, #FF007F, #00F0FF, transparent);
+    box-shadow: 0 0 15px #00F0FF, 0 0 30px #FF007F;
+    z-index: 50;
+    animation: laserScan 3s linear infinite;
+}
+body.theme-blockbuster .blockbuster-laser {
+    display: block;
+}
+@keyframes laserScan {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+body.theme-blockbuster .bg-cneDark {
+    background-color: #020617 !important;
+}
+
+body.theme-blockbuster .bg-cneCard {
+    background-color: #0A193D !important;
+    border-color: #1D4ED8 !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9), inset 0 0 20px rgba(0, 240, 255, 0.15) !important;
+}
+
+body.theme-blockbuster .border-cneBorder {
+    border-color: #1E3A8A !important;
+}
+
+body.theme-blockbuster .bg-cneRed {
+    background-color: #00F0FF !important;
+    color: #000000 !important;
+    font-weight: 900 !important;
+    box-shadow: 0 0 25px rgba(0, 240, 255, 0.7) !important;
+}
+
+body.theme-blockbuster [class*="bg-cneRed/"] {
+    background-color: rgba(0, 240, 255, 0.25) !important;
+    border-color: #00F0FF !important;
+}
+
+body.theme-blockbuster .text-cneRed {
+    color: #00F0FF !important;
+    text-shadow: 0 0 15px rgba(0, 240, 255, 0.8);
+}
+
+body.theme-blockbuster .border-cneRed {
+    border-color: #00F0FF !important;
+}
+
+body.theme-blockbuster .text-gradient {
+    background: linear-gradient(to right, #00F0FF, #FF007F, #FFE600) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    text-shadow: 0 0 30px rgba(0, 240, 255, 0.6);
+}
+
+body.theme-blockbuster .bg-gradient-to-r.from-cneRed {
+    background-image: linear-gradient(to right, #00F0FF, #FF007F) !important;
+    color: #000000 !important;
+    font-weight: 900 !important;
+    box-shadow: 0 0 35px rgba(0, 240, 255, 0.6) !important;
+}
+
+body.theme-blockbuster .group:hover {
+    border-color: #00F0FF !important;
+    box-shadow: 0 20px 45px rgba(0, 240, 255, 0.5), 0 0 35px rgba(255, 0, 127, 0.4) !important;
+}
+
+body.theme-blockbuster footer {
+    background-color: #020713 !important;
+    border-top: 3px solid #00F0FF !important;
+}
+
+/* ==========================================================
+   4. 🎬 TEMÁTICA: CINE TRADICIONAL (XILOTZIN CLÁSICO & ELEGANTE)
+   ========================================================== */
+body.theme-traditional {
+    --theme-primary: #E11D2F;
+    --theme-primary-hover: #B91423;
+    --theme-bg: #0A0A0A;
+    --theme-card: #141414;
+    --theme-border: #262626;
+    --theme-text: #E0E0E0;
+    --theme-muted: #A0A0A0;
+    --theme-accent: #DCA54C;
+    --theme-glow: rgba(225, 29, 47, 0.4);
+    background-color: #0A0A0A !important;
+    background-image: 
+        radial-gradient(circle at 50% 15%, rgba(225, 29, 47, 0.35) 0%, transparent 55%),
+        radial-gradient(circle at 10% 85%, rgba(220, 165, 76, 0.2) 0%, transparent 45%),
+        linear-gradient(180deg, #0A0A0A 0%, #151515 100%) !important;
+}
+
+body.theme-traditional .font-serif,
+body.theme-traditional h1,
+body.theme-traditional h2,
+body.theme-traditional h3,
+body.theme-traditional .theme-heading {
+    font-family: 'Playfair Display', serif !important;
+    letter-spacing: 0.05em !important;
+    text-shadow: 0 0 15px rgba(225, 29, 47, 0.4), 0 0 25px rgba(220, 165, 76, 0.3) !important;
+}
+
+body.theme-traditional header {
+    background-color: rgba(10, 10, 10, 0.97) !important;
+    border-bottom: 2px solid #E11D2F !important;
+    box-shadow: 0 10px 30px rgba(225, 29, 47, 0.3) !important;
+}
+
+body.theme-traditional .group:hover {
+    border-color: #E11D2F !important;
+    box-shadow: 0 20px 40px rgba(225, 29, 47, 0.35), 0 0 25px rgba(220, 165, 76, 0.2) !important;
+}
+
+/* ==========================================================
+   5. BARRA MARQUEE / TICKER ESTACIONAL Y SELECTOR RÁPIDO
+   ========================================================== */
+.theme-marquee-bar {
+    width: 100%;
+    padding: 7px 16px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    transition: all 0.4s ease;
+    position: relative;
+    z-index: 45;
+}
+
+body.theme-traditional .theme-marquee-bar {
+    background: linear-gradient(90deg, #180305, #35070c, #180305);
+    color: #FCD34D;
+    border-bottom: 1px solid #E11D2F;
+}
+
+body.theme-halloween .theme-marquee-bar {
+    background: linear-gradient(90deg, #1d032e, #FF5500, #140224);
+    color: #FFFFFF;
+    border-bottom: 2px solid #FF5500;
+    text-shadow: 0 0 8px #000;
+}
+
+body.theme-christmas .theme-marquee-bar {
+    background: linear-gradient(90deg, #072315, #DC2626, #072315);
+    color: #FFFFFF;
+    border-bottom: 2px solid #16A34A;
+    text-shadow: 0 0 8px #000;
+}
+
+body.theme-blockbuster .theme-marquee-bar {
+    background: linear-gradient(90deg, #030a1c, #00F0FF, #030a1c);
+    color: #000000;
+    font-family: 'Orbitron', sans-serif !important;
+    font-weight: 900 !important;
+    border-bottom: 2px solid #00F0FF;
+    box-shadow: 0 0 20px rgba(0, 240, 255, 0.5);
+}
+
+/* Botones de selector rápido de temática */
+.theme-switch-btn {
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.85);
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    white-space: nowrap;
+}
+
+.theme-switch-btn:hover {
+    background: rgba(255, 255, 255, 0.25);
+    color: #FFFFFF;
+    transform: translateY(-1px);
+}
+
+.theme-switch-btn.active-theme {
+    background: var(--theme-primary) !important;
+    color: #FFFFFF !important;
+    border-color: var(--theme-primary) !important;
+    box-shadow: 0 0 12px var(--theme-primary) !important;
+}
+
+body.theme-blockbuster .theme-switch-btn.active-theme {
+    color: #000000 !important;
+    font-weight: 900 !important;
+}
+
+/* Badges estacionales en tarjetas de película */
+.theme-card-badge {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    font-size: 10px;
+    font-weight: 900;
+    padding: 3px 8px;
+    border-radius: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    z-index: 15;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+
+body.theme-traditional .theme-card-badge {
+    background: #E11D2F !important;
+    color: #FFFFFF !important;
+    border: 1px solid rgba(255,255,255,0.3) !important;
+}
+
+body.theme-halloween .theme-card-badge {
+    background: #FF5500 !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 0 15px rgba(255, 85, 0, 0.8) !important;
+    border: 1px solid #FFAA00 !important;
+}
+
+body.theme-christmas .theme-card-badge {
+    background: #15803D !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 0 15px rgba(22, 101, 52, 0.8) !important;
+    border: 1px solid #FCD34D !important;
+}
+
+body.theme-blockbuster .theme-card-badge {
+    background: #00F0FF !important;
+    color: #000000 !important;
+    font-family: 'Orbitron', sans-serif !important;
+    font-weight: 900 !important;
+    box-shadow: 0 0 18px rgba(0, 240, 255, 0.9) !important;
+    border: 1px solid #FFFFFF !important;
+}
+
+/* ==========================================================
+   6. UTILIDADES, EFECTOS Y TICKET TÉRMICO
+   ========================================================== */
 .neon-gold {
     text-shadow: 0 0 10px rgba(251, 191, 36, 0.8), 0 0 20px rgba(251, 191, 36, 0.4);
 }
@@ -97,70 +590,20 @@ body {
     mask-repeat: no-repeat;
 }
 
-.seat {
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    cursor: pointer;
-}
-.seat:hover:not(.occupied) {
-    transform: scale(1.15);
-    background-color: var(--theme-accent);
-    border-color: var(--theme-accent);
-    color: black;
-}
-.seat-selected {
-    background-color: var(--theme-accent);
-    border-color: var(--theme-accent);
-    color: black;
-    transform: scale(1.10);
-    box-shadow: 0 0 15px rgba(251, 191, 36, 0.5);
-}
-
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
 }
 
-.hide-scroll::-webkit-scrollbar {
-    display: none;
-}
+.hide-scroll::-webkit-scrollbar { display: none; }
+.hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
 
-.hide-scroll {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-}
-
-.text-gradient {
-    background: linear-gradient(to right, #FFFFFF, var(--theme-primary));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
-/* Animations */
-@keyframes fadeInUp {
-    0% {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    100% {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
+/* Animación de escáner láser */
 @keyframes laserSweep {
-    0% {
-        top: 5%;
-        opacity: 0.8;
-    }
-    50% {
-        top: 90%;
-        opacity: 1;
-    }
-    100% {
-        top: 5%;
-        opacity: 0.8;
-    }
+    0% { top: 5%; opacity: 0.8; }
+    50% { top: 90%; opacity: 1; }
+    100% { top: 5%; opacity: 0.8; }
 }
 
 .laser-scanner-line {
@@ -211,12 +654,8 @@ input[type="number"]::-webkit-inner-spin-button {
 }
 
 @media print {
-    body * {
-        visibility: hidden;
-    }
-    #modal-ticket-print-area, #modal-ticket-print-area * {
-        visibility: visible;
-    }
+    body * { visibility: hidden; }
+    #modal-ticket-print-area, #modal-ticket-print-area * { visibility: visible; }
     #modal-ticket-print-area {
         position: absolute;
         left: 0;
@@ -225,7 +664,5 @@ input[type="number"]::-webkit-inner-spin-button {
         background: transparent !important;
         box-shadow: none !important;
     }
-    .no-print {
-        display: none !important;
-    }
+    .no-print { display: none !important; }
 }

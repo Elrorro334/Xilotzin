@@ -56,6 +56,16 @@ document.addEventListener('CarteleraLista', () => {
     }
 });
 
+// Sincronización en vivo entre pestañas: si el Admin cambia el tema en el Dashboard, se actualiza al instante en la vista pública
+window.addEventListener('storage', (e) => {
+    if (e.key === 'xilotzin_tema_activo' && e.newValue) {
+        try {
+            const nuevoTema = JSON.parse(e.newValue);
+            aplicarTema(nuevoTema, false);
+        } catch (err) {}
+    }
+});
+
 // ==========================================================
 // 1. MOTOR DE TEMÁTICAS ESTACIONALES
 // ==========================================================
@@ -68,23 +78,183 @@ function aplicarTema(tema, guardar = true) {
 
     if (guardar) {
         Store.set('tema_activo', tema);
-        mostrarAlertaToast(`Tema cambiado a: ${obtenerNombreTema(tema)}`);
+        mostrarAlertaToast(`🎭 Temática activada: ${obtenerNombreTema(tema)}`);
     }
 
-    // Sincronizar selector visual en el header si existe
-    const sel = document.getElementById('theme-selector');
-    if (sel && sel.value !== tema) sel.value = tema;
+    // 1. Selector Rápido de Temática (resaltar botón activo)
+    temasValidos.forEach(t => {
+        const btn = document.getElementById(`btn-theme-${t}`);
+        if (btn) {
+            if (t === tema) {
+                btn.classList.add('active-theme');
+            } else {
+                btn.classList.remove('active-theme');
+            }
+        }
+    });
 
-    // Actualizar badge temático visual
-    const badge = document.getElementById('theme-current-badge');
-    if (badge) {
-        const nombres = {
-            'traditional': '🎬 Cine Tradicional',
-            'halloween': '🎃 Noche de Terror',
-            'christmas': '🎄 Especial Navideño',
-            'blockbuster': '🍿 Verano Blockbuster'
+    // 2. Barra Marquee / Ticker Estacional
+    const marqueeText = document.getElementById('theme-marquee-text');
+    const marqueeIcon = document.getElementById('theme-marquee-icon');
+    if (marqueeText) {
+        const marqueeConfig = {
+            'traditional': {
+                icon: '🎬',
+                text: '🎬 CINE XILOTZIN • LA TRADICIÓN CINEMATOGRÁFICA DE JILOTEPEC DESDE 1998 • BOLETOS GENERALES $50 • CARTELERA EN VIVO 🍿'
+            },
+            'halloween': {
+                icon: '🎃',
+                text: '🎃 ¡NOCHES DE TERROR EN XILOTZIN! 🦇 FUNCIONES DE MEDIANOCHE • PALOMITAS PUMPKIN SPICE • BOLETOS $50 • 2X1 SI VIENES DISFRAZADO 👻'
+            },
+            'christmas': {
+                icon: '🎄',
+                text: '🎄 ¡LA MAGIA DE LA NAVIDAD EN XILOTZIN! 🎅 CHOCOLATE CALIENTE & PALOMITAS CARAMELIZADAS • CINE FAMILIAR DE FIN DE AÑO ❄️'
+            },
+            'blockbuster': {
+                icon: '⚡',
+                text: '⚡ ¡VERANO BLOCKBUSTER 2026! 🚀 GRANDES ESTRENOS • SONIDO DIGITAL DEMOLEDOR 7.1 • PANTALLA GIGANTE IMAX-FEEL 🍿'
+            }
         };
-        badge.innerText = nombres[tema] || 'Cine Xilotzin';
+        const c = marqueeConfig[tema] || marqueeConfig.traditional;
+        marqueeText.innerText = c.text;
+        if (marqueeIcon) marqueeIcon.innerText = c.icon;
+    }
+
+    // 3. Subtítulo e icono del Header
+    const headerSub = document.getElementById('header-subtitle');
+    const headerIcon = document.getElementById('header-logo-icon');
+    if (headerSub) {
+        const subTitles = {
+            'traditional': 'Cine Tradicional',
+            'halloween': 'Noches de Terror 🎃',
+            'christmas': 'Especial Navideño 🎄',
+            'blockbuster': 'Verano Blockbuster 🚀'
+        };
+        headerSub.innerText = subTitles[tema] || 'Cine Tradicional';
+    }
+    if (headerIcon) {
+        const iconClasses = {
+            'traditional': 'fa-solid fa-film text-white text-3xl relative z-10',
+            'halloween': 'fa-solid fa-skull text-orange-500 text-3xl relative z-10 spooky-float',
+            'christmas': 'fa-solid fa-snowflake text-amber-300 text-3xl relative z-10 animate-spin-slow',
+            'blockbuster': 'fa-solid fa-bolt text-cyan-400 text-3xl relative z-10'
+        };
+        headerIcon.className = iconClasses[tema] || 'fa-solid fa-film text-white text-3xl relative z-10';
+    }
+
+    // 4. Hero Section dinámico con enjundia visual y fondos atmosféricos
+    const heroBadge = document.getElementById('hero-badge');
+    const heroTitle = document.getElementById('hero-title');
+    const heroDesc = document.getElementById('hero-desc');
+    const heroOverlay = document.getElementById('hero-gradient-overlay');
+
+    if (heroBadge && heroTitle && heroDesc) {
+        if (tema === 'halloween') {
+            heroBadge.innerHTML = '<i class="fa-solid fa-ghost text-orange-400"></i> 🎃 TEMPORADA DE TERROR • NOCHE DE BRUJAS EN JILOTEPEC';
+            heroTitle.innerHTML = 'Noches de Terror en <br><span class="text-gradient">Cine Xilotzin</span>';
+            heroDesc.innerText = '¡Gritos, suspenso y las mejores películas de miedo en nuestra pantalla gigante! Aparta tus accesos en Pre-orden.';
+            if (heroOverlay) heroOverlay.className = 'absolute inset-0 bg-gradient-to-r from-orange-600/35 via-purple-900/40 to-black/80';
+        } else if (tema === 'christmas') {
+            heroBadge.innerHTML = '<i class="fa-solid fa-star text-yellow-300"></i> 🎄 LA MAGIA DE LA NAVIDAD • CINE FAMILIAR';
+            heroTitle.innerHTML = 'Celebra la Navidad en <br><span class="text-gradient">Cine Xilotzin</span>';
+            heroDesc.innerText = 'Vive historias inolvidables, estrenos familiares y la magia de siempre en estas fiestas navideñas.';
+            if (heroOverlay) heroOverlay.className = 'absolute inset-0 bg-gradient-to-r from-emerald-600/35 via-red-900/40 to-black/80';
+        } else if (tema === 'blockbuster') {
+            heroBadge.innerHTML = '<i class="fa-solid fa-bolt text-cyan-400"></i> 🚀 VERANO BLOCKBUSTER • ESTRENOS EXPLOSIVOS';
+            heroTitle.innerHTML = 'Acción al Límite en <br><span class="text-gradient">Cine Xilotzin</span>';
+            heroDesc.innerText = 'Sonido digital demoledor 7.1, efectos visuales deslumbrantes y las películas más taquilleras del año.';
+            if (heroOverlay) heroOverlay.className = 'absolute inset-0 bg-gradient-to-r from-cyan-500/30 via-pink-600/30 to-black/80';
+        } else {
+            heroBadge.innerHTML = '<i class="fa-solid fa-sparkles text-cneGold"></i> Pantalla Gigante • Sonido Digital • Jilotepec';
+            heroTitle.innerHTML = 'La Magia del <br><span class="text-gradient">Cine Tradicional</span>';
+            heroDesc.innerText = 'Consulta cartelera oficial en tiempo real, genera tu Pre-orden con código QR y canjéala directamente en caja sin hacer fila.';
+            if (heroOverlay) heroOverlay.className = 'absolute inset-0 bg-gradient-to-r from-cneRed/25 via-transparent to-white/10';
+        }
+    }
+
+    // 5. Telarañas decorativas de esquina (Halloween)
+    const webTL = document.getElementById('web-tl');
+    const webTR = document.getElementById('web-tr');
+    if (webTL && webTR) {
+        if (tema === 'halloween') {
+            webTL.style.display = 'block';
+            webTR.style.display = 'block';
+        } else {
+            webTL.style.display = 'none';
+            webTR.style.display = 'none';
+        }
+    }
+
+    // 6. Actualizar Badges de las Películas en Cartelera
+    document.querySelectorAll('.theme-card-badge').forEach(b => {
+        b.innerText = obtenerBadgeTematico(tema);
+    });
+
+    // 7. Partículas y Efectos Ambientales
+    const ambientCont = document.getElementById('theme-ambient-decorations');
+    if (ambientCont) {
+        ambientCont.innerHTML = '';
+        if (tema === 'christmas') {
+            // Nieve copiosa y mágica cayendo
+            const copos = ['❄', '❅', '❆', '•', '⭐'];
+            for (let i = 0; i < 28; i++) {
+                const flake = document.createElement('div');
+                flake.className = 'snowflake';
+                flake.innerText = copos[i % copos.length];
+                flake.style.left = `${Math.random() * 98}%`;
+                flake.style.animationDuration = `${4 + Math.random() * 7}s`;
+                flake.style.animationDelay = `${Math.random() * 5}s`;
+                flake.style.opacity = `${0.35 + Math.random() * 0.65}`;
+                flake.style.fontSize = `${0.8 + Math.random() * 1.5}rem`;
+                ambientCont.appendChild(flake);
+            }
+        } else if (tema === 'halloween') {
+            // Murciélagos, calabazas, calaveras y fantasmas flotantes
+            const iconitos = ['🦇', '🎃', '👻', '💀', '🕷️'];
+            for (let i = 0; i < 10; i++) {
+                const sp = document.createElement('div');
+                sp.className = 'fixed pointer-events-none spooky-float select-none opacity-25';
+                sp.innerText = iconitos[i % iconitos.length];
+                sp.style.top = `${12 + Math.random() * 75}%`;
+                sp.style.left = `${4 + Math.random() * 92}%`;
+                sp.style.fontSize = `${1.6 + Math.random() * 1.6}rem`;
+                ambientCont.appendChild(sp);
+            }
+        } else if (tema === 'blockbuster') {
+            // Destellos cibernéticos y rayos de energía
+            const iconosCyber = ['⚡', '✨', '🔷', '🚀', '🔥'];
+            for (let i = 0; i < 10; i++) {
+                const el = document.createElement('div');
+                el.className = 'fixed pointer-events-none spooky-float select-none opacity-20';
+                el.innerText = iconosCyber[i % iconosCyber.length];
+                el.style.top = `${15 + Math.random() * 70}%`;
+                el.style.left = `${5 + Math.random() * 90}%`;
+                el.style.fontSize = `${1.4 + Math.random() * 1.4}rem`;
+                ambientCont.appendChild(el);
+            }
+        } else {
+            // Destellos dorados clásicos
+            const clasicos = ['✨', '⭐', '🎬', '🍿'];
+            for (let i = 0; i < 6; i++) {
+                const el = document.createElement('div');
+                el.className = 'fixed pointer-events-none spooky-float select-none opacity-15';
+                el.innerText = clasicos[i % clasicos.length];
+                el.style.top = `${20 + Math.random() * 65}%`;
+                el.style.left = `${10 + Math.random() * 80}%`;
+                el.style.fontSize = `${1.2 + Math.random() * 1.2}rem`;
+                ambientCont.appendChild(el);
+            }
+        }
+    }
+}
+
+function obtenerBadgeTematico(tema = null) {
+    if (!tema) tema = Store.get('tema_activo') || 'traditional';
+    switch (tema) {
+        case 'halloween': return '🎃 Terror VIP';
+        case 'christmas': return '🎄 Navideño';
+        case 'blockbuster': return '⚡ Blockbuster';
+        default: return '🎬 Clásico';
     }
 }
 
@@ -181,6 +351,11 @@ function renderIndex() {
                 <img src="${p.poster}" alt="${p.titulo}" class="object-cover w-full h-full opacity-85 group-hover:opacity-100 group-hover:scale-105 transition duration-500">
                 <div class="absolute inset-0 bg-gradient-to-t from-cneCard via-transparent to-transparent"></div>
                 
+                <!-- Badge temático estacional (Halloween, Navidad, Blockbuster, Clásico) -->
+                <div class="theme-card-badge">
+                    ${obtenerBadgeTematico()}
+                </div>
+
                 <!-- Badge de clasificación oficial -->
                 <div class="absolute top-3.5 right-3.5 bg-cneRed text-white font-black text-xs px-2.5 py-1 rounded shadow-lg z-10 border border-white/20">
                     ${p.clasificacion}
