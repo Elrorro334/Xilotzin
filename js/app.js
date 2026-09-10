@@ -70,10 +70,12 @@ window.addEventListener('storage', (e) => {
 // 1. MOTOR DE TEMÁTICAS ESTACIONALES
 // ==========================================================
 function aplicarTema(tema, guardar = true) {
-    const temasValidos = ['traditional', 'halloween', 'christmas', 'blockbuster'];
+    if (tema === 'blockbuster') tema = 'mexican';
+    const temasValidos = ['traditional', 'halloween', 'christmas', 'mexican'];
     if (!temasValidos.includes(tema)) tema = 'traditional';
 
     temasValidos.forEach(t => document.body.classList.remove(`theme-${t}`));
+    document.body.classList.remove('theme-blockbuster');
     document.body.classList.add(`theme-${tema}`);
 
     if (guardar) {
@@ -81,7 +83,7 @@ function aplicarTema(tema, guardar = true) {
         mostrarAlertaToast(`🎭 Temática activada: ${obtenerNombreTema(tema)}`);
     }
 
-    // 1. Selector Rápido de Temática (resaltar botón activo)
+    // 1. Selector Rápido de Temática (resaltar botón activo si existe)
     temasValidos.forEach(t => {
         const btn = document.getElementById(`btn-theme-${t}`);
         if (btn) {
@@ -110,9 +112,9 @@ function aplicarTema(tema, guardar = true) {
                 icon: '🎄',
                 text: '🎄 ¡LA MAGIA DE LA NAVIDAD EN XILOTZIN! 🎅 CHOCOLATE CALIENTE & PALOMITAS CARAMELIZADAS • CINE FAMILIAR DE FIN DE AÑO ❄️'
             },
-            'blockbuster': {
-                icon: '⚡',
-                text: '⚡ ¡VERANO BLOCKBUSTER 2026! 🚀 GRANDES ESTRENOS • SONIDO DIGITAL DEMOLEDOR 7.1 • PANTALLA GIGANTE IMAX-FEEL 🍿'
+            'mexican': {
+                icon: '🇲🇽',
+                text: '🇲🇽 ¡VIVA MÉXICO EN CINE XILOTZIN! • CARTELERA DE GALA PATRIA • COMBOS TRICOLOR • ORGULLO DE JILOTEPEC 🪅'
             }
         };
         const c = marqueeConfig[tema] || marqueeConfig.traditional;
@@ -128,7 +130,7 @@ function aplicarTema(tema, guardar = true) {
             'traditional': 'Cine Tradicional',
             'halloween': 'Noches de Terror 🎃',
             'christmas': 'Especial Navideño 🎄',
-            'blockbuster': 'Verano Blockbuster 🚀'
+            'mexican': 'Noches Mexicanas 🇲🇽'
         };
         headerSub.innerText = subTitles[tema] || 'Cine Tradicional';
     }
@@ -137,7 +139,7 @@ function aplicarTema(tema, guardar = true) {
             'traditional': 'fa-solid fa-film text-white text-3xl relative z-10',
             'halloween': 'fa-solid fa-skull text-orange-500 text-3xl relative z-10 spooky-float',
             'christmas': 'fa-solid fa-snowflake text-amber-300 text-3xl relative z-10 animate-spin-slow',
-            'blockbuster': 'fa-solid fa-bolt text-cyan-400 text-3xl relative z-10'
+            'mexican': 'fa-solid fa-flag text-emerald-400 text-3xl relative z-10'
         };
         headerIcon.className = iconClasses[tema] || 'fa-solid fa-film text-white text-3xl relative z-10';
     }
@@ -159,11 +161,11 @@ function aplicarTema(tema, guardar = true) {
             heroTitle.innerHTML = 'Celebra la Navidad en <br><span class="text-gradient">Cine Xilotzin</span>';
             heroDesc.innerText = 'Vive historias inolvidables, estrenos familiares y la magia de siempre en estas fiestas navideñas.';
             if (heroOverlay) heroOverlay.className = 'absolute inset-0 bg-gradient-to-r from-emerald-600/35 via-red-900/40 to-black/80';
-        } else if (tema === 'blockbuster') {
-            heroBadge.innerHTML = '<i class="fa-solid fa-bolt text-cyan-400"></i> 🚀 VERANO BLOCKBUSTER • ESTRENOS EXPLOSIVOS';
-            heroTitle.innerHTML = 'Acción al Límite en <br><span class="text-gradient">Cine Xilotzin</span>';
-            heroDesc.innerText = 'Sonido digital demoledor 7.1, efectos visuales deslumbrantes y las películas más taquilleras del año.';
-            if (heroOverlay) heroOverlay.className = 'absolute inset-0 bg-gradient-to-r from-cyan-500/30 via-pink-600/30 to-black/80';
+        } else if (tema === 'mexican') {
+            heroBadge.innerHTML = '<i class="fa-solid fa-flag text-emerald-400"></i> 🇲🇽 ¡FIESTAS PATRIAS & NOCHES MEXICANAS! • CINE Y TRADICIÓN';
+            heroTitle.innerHTML = '¡Viva el Cine! en <br><span class="text-gradient">Cine Xilotzin</span>';
+            heroDesc.innerText = 'Grandes funciones patrias, cine nacional y lo mejor de la cartelera familiar con el sabor y orgullo de Jilotepec.';
+            if (heroOverlay) heroOverlay.className = 'absolute inset-0 bg-gradient-to-r from-emerald-700/35 via-red-800/35 to-black/85';
         } else {
             heroBadge.innerHTML = '<i class="fa-solid fa-sparkles text-cneGold"></i> Pantalla Gigante • Sonido Digital • Jilotepec';
             heroTitle.innerHTML = 'La Magia del <br><span class="text-gradient">Cine Tradicional</span>';
@@ -220,16 +222,17 @@ function aplicarTema(tema, guardar = true) {
                 sp.style.fontSize = `${1.6 + Math.random() * 1.6}rem`;
                 ambientCont.appendChild(sp);
             }
-        } else if (tema === 'blockbuster') {
-            // Destellos cibernéticos y rayos de energía
-            const iconosCyber = ['⚡', '✨', '🔷', '🚀', '🔥'];
-            for (let i = 0; i < 10; i++) {
+        } else if (tema === 'mexican') {
+            // Papel picado flotante, confeti patrio, piñatas y motivos mexicanos
+            const motivos = ['🇲🇽', '🪅', '🎉', '✨', '🌵', '🎺', '🌮', '🌶️'];
+            for (let i = 0; i < 14; i++) {
                 const el = document.createElement('div');
-                el.className = 'fixed pointer-events-none spooky-float select-none opacity-20';
-                el.innerText = iconosCyber[i % iconosCyber.length];
-                el.style.top = `${15 + Math.random() * 70}%`;
-                el.style.left = `${5 + Math.random() * 90}%`;
-                el.style.fontSize = `${1.4 + Math.random() * 1.4}rem`;
+                el.className = 'fixed pointer-events-none spooky-float select-none opacity-30';
+                el.innerText = motivos[i % motivos.length];
+                el.style.top = `${12 + Math.random() * 75}%`;
+                el.style.left = `${4 + Math.random() * 92}%`;
+                el.style.fontSize = `${1.3 + Math.random() * 1.5}rem`;
+                el.style.animationDuration = `${3 + Math.random() * 4}s`;
                 ambientCont.appendChild(el);
             }
         } else {
@@ -250,19 +253,21 @@ function aplicarTema(tema, guardar = true) {
 
 function obtenerBadgeTematico(tema = null) {
     if (!tema) tema = Store.get('tema_activo') || 'traditional';
+    if (tema === 'blockbuster') tema = 'mexican';
     switch (tema) {
         case 'halloween': return '🎃 Terror VIP';
         case 'christmas': return '🎄 Navideño';
-        case 'blockbuster': return '⚡ Blockbuster';
+        case 'mexican': return '🇲🇽 Gala Patria';
         default: return '🎬 Clásico';
     }
 }
 
 function obtenerNombreTema(tema) {
+    if (tema === 'blockbuster') tema = 'mexican';
     switch (tema) {
         case 'halloween': return 'Noche de Terror (Halloween)';
         case 'christmas': return 'Especial Navideño e Invernal';
-        case 'blockbuster': return 'Verano Blockbuster';
+        case 'mexican': return 'Fiestas Patrias & Tradición Mexicana (Viva México)';
         default: return 'Cine Tradicional (Xilotzin Clásico)';
     }
 }

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Space+Mono:wght@400;700&family=Creepster&family=Mountains+of+Christmas:wght@700&family=Orbitron:wght@700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Space+Mono:wght@400;700&family=Creepster&family=Mountains+of+Christmas:wght@700&family=Rye&family=Alfa+Slab+One&display=swap');
 
 /* ==========================================================
    MOTOR DE TEMÁTICAS ESTACIONALES - VARIABLES MAESTRAS
@@ -43,7 +43,6 @@ body.theme-halloween {
         linear-gradient(180deg, #090112 0%, #17042C 100%) !important;
 }
 
-/* Tipografía de Terror para Encabezados */
 body.theme-halloween .font-serif,
 body.theme-halloween h1,
 body.theme-halloween h2,
@@ -116,7 +115,6 @@ body.theme-halloween footer {
     border-top: 3px solid #7E22CE !important;
 }
 
-/* Telarañas de esquina en Halloween */
 .halloween-corner-web {
     position: fixed;
     width: 140px;
@@ -128,7 +126,6 @@ body.theme-halloween footer {
 .halloween-web-tl { top: 0; left: 0; }
 .halloween-web-tr { top: 0; right: 0; transform: scaleX(-1); }
 
-/* Partículas animadas de Halloween */
 @keyframes floatSpooky {
     0%, 100% { transform: translateY(0) rotate(0deg) scale(1); }
     50% { transform: translateY(-16px) rotate(6deg) scale(1.1); }
@@ -158,7 +155,6 @@ body.theme-christmas {
         linear-gradient(180deg, #020E08 0%, #082D1B 100%) !important;
 }
 
-/* Tipografía Festiva Navideña */
 body.theme-christmas .font-serif,
 body.theme-christmas h1,
 body.theme-christmas h2,
@@ -232,7 +228,6 @@ body.theme-christmas footer {
     border-top: 3px solid #15803D !important;
 }
 
-/* Guirnalda de luces navideñas parpadeantes */
 .christmas-lights {
     display: none;
     position: absolute;
@@ -267,7 +262,6 @@ body.theme-christmas .christmas-lights {
     100% { opacity: 1; transform: scale(1.15); }
 }
 
-/* Nieve cayendo en temática navideña */
 @keyframes snowfall {
     0% { transform: translateY(-10px) translateX(0); opacity: 1; }
     100% { transform: translateY(100vh) translateX(35px); opacity: 0.15; }
@@ -285,125 +279,157 @@ body.theme-christmas .christmas-lights {
 }
 
 /* ==========================================================
-   3. 🍿 TEMÁTICA: VERANO BLOCKBUSTER / CYBER NEÓN (MÁXIMA ENJUNDIA)
+   3. 🇲🇽 TEMÁTICA: FIESTAS PATRIAS & NOCHES MEXICANAS (VIVA MÉXICO)
    ========================================================== */
+body.theme-mexican,
 body.theme-blockbuster {
-    --theme-primary: #00F0FF;
-    --theme-primary-hover: #00B4D8;
-    --theme-bg: #020617;
-    --theme-card: #0A193D;
-    --theme-border: #1D4ED8;
-    --theme-text: #E0F2FE;
-    --theme-muted: #7DD3FC;
-    --theme-accent: #FF007F;
-    --theme-glow: rgba(0, 240, 255, 0.7);
-    background-color: #020617 !important;
+    --theme-primary: #00843D;
+    --theme-primary-hover: #006830;
+    --theme-bg: #07160E;
+    --theme-card: #0E291B;
+    --theme-border: #166534;
+    --theme-text: #FFFFFF;
+    --theme-muted: #86EFAC;
+    --theme-accent: #E4007C;
+    --theme-glow: rgba(0, 132, 61, 0.7);
+    background-color: #07160E !important;
     background-image: 
-        linear-gradient(rgba(0, 240, 255, 0.08) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 240, 255, 0.08) 1px, transparent 1px),
-        radial-gradient(circle at 50% 20%, rgba(255, 0, 127, 0.35) 0%, transparent 60%),
-        radial-gradient(circle at 15% 75%, rgba(0, 240, 255, 0.35) 0%, transparent 50%),
-        linear-gradient(180deg, #020713 0%, #071536 100%) !important;
-    background-size: 35px 35px, 35px 35px, 100% 100%, 100% 100%, 100% 100% !important;
+        radial-gradient(circle at 15% 15%, rgba(0, 132, 61, 0.5) 0%, transparent 45%),
+        radial-gradient(circle at 85% 20%, rgba(206, 17, 38, 0.4) 0%, transparent 45%),
+        radial-gradient(circle at 50% 85%, rgba(228, 0, 124, 0.25) 0%, transparent 50%),
+        radial-gradient(circle at 50% 15%, rgba(255, 215, 0, 0.15) 0%, transparent 40%),
+        linear-gradient(180deg, #051009 0%, #0F2D1C 100%) !important;
 }
 
-/* Tipografía Futurista y Cyberpunk */
+/* Tipografía de Cartel Tradicional Mexicano */
+body.theme-mexican .font-serif,
+body.theme-mexican h1,
+body.theme-mexican h2,
+body.theme-mexican h3,
+body.theme-mexican .theme-heading,
 body.theme-blockbuster .font-serif,
 body.theme-blockbuster h1,
 body.theme-blockbuster h2,
 body.theme-blockbuster h3,
 body.theme-blockbuster .theme-heading {
-    font-family: 'Orbitron', sans-serif !important;
-    letter-spacing: 0.12em !important;
-    text-transform: uppercase !important;
-    text-shadow: 0 0 12px #00F0FF, 0 0 25px #00F0FF, 0 0 45px #FF007F !important;
+    font-family: 'Rye', 'Alfa Slab One', cursive !important;
+    letter-spacing: 0.04em !important;
+    text-shadow: 0 0 15px rgba(0, 132, 61, 0.8), 0 0 25px rgba(206, 17, 38, 0.7), 2px 2px 0px #000 !important;
 }
 
+body.theme-mexican header,
 body.theme-blockbuster header {
-    background-color: rgba(2, 7, 19, 0.97) !important;
-    border-bottom: 2px solid #00F0FF !important;
-    box-shadow: 0 10px 35px rgba(0, 240, 255, 0.45) !important;
+    background-color: rgba(7, 22, 14, 0.97) !important;
+    border-bottom: 3px solid #00843D !important;
+    box-shadow: 0 10px 30px rgba(0, 132, 61, 0.4), 0 0 20px rgba(206, 17, 38, 0.3) !important;
     position: relative;
 }
 
-/* Escáner láser cyber neón */
-.blockbuster-laser {
+/* Guirnalda de Papel Picado Mexicano */
+.mexican-papel-picado {
     display: none;
     position: absolute;
-    bottom: -2px;
+    top: 0;
     left: 0;
     width: 100%;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, #00F0FF, #FF007F, #00F0FF, transparent);
-    box-shadow: 0 0 15px #00F0FF, 0 0 30px #FF007F;
-    z-index: 50;
-    animation: laserScan 3s linear infinite;
+    height: 14px;
+    z-index: 55;
+    pointer-events: none;
+    overflow: hidden;
+    white-space: nowrap;
 }
-body.theme-blockbuster .blockbuster-laser {
-    display: block;
-}
-@keyframes laserScan {
-    0% { transform: translateX(-100%); }
-    100% { transform: translateX(100%); }
+body.theme-mexican .mexican-papel-picado,
+body.theme-blockbuster .mexican-papel-picado {
+    display: flex;
+    justify-content: space-around;
 }
 
+.banderin-picado {
+    width: 16px;
+    height: 14px;
+    display: inline-block;
+    clip-path: polygon(0 0, 100% 0, 100% 75%, 50% 100%, 0 75%);
+    animation: papelSway 2.5s ease-in-out infinite alternate;
+}
+.banderin-picado:nth-child(5n+1) { background: #00843D; box-shadow: 0 0 8px #00843D; animation-delay: 0s; }
+.banderin-picado:nth-child(5n+2) { background: #FFFFFF; box-shadow: 0 0 8px #FFFFFF; animation-delay: 0.5s; }
+.banderin-picado:nth-child(5n+3) { background: #CE1126; box-shadow: 0 0 8px #CE1126; animation-delay: 1s; }
+.banderin-picado:nth-child(5n+4) { background: #E4007C; box-shadow: 0 0 8px #E4007C; animation-delay: 1.5s; }
+.banderin-picado:nth-child(5n+5) { background: #FFD700; box-shadow: 0 0 8px #FFD700; animation-delay: 2s; }
+
+@keyframes papelSway {
+    0% { transform: rotate(-4deg) translateY(0); }
+    100% { transform: rotate(4deg) translateY(2px); }
+}
+
+body.theme-mexican .bg-cneDark,
 body.theme-blockbuster .bg-cneDark {
-    background-color: #020617 !important;
+    background-color: #07160E !important;
 }
 
+body.theme-mexican .bg-cneCard,
 body.theme-blockbuster .bg-cneCard {
-    background-color: #0A193D !important;
-    border-color: #1D4ED8 !important;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9), inset 0 0 20px rgba(0, 240, 255, 0.15) !important;
+    background-color: #0E291B !important;
+    border-color: #166534 !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.85), inset 0 0 15px rgba(0, 132, 61, 0.2) !important;
 }
 
+body.theme-mexican .border-cneBorder,
 body.theme-blockbuster .border-cneBorder {
-    border-color: #1E3A8A !important;
+    border-color: #166534 !important;
 }
 
+body.theme-mexican .bg-cneRed,
 body.theme-blockbuster .bg-cneRed {
-    background-color: #00F0FF !important;
-    color: #000000 !important;
+    background: linear-gradient(135deg, #00843D, #CE1126) !important;
+    color: #FFFFFF !important;
     font-weight: 900 !important;
-    box-shadow: 0 0 25px rgba(0, 240, 255, 0.7) !important;
+    box-shadow: 0 0 25px rgba(0, 132, 61, 0.6) !important;
 }
 
+body.theme-mexican [class*="bg-cneRed/"],
 body.theme-blockbuster [class*="bg-cneRed/"] {
-    background-color: rgba(0, 240, 255, 0.25) !important;
-    border-color: #00F0FF !important;
+    background-color: rgba(0, 132, 61, 0.25) !important;
+    border-color: #00843D !important;
 }
 
+body.theme-mexican .text-cneRed,
 body.theme-blockbuster .text-cneRed {
-    color: #00F0FF !important;
-    text-shadow: 0 0 15px rgba(0, 240, 255, 0.8);
+    color: #00843D !important;
+    text-shadow: 0 0 12px rgba(0, 132, 61, 0.6);
 }
 
+body.theme-mexican .border-cneRed,
 body.theme-blockbuster .border-cneRed {
-    border-color: #00F0FF !important;
+    border-color: #00843D !important;
 }
 
+body.theme-mexican .text-gradient,
 body.theme-blockbuster .text-gradient {
-    background: linear-gradient(to right, #00F0FF, #FF007F, #FFE600) !important;
+    background: linear-gradient(to right, #00843D, #FFFFFF, #CE1126, #E4007C) !important;
     -webkit-background-clip: text !important;
     -webkit-text-fill-color: transparent !important;
-    text-shadow: 0 0 30px rgba(0, 240, 255, 0.6);
+    text-shadow: 0 0 25px rgba(0, 132, 61, 0.5);
 }
 
+body.theme-mexican .bg-gradient-to-r.from-cneRed,
 body.theme-blockbuster .bg-gradient-to-r.from-cneRed {
-    background-image: linear-gradient(to right, #00F0FF, #FF007F) !important;
-    color: #000000 !important;
+    background-image: linear-gradient(to right, #00843D, #CE1126) !important;
+    color: #FFFFFF !important;
     font-weight: 900 !important;
-    box-shadow: 0 0 35px rgba(0, 240, 255, 0.6) !important;
+    box-shadow: 0 0 35px rgba(0, 132, 61, 0.6) !important;
 }
 
+body.theme-mexican .group:hover,
 body.theme-blockbuster .group:hover {
-    border-color: #00F0FF !important;
-    box-shadow: 0 20px 45px rgba(0, 240, 255, 0.5), 0 0 35px rgba(255, 0, 127, 0.4) !important;
+    border-color: #E4007C !important;
+    box-shadow: 0 20px 45px rgba(0, 132, 61, 0.45), 0 0 30px rgba(228, 0, 124, 0.4) !important;
 }
 
+body.theme-mexican footer,
 body.theme-blockbuster footer {
-    background-color: #020713 !important;
-    border-top: 3px solid #00F0FF !important;
+    background-color: #05120B !important;
+    border-top: 3px solid #00843D !important;
 }
 
 /* ==========================================================
@@ -448,7 +474,7 @@ body.theme-traditional .group:hover {
 }
 
 /* ==========================================================
-   5. BARRA MARQUEE / TICKER ESTACIONAL Y SELECTOR RÁPIDO
+   5. BARRA MARQUEE / TICKER ESTACIONAL
    ========================================================== */
 .theme-marquee-bar {
     width: 100%;
@@ -458,7 +484,7 @@ body.theme-traditional .group:hover {
     letter-spacing: 0.06em;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     gap: 12px;
     transition: all 0.4s ease;
     position: relative;
@@ -485,46 +511,13 @@ body.theme-christmas .theme-marquee-bar {
     text-shadow: 0 0 8px #000;
 }
 
+body.theme-mexican .theme-marquee-bar,
 body.theme-blockbuster .theme-marquee-bar {
-    background: linear-gradient(90deg, #030a1c, #00F0FF, #030a1c);
-    color: #000000;
-    font-family: 'Orbitron', sans-serif !important;
-    font-weight: 900 !important;
-    border-bottom: 2px solid #00F0FF;
-    box-shadow: 0 0 20px rgba(0, 240, 255, 0.5);
-}
-
-/* Botones de selector rápido de temática */
-.theme-switch-btn {
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    background: rgba(255, 255, 255, 0.08);
-    color: rgba(255, 255, 255, 0.85);
-    padding: 3px 8px;
-    border-radius: 6px;
-    font-size: 10px;
-    font-weight: 800;
-    letter-spacing: 0.05em;
-    cursor: pointer;
-    transition: all 0.25s ease;
-    white-space: nowrap;
-}
-
-.theme-switch-btn:hover {
-    background: rgba(255, 255, 255, 0.25);
+    background: linear-gradient(90deg, #052312, #CE1126, #052312);
     color: #FFFFFF;
-    transform: translateY(-1px);
-}
-
-.theme-switch-btn.active-theme {
-    background: var(--theme-primary) !important;
-    color: #FFFFFF !important;
-    border-color: var(--theme-primary) !important;
-    box-shadow: 0 0 12px var(--theme-primary) !important;
-}
-
-body.theme-blockbuster .theme-switch-btn.active-theme {
-    color: #000000 !important;
-    font-weight: 900 !important;
+    font-weight: 900;
+    border-bottom: 2px solid #00843D;
+    text-shadow: 0 0 8px #000;
 }
 
 /* Badges estacionales en tarjetas de película */
@@ -564,13 +557,13 @@ body.theme-christmas .theme-card-badge {
     border: 1px solid #FCD34D !important;
 }
 
+body.theme-mexican .theme-card-badge,
 body.theme-blockbuster .theme-card-badge {
-    background: #00F0FF !important;
+    background: linear-gradient(135deg, #00843D 0%, #FFFFFF 50%, #CE1126 100%) !important;
     color: #000000 !important;
-    font-family: 'Orbitron', sans-serif !important;
     font-weight: 900 !important;
-    box-shadow: 0 0 18px rgba(0, 240, 255, 0.9) !important;
-    border: 1px solid #FFFFFF !important;
+    box-shadow: 0 0 15px rgba(0, 132, 61, 0.8) !important;
+    border: 1px solid #FFD700 !important;
 }
 
 /* ==========================================================
@@ -599,7 +592,6 @@ input[type="number"]::-webkit-inner-spin-button {
 .hide-scroll::-webkit-scrollbar { display: none; }
 .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
 
-/* Animación de escáner láser */
 @keyframes laserSweep {
     0% { top: 5%; opacity: 0.8; }
     50% { top: 90%; opacity: 1; }
