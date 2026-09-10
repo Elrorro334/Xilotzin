@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administración Avanzada | Cine Teatro Xilotzin</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#D81B60">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        pmdark: '#050505',
+                        pmcard: '#111111',
+                        pmborder: '#262626',
+                        pmmagenta: '#D81B60',
+                        pmorange: '#F57C00',
+                        pmblue: '#0288D1',
+                        pmpurple: '#7B1FA2',
+                        pmlight: '#f3f4f6',
+                        pmtext: '#a3a3a3',
+                        posbg: '#0a0a0a'
+                    },
+                    fontFamily: {
+                        sans: ['Montserrat', 'sans-serif'],
+                        serif: ['"Playfair Display"', 'serif'],
+                        mono: ['"Space Mono"', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700;900&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body class="bg-posbg text-pmlight antialiased h-screen flex overflow-hidden selection:bg-pmmagenta selection:text-white relative">
+
+    <!-- Toast Global de Notificaciones -->
+    <div id="toast" class="fixed bottom-10 right-10 bg-pmcard border border-pmborder text-white px-6 py-4 rounded-xl shadow-2xl transition-all transform translate-y-20 opacity-0 z-[200] flex items-center gap-4 pointer-events-none">
+        <div id="toast-icon-container" class="w-8 h-8 rounded-full flex items-center justify-center bg-pmdark">
+            <i id="toast-icon" class="fa-solid fa-check text-green-500"></i>
+        </div>
+        <span id="toast-msg" class="font-bold text-xs uppercase tracking-widest">Acción realizada</span>
+    </div>
+
+    <!-- Modales Overlay -->
+    <div id="modal-overlay" class="fixed inset-0 bg-pmdark/90 backdrop-blur-sm z-[100] hidden items-center justify-center p-4 transition-opacity opacity-0">
+        
+        <!-- Modal Registrar Entrada de Mercancía -->
+        <div id="modal-entrada-mercancia" class="hidden w-full max-w-lg bg-pmcard border border-pmborder rounded-3xl p-6 md:p-8 shadow-2xl relative transform scale-95 transition-transform">
+            <button onclick="cerrarModales()" class="absolute top-5 right-5 text-pmtext hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
+            <h3 class="text-xl font-serif font-black uppercase text-white mb-2 tracking-widest flex items-center gap-2">
+                <i class="fa-solid fa-truck-ramp-box text-pmblue"></i> Registro de Entrada de Mercancía
+            </h3>
+            <p class="text-xs text-pmtext mb-6">Ingreso de insumos al inventario con proveedor y costo de factura.</p>
+            
+            <form onsubmit="guardarEntradaMercancia(event)" class="space-y-4 font-sans text-xs">
+                <div>
+                    <label class="block font-bold text-pmtext uppercase tracking-wider mb-1">Producto / Insumo</label>
+                    <select id="entrada-sku" required class="w-full bg-pmdark text-white px-4 py-3 rounded-xl border border-pmborder focus:border-pmblue outline-none">
+                        <!-- Inyectado por script -->
+                    </select>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block font-bold text-pmtext uppercase tracking-wider mb-1">Cantidad Recibida</label>
+                        <input type="number" id="entrada-cantidad" required min="1" value="50" class="w-full bg-pmdark text-white px-4 py-3 rounded-xl border border-pmborder focus:border-pmblue outline-none font-bold text-base">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-pmtext uppercase tracking-wider mb-1">Costo Unitario ($)</label>
+                        <input type="number" id="entrada-costo" required min="0.1" step="0.1" value="15.0" class="w-full bg-pmdark text-white px-4 py-3 rounded-xl border border-pmborder focus:border-pmblue outline-none font-bold text-base">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block font-bold text-pmtext uppercase tracking-wider mb-1">Proveedor</label>
+                        <input type="text" id="entrada-proveedor" required placeholder="Ej. Distribuidora Central" class="w-full bg-pmdark text-white px-4 py-3 rounded-xl border border-pmborder focus:border-pmblue outline-none">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-pmtext uppercase tracking-wider mb-1">No. Factura / Remisión</label>
+                        <input type="text" id="entrada-factura" required placeholder="Ej. FAC-2026-90" class="w-full bg-pmdark text-white px-4 py-3 rounded-xl border border-pmborder focus:border-pmblue outline-none uppercase">
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full bg-pmblue hover:bg-sky-600 text-white font-black py-4 rounded-xl uppercase tracking-widest mt-4 transition-all shadow-lg">
+                    Registrar Entrada y Actualizar Stock
+                </button>
+            </form>
+        </div>
+
+        <!-- Modal Editar Producto -->
+        <div id="modal-inventario" class="hidden w-full max-w-lg bg-pmcard border border-pmborder rounded-3xl p-6 shadow-2xl relative transform scale-95 transition-transform">
+            <button onclick="cerrarModales()" class="absolute top-5 right-5 text-pmtext hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
+            <h3 class="text-xl font-serif font-black uppercase text-white mb-4 tracking-widest"><i class="fa-solid fa-box text-pmorange mr-2"></i> <span id="m-inv-title">Ficha de Producto</span></h3>
+            
+            <form id="form-inventario" onsubmit="guardarInventario(event)" class="space-y-4 font-sans text-xs">
+                <input type="hidden" id="inv-index" value="-1">
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block font-bold text-pmtext uppercase tracking-widest mb-1">SKU / Código</label>
+                        <input type="text" id="inv-sku" required class="w-full bg-pmdark text-white px-4 py-3 rounded-xl border border-pmborder focus:border-pmorange outline-none">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-pmtext uppercase tracking-widest mb-1">Categoría</label>
+                        <select id="inv-cat" class="w-full bg-pmdark text-white px-4 py-3 rounded-xl border border-pmborder focus:border-pmorange outline-none">
+                            <option value="Snacks">Snacks / Palomitas</option>
+                            <option value="Bebidas">Bebidas / Refrescos</option>
+                            <option value="Comida">Comida Caliente / Pizza</option>
+                            <option value="Dulces">Dulces y Frituras</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block font-bold text-pmtext uppercase tracking-widest mb-1">Nombre del Producto</label>
+                    <input type="text" id="inv-nombre" required class="w-full bg-pmdark text-white px-4 py-3 rounded-xl border border-pmborder focus:border-pmorange outline-none">
+                </div>
+                
+                <div class="grid grid-cols-4 gap-3">
+                    <div>
+                        <label class="block font-bold text-pmtext uppercase tracking-widest mb-1">Stock</label>
+                        <input type="number" id="inv-stock" required class="w-full bg-pmdark text-white p-3 rounded-xl border border-pmborder text-center font-bold">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-red-400 uppercase tracking-widest mb-1">Mínimo</label>
+                        <input type="number" id="inv-min" required class="w-full bg-pmdark text-white p-3 rounded-xl border border-pmborder text-center font-bold text-red-400">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-pmtext uppercase tracking-widest mb-1">Costo ($)</label>
+                        <input type="number" id="inv-costo" step="0.5" required class="w-full bg-pmdark text-white p-3 rounded-xl border border-pmborder text-center font-bold">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-green-400 uppercase tracking-widest mb-1">Precio ($)</label>
+                        <input type="number" id="inv-precio" step="0.5" required class="w-full bg-pmdark text-white p-3 rounded-xl border border-pmborder text-center font-bold text-green-400">
+                    </div>
+                </div>
+                
+                <button type="submit" class="w-full bg-pmorange hover:bg-orange-500 text-white font-black py-4 rounded-xl uppercase tracking-widest mt-4 transition-all">
+                    Guardar Cambios
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Sidebar de Navegación del Dashboard -->
+    <aside class="w-64 bg-pmcard border-r border-pmborder flex flex-col h-full shrink-0 shadow-2xl relative z-20">
+        <div class="h-20 border-b border-pmborder flex items-center px-6 gap-3">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTmU78ReuLCf8T4T3Rv6K8-yAB13kXuZX7_TQ&s" class="h-10 w-10 rounded-full grayscale brightness-125 object-cover border border-pmborder">
+            <div class="flex flex-col">
+                <h1 class="text-xl font-serif font-black tracking-widest uppercase leading-none text-white">Xilotzin</h1>
+                <span class="text-[8px] font-sans font-bold tracking-[0.3em] text-pmmagenta uppercase mt-1">Administración</span>
+            </div>
+        </div>
+
+        <nav class="flex-grow p-4 flex flex-col gap-2 mt-2">
+            <button onclick="cambiarVista('dashboard')" class="w-full text-left px-4 py-3 rounded-xl font-sans font-bold text-xs uppercase tracking-widest transition-all text-white bg-pmmagenta shadow-[0_0_15px_rgba(216,27,96,0.3)] flex items-center gap-3" id="nav-dashboard">
+                <i class="fa-solid fa-chart-line w-4"></i> Cortes & Reportes
+            </button>
+            <button onclick="cambiarVista('inventario')" class="w-full text-left px-4 py-3 rounded-xl font-sans font-bold text-xs uppercase tracking-widest transition-all text-pmtext hover:bg-pmdark hover:text-white flex items-center gap-3" id="nav-inventario">
+                <i class="fa-solid fa-boxes-stacked w-4"></i> Inventario & Entradas
+            </button>
+            <button onclick="cambiarVista('seguridad')" class="w-full text-left px-4 py-3 rounded-xl font-sans font-bold text-xs uppercase tracking-widest transition-all text-pmtext hover:bg-pmdark hover:text-white flex items-center gap-3" id="nav-seguridad">
+                <i class="fa-solid fa-shield-halved w-4"></i> Control de Accesos
+            </button>
+            <button onclick="cambiarVista('marketing')" class="w-full text-left px-4 py-3 rounded-xl font-sans font-bold text-xs uppercase tracking-widest transition-all text-pmtext hover:bg-pmdark hover:text-white flex items-center gap-3" id="nav-marketing">
+                <i class="fa-solid fa-envelope-open-text w-4"></i> Marketing & News
+            </button>
+            
+            <div class="mt-auto border-t border-pmborder pt-4">
+                <a href="taquilla.html" target="_blank" class="w-full text-center px-4 py-3 rounded-xl font-sans font-bold text-xs uppercase tracking-widest transition-all text-pmorange border border-pmorange/50 hover:bg-pmorange hover:text-white flex items-center justify-center gap-2 shadow-sm">
+                    <i class="fa-solid fa-cash-register"></i> Abrir POS Taquilla
+                </a>
+            </div>
+        </nav>
+
+        <div class="p-4 border-t border-pmborder bg-pmdark flex items-center justify-between">
+            <span class="text-[10px] text-pmtext font-bold uppercase">Rol: Administrador</span>
+            <a href="login.html" class="text-pmtext hover:text-red-500 text-xs font-bold uppercase tracking-wider" title="Cerrar sesión">
+                <i class="fa-solid fa-power-off"></i>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Área Principal de Contenido -->
+    <main class="flex-grow flex flex-col h-full overflow-hidden bg-pmdark relative">
+        <header class="h-20 border-b border-pmborder px-8 flex items-center justify-between shrink-0 bg-pmcard relative z-10 shadow-md">
+            <div>
+                <h2 class="text-xl font-serif font-black uppercase text-white" id="titulo-seccion">Reporte de Ventas & Cortes</h2>
+                <p class="text-xs font-sans text-pmtext uppercase tracking-widest mt-1" id="fecha-hoy"></p>
+            </div>
+
+            <!-- Botones Rápidos de Alertas y Correo a Gerencia -->
+            <div class="flex items-center gap-3">
+                <button onclick="enviarReportePorCorreo()" class="bg-pmdark hover:bg-pmcard text-pmblue border border-pmblue/40 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors flex items-center gap-2">
+                    <i class="fa-solid fa-paper-plane"></i> Enviar Corte a Gerencia
+                </button>
+            </div>
+        </header>
+
+        <div class="flex-grow overflow-y-auto p-8 hide-scroll relative z-0">
+
+            <!-- ========================================== -->
+            <!-- VISTA 1: CORTES CINEMATOGRÁFICOS JUEVES A MIÉRCOLES & EXCEL -->
+            <!-- ========================================== -->
+            <div id="vista-dashboard" class="block animate-[fadeInUp_0.3s_ease-out] max-w-6xl space-y-8">
+                
+                <!-- Filtros Oficiales de la Semana Cinematográfica -->
+                <div class="bg-pmcard border border-pmborder p-5 rounded-2xl flex flex-wrap items-center justify-between gap-4 shadow-lg">
+                    <div class="flex items-center gap-3">
+                        <i class="fa-solid fa-calendar-week text-pmmagenta text-2xl"></i>
+                        <div>
+                            <h4 class="text-xs font-sans font-bold uppercase text-white tracking-widest">Semana Cinematográfica (Jueves a Miércoles)</h4>
+                            <p class="text-[10px] text-pmtext">Ciclo de programación y corte de taquilla estándar de la industria</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-3">
+                        <select id="filtro-periodo" onchange="aplicarFiltroPeriodo()" class="bg-pmdark text-white text-xs font-bold uppercase px-4 py-2.5 rounded-xl border border-pmborder focus:border-pmmagenta outline-none cursor-pointer">
+                            <option value="semana_actual">Semana Actual (Jueves - Miércoles)</option>
+                            <option value="semana_anterior">Semana Anterior (Jueves - Miércoles)</option>
+                            <option value="hoy">Corte del Día (Hoy)</option>
+                            <option value="mes">Mes Completo</option>
+                        </select>
+
+                        <!-- Botón de Exportación Excel / CSV Oficial -->
+                        <button onclick="exportarReporteExcelCSV()" class="bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-widest transition-all shadow-lg flex items-center gap-2">
+                            <i class="fa-solid fa-file-excel text-base"></i> Exportar Excel / CSV
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tarjetas KPI Resumen Financiero -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="bg-pmcard border border-pmborder p-6 rounded-2xl shadow-lg">
+                        <div class="flex justify-between items-start mb-3">
+                            <p class="text-[10px] font-bold uppercase tracking-widest text-pmtext">Total Ingresos</p>
+                            <i class="fa-solid fa-sack-dollar text-green-400 text-lg"></i>
+                        </div>
+                        <h3 class="text-3xl font-serif font-black text-white" id="kpi-total-ingresos">$0</h3>
+                        <p class="text-[10px] text-pmtext uppercase mt-2">Ventas acumuladas</p>
+                    </div>
+
+                    <div class="bg-pmcard border border-pmborder p-6 rounded-2xl shadow-lg">
+                        <div class="flex justify-between items-start mb-3">
+                            <p class="text-[10px] font-bold uppercase tracking-widest text-pmtext">Taquilla (Boletos)</p>
+                            <i class="fa-solid fa-ticket text-pmmagenta text-lg"></i>
+                        </div>
+                        <h3 class="text-3xl font-serif font-black text-white" id="kpi-taquilla">$0</h3>
+                        <p class="text-[10px] text-pmtext uppercase mt-2" id="kpi-boletos-count">0 boletos vendidos</p>
+                    </div>
+
+                    <div class="bg-pmcard border border-pmborder p-6 rounded-2xl shadow-lg">
+                        <div class="flex justify-between items-start mb-3">
+                            <p class="text-[10px] font-bold uppercase tracking-widest text-pmtext">Ventas Dulcería</p>
+                            <i class="fa-solid fa-store text-pmorange text-lg"></i>
+                        </div>
+                        <h3 class="text-3xl font-serif font-black text-white" id="kpi-dulceria">$0</h3>
+                        <p class="text-[10px] text-pmtext uppercase mt-2">Snacks y combos</p>
+                    </div>
+
+                    <div class="bg-pmcard border border-pmborder p-6 rounded-2xl shadow-lg">
+                        <div class="flex justify-between items-start mb-3">
+                            <p class="text-[10px] font-bold uppercase tracking-widest text-pmtext">Efectivo vs Tarjeta</p>
+                            <i class="fa-solid fa-scale-balanced text-pmblue text-lg"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white" id="kpi-metodos">Ef: $0 | Tj: $0</h3>
+                        <p class="text-[10px] text-pmtext uppercase mt-2">Cuadre por método</p>
+                    </div>
+                </div>
+
+                <!-- Tabla de Transacciones y Folios -->
+                <div class="bg-pmcard border border-pmborder rounded-2xl overflow-hidden shadow-lg">
+                    <div class="p-5 border-b border-pmborder flex justify-between items-center">
+                        <h4 class="text-xs font-sans font-bold uppercase tracking-widest text-white">Transacciones del Período</h4>
+                        <span class="text-[10px] text-pmtext uppercase font-mono" id="transacciones-count">0 registros</span>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs font-sans whitespace-nowrap">
+                            <thead class="bg-pmdark border-b border-pmborder text-[10px] uppercase tracking-widest text-pmtext">
+                                <tr>
+                                    <th class="p-4">Folio</th>
+                                    <th class="p-4">Fecha / Hora</th>
+                                    <th class="p-4">Módulo</th>
+                                    <th class="p-4">Concepto Detallado</th>
+                                    <th class="p-4 text-center">Método</th>
+                                    <th class="p-4 text-right">Monto</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-pmborder" id="tabla-ventas-body">
+                                <!-- Inyectado por js -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- VISTA 2: INVENTARIO, ENTRADAS & PIZZA FRACCIONADA -->
+            <!-- ========================================== -->
+            <div id="vista-inventario" class="hidden animate-[fadeInUp_0.3s_ease-out] max-w-6xl space-y-8">
+                <div class="flex flex-wrap items-center justify-between gap-4">
+                    <div>
+                        <h3 class="text-sm font-sans font-bold uppercase text-white tracking-widest">Inventario Maestro & Stock Fraccionado</h3>
+                        <p class="text-xs text-pmtext">Supervisión de existencias, alertas automáticas de insumos y entradas de mercancía</p>
+                    </div>
+                    
+                    <div class="flex gap-3">
+                        <button onclick="abrirModalEntradaMercancia()" class="bg-pmblue hover:bg-sky-600 text-white px-4 py-2.5 rounded-xl font-bold text-xs uppercase tracking-widest transition-colors shadow-lg flex items-center gap-2">
+                            <i class="fa-solid fa-truck-ramp-box"></i> Registrar Entrada
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tabla de Stock Maestro -->
+                <div class="bg-pmcard border border-pmborder rounded-2xl overflow-hidden shadow-lg overflow-x-auto">
+                    <table class="w-full text-left text-xs font-sans whitespace-nowrap">
+                        <thead class="bg-pmdark border-b border-pmborder text-[10px] uppercase tracking-widest text-pmtext">
+                            <tr>
+                                <th class="p-4">SKU / Cód.</th>
+                                <th class="p-4">Producto</th>
+                                <th class="p-4 text-center">Categoría</th>
+                                <th class="p-4 text-center">Stock Actual</th>
+                                <th class="p-4 text-center">Mín. Alerta</th>
+                                <th class="p-4 text-right">Costo</th>
+                                <th class="p-4 text-right text-green-400">Precio Venta</th>
+                                <th class="p-4 text-right">Margen</th>
+                                <th class="p-4 text-right">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-pmborder" id="tabla-inventario-body">
+                            <!-- Inyectado por js -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Historial de Entradas de Mercancía Recientes -->
+                <div class="bg-pmcard border border-pmborder rounded-2xl p-6 shadow-lg">
+                    <h4 class="text-xs font-bold uppercase tracking-widest text-white mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-clipboard-list text-pmblue"></i> Últimas Entradas de Mercancía Registradas
+                    </h4>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs font-sans">
+                            <thead class="text-[10px] text-pmtext uppercase border-b border-pmborder">
+                                <tr>
+                                    <th class="pb-3">ID Entrada</th>
+                                    <th class="pb-3">Fecha</th>
+                                    <th class="pb-3">Proveedor</th>
+                                    <th class="pb-3">Factura</th>
+                                    <th class="pb-3">Insumo</th>
+                                    <th class="pb-3 text-center">Cantidad</th>
+                                    <th class="pb-3 text-right">Importe Total</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-pmborder/60" id="tabla-entradas-body">
+                                <!-- Inyectado por js -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- VISTA 3: CONTROL DE ACCESOS, ROLES, IP & HORARIOS -->
+            <!-- ========================================== -->
+            <div id="vista-seguridad" class="hidden animate-[fadeInUp_0.3s_ease-out] max-w-5xl space-y-8">
+                <div>
+                    <h3 class="text-sm font-sans font-bold uppercase text-white tracking-widest">Seguridad de Acceso & Políticas de Turno</h3>
+                    <p class="text-xs text-pmtext">Restricción estricta de inicio de sesión por zona (IP del cine) y por horario laboral asignado.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Configuración de Red Cine (IP) -->
+                    <div class="bg-pmcard border border-pmborder p-6 rounded-2xl shadow-lg space-y-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-pmmagenta/15 border border-pmmagenta/40 flex items-center justify-center text-pmmagenta">
+                                <i class="fa-solid fa-network-wired text-lg"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-bold uppercase text-white">Validación de Zona (IP del Cine)</h4>
+                                <p class="text-[10px] text-pmtext">El rol Vendedor solo puede iniciar sesión desde la red del cine</p>
+                            </div>
+                        </div>
+
+                        <div class="space-y-3 pt-2">
+                            <div>
+                                <label class="text-[10px] font-bold text-pmtext uppercase tracking-widest block mb-1">IP Autorizada de la Taquilla</label>
+                                <input type="text" id="sec-ip-cine" value="192.168.1.105" class="w-full bg-pmdark text-white px-4 py-2.5 rounded-xl border border-pmborder font-mono text-xs">
+                            </div>
+
+                            <div class="bg-pmdark p-3.5 rounded-xl border border-pmborder flex items-center justify-between">
+                                <div>
+                                    <span class="text-xs font-bold text-white block">Simular IP del Vendedor</span>
+                                    <span class="text-[10px] text-pmtext" id="sec-ip-actual-desc">Actualmente: Red Local Cine (192.168.1.105)</span>
+                                </div>
+                                <button onclick="toggleSimulacionIP()" id="btn-toggle-ip" class="bg-green-900/40 text-green-400 border border-green-700 px-3 py-1.5 rounded-lg text-xs font-bold uppercase">
+                                    Red Cine OK
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Configuración de Horario Laboral de Vendedores -->
+                    <div class="bg-pmcard border border-pmborder p-6 rounded-2xl shadow-lg space-y-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-pmorange/15 border border-pmorange/40 flex items-center justify-center text-pmorange">
+                                <i class="fa-solid fa-business-time text-lg"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-bold uppercase text-white">Restricción por Horario Laboral</h4>
+                                <p class="text-[10px] text-pmtext">Acceso permitido únicamente en el turno asignado</p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3 pt-2">
+                            <div>
+                                <label class="text-[10px] font-bold text-pmtext uppercase tracking-widest block mb-1">Hora Inicio</label>
+                                <input type="time" id="sec-horario-inicio" value="10:00" class="w-full bg-pmdark text-white px-3 py-2.5 rounded-xl border border-pmborder font-mono text-xs text-center font-bold">
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold text-pmtext uppercase tracking-widest block mb-1">Hora Cierre</label>
+                                <input type="time" id="sec-horario-fin" value="23:30" class="w-full bg-pmdark text-white px-3 py-2.5 rounded-xl border border-pmborder font-mono text-xs text-center font-bold">
+                            </div>
+                        </div>
+
+                        <!-- Autorización de Excepción / Horas Extras -->
+                        <div class="bg-pmdark p-3.5 rounded-xl border border-pmborder flex items-center justify-between mt-2">
+                            <div>
+                                <span class="text-xs font-bold text-white block">Autorizar Excepción / Horas Extras</span>
+                                <span class="text-[10px] text-pmtext">Permite login fuera de horario si el Admin lo autoriza</span>
+                            </div>
+                            <input type="checkbox" id="sec-excepcion" onchange="toggleExcepcionHoras(this.checked)" class="w-5 h-5 accent-pmmagenta cursor-pointer">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-pmcard border border-pmborder p-6 rounded-2xl shadow-lg">
+                    <h4 class="text-xs font-bold uppercase tracking-widest text-white mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-list-check text-pmmagenta"></i> Políticas de Acceso Aplicadas
+                    </h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs text-pmtext leading-relaxed">
+                        <div class="bg-pmdark p-4 rounded-xl border border-pmborder">
+                            <span class="text-white font-bold block mb-1">Rol Vendedor:</span>
+                            • Acceso únicamente a taquilla.html y módulo de tickets térmicos.<br>
+                            • Validación obligatoria de IP y turno laboral.<br>
+                            • Sin acceso a modificación de precios ni reportes financieros.
+                        </div>
+                        <div class="bg-pmdark p-4 rounded-xl border border-pmborder">
+                            <span class="text-white font-bold block mb-1">Rol Administrador:</span>
+                            • Acceso total sin restricción de horario.<br>
+                            • Capacidad para autorizar excepciones y desbloquear accesos.<br>
+                            • Exportación oficial a Excel de Jueves a Miércoles.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- VISTA 4: MARKETING, NEWSLETTER & NOTIFICACIONES -->
+            <!-- ========================================== -->
+            <div id="vista-marketing" class="hidden animate-[fadeInUp_0.3s_ease-out] max-w-5xl space-y-8">
+                <div>
+                    <h3 class="text-sm font-sans font-bold uppercase text-white tracking-widest">Marketing Digital & Captación de Newsletter</h3>
+                    <p class="text-xs text-pmtext">Lista de correos captados desde el Toast público y automatización de envíos de preventas.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Suscriptores Totales -->
+                    <div class="bg-pmcard border border-pmborder p-6 rounded-2xl shadow-lg flex flex-col justify-between">
+                        <div>
+                            <span class="text-[10px] font-bold uppercase tracking-widest text-pmtext block mb-1">Suscriptores al Newsletter</span>
+                            <h4 class="text-3xl font-serif font-black text-white" id="marketing-total-emails">0</h4>
+                        </div>
+                        <p class="text-[10px] text-pmtext mt-4">Correos captados vía notificación Toast</p>
+                    </div>
+
+                    <!-- Envíos Automatizados -->
+                    <div class="bg-pmcard border border-pmborder p-6 rounded-2xl shadow-lg md:col-span-2 space-y-4">
+                        <h4 class="text-xs font-bold uppercase text-white tracking-wider flex items-center gap-2">
+                            <i class="fa-solid fa-paper-plane text-cneRed"></i> Lanzar Campaña de Preventa / Estreno
+                        </h4>
+                        <form onsubmit="enviarCampanaNewsletter(event)" class="space-y-3 font-sans text-xs">
+                            <div>
+                                <label class="text-[10px] font-bold text-pmtext uppercase block mb-1">Título del Aviso</label>
+                                <input type="text" id="campana-titulo" required value="¡Preventa Exclusiva! Asegura tus lugares en Cine Xilotzin" class="w-full bg-pmdark text-white px-4 py-2.5 rounded-xl border border-pmborder focus:border-cneRed outline-none">
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold text-pmtext uppercase block mb-1">Película a Promocionar</label>
+                                <input type="text" id="campana-pelicula" required value="The Super Mario Bros. Movie" class="w-full bg-pmdark text-white px-4 py-2.5 rounded-xl border border-pmborder focus:border-cneRed outline-none">
+                            </div>
+                            <button type="submit" class="bg-gradient-to-r from-cneRed to-red-700 hover:from-red-600 hover:to-red-800 text-white font-bold text-xs uppercase tracking-widest py-3 px-6 rounded-xl transition-all shadow-lg flex items-center gap-2">
+                                <i class="fa-solid fa-bullhorn"></i> Enviar Notificación a Suscriptores
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Lista de Suscriptores -->
+                <div class="bg-pmcard border border-pmborder rounded-2xl p-6 shadow-lg">
+                    <h4 class="text-xs font-bold uppercase tracking-widest text-white mb-4">Base de Datos de Suscriptores</h4>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs font-sans">
+                            <thead class="text-[10px] text-pmtext uppercase border-b border-pmborder">
+                                <tr>
+                                    <th class="pb-3">Correo Electrónico</th>
+                                    <th class="pb-3">Estado</th>
+                                    <th class="pb-3 text-right">Preferencia</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-pmborder/60" id="tabla-suscriptores-body">
+                                <!-- Inyectado por js -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Scripts de Datos y Lógica del Dashboard -->
+    <script src="js/data.js"></script>
+    <script>
+        document.getElementById('fecha-hoy').innerText = new Date().toLocaleDateString('es-MX', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderResumenVentas();
+            renderInventarioCompleto();
+            renderEntradasMercancia();
+            renderSuscriptores();
+            sincronizarControlesSeguridad();
+        });
+
+        // ==========================================================
+        // CONTROL DE VISTAS (TABS)
+        // ==========================================================
+        function cambiarVista(vista) {
+            ['dashboard', 'inventario', 'seguridad', 'marketing'].forEach(v => {
+                const btn = document.getElementById(`nav-${v}`);
+                const panel = document.getElementById(`vista-${v}`);
+
+                if (v === vista) {
+                    btn?.classList.replace('text-pmtext', 'text-white');
+                    btn?.classList.add('bg-pmmagenta', 'shadow-[0_0_15px_rgba(216,27,96,0.3)]');
+                    panel?.classList.remove('hidden');
+                    panel?.classList.add('block');
+                } else {
+                    btn?.classList.replace('text-white', 'text-pmtext');
+                    btn?.classList.remove('bg-pmmagenta', 'shadow-[0_0_15px_rgba(216,27,96,0.3)]');
+                    panel?.classList.add('hidden');
+                    panel?.classList.remove('block');
+                }
+            });
+
+            const titulos = {
+                'dashboard': 'Reporte de Ventas & Cortes Cinematográficos',
+                'inventario': 'Inventario Maestro, Insumos & Entradas',
+                'seguridad': 'Control de Accesos, Roles, IP & Horarios',
+                'marketing': 'Marketing Digital, Newsletter & Campañas'
+            };
+            document.getElementById('titulo-seccion').innerText = titulos[vista] || 'Administración';
+        }
+
+        // ==========================================================
+        // 1. REPORTES Y CORTES (JUEVES A MIÉRCOLES) & EXPORTACIÓN CSV
+        // ==========================================================
+        function renderResumenVentas() {
+            const ventas = XilotzinDB.get('ventas') || [];
+            
+            let total = 0;
+            let taquilla = 0;
+            let dulceria = 0;
+            let efectivo = 0;
+            let tarjeta = 0;
+            let boletos = 0;
+
+            ventas.forEach(v => {
+                total += v.total;
+                if (v.tipo === 'Taquilla') {
+                    taquilla += v.total;
+                    boletos += (v.cantidad || 1);
+                } else {
+                    dulceria += v.total;
+                }
+
+                if (v.metodo === 'Efectivo') efectivo += v.total;
+                else tarjeta += v.total;
+            });
+
+            document.getElementById('kpi-total-ingresos').innerText = `$${total.toLocaleString('es-MX')}.00`;
+            document.getElementById('kpi-taquilla').innerText = `$${taquilla.toLocaleString('es-MX')}.00`;
+            document.getElementById('kpi-boletos-count').innerText = `${boletos} boletos vendidos`;
+            document.getElementById('kpi-dulceria').innerText = `$${dulceria.toLocaleString('es-MX')}.00`;
+            document.getElementById('kpi-metodos').innerText = `Ef: $${efectivo} | Tj: $${tarjeta}`;
+            document.getElementById('transacciones-count').innerText = `${ventas.length} transacciones`;
+
+            const tbody = document.getElementById('tabla-ventas-body');
+            if (tbody) {
+                tbody.innerHTML = ventas.slice(0, 15).map(v => `
+                    <tr class="hover:bg-pmdark/50 transition-colors">
+                        <td class="p-4 font-mono font-bold text-pmmagenta">${v.folio}</td>
+                        <td class="p-4 text-pmtext">${v.fecha} • ${v.hora}</td>
+                        <td class="p-4"><span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase ${v.tipo === 'Taquilla' ? 'bg-pmmagenta/20 text-pmmagenta' : 'bg-pmorange/20 text-pmorange'}">${v.tipo}</span></td>
+                        <td class="p-4 text-white font-medium max-w-xs truncate" title="${v.concepto}">${v.concepto}</td>
+                        <td class="p-4 text-center text-pmtext">${v.metodo}</td>
+                        <td class="p-4 text-right font-bold text-white font-mono">$${v.total}.00</td>
+                    </tr>
+                `).join('');
+            }
+        }
+
+        function aplicarFiltroPeriodo() {
+            mostrarToast("Filtro cinematográfico de Jueves a Miércoles aplicado con éxito.");
+            renderResumenVentas();
+        }
+
+        function exportarReporteExcelCSV() {
+            const ventas = XilotzinDB.get('ventas') || [];
+            if (ventas.length === 0) {
+                alert("No hay transacciones registradas para exportar.");
+                return;
+            }
+
+            // Encabezados en formato CSV oficial para Excel
+            let csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += "Folio,Fecha,Hora,Tipo,Concepto,Cantidad,Total_MXN,Metodo_Pago,Cajero\n";
+
+            ventas.forEach(v => {
+                const fila = [
+                    v.folio,
+                    v.fecha,
+                    v.hora,
+                    v.tipo,
+                    `"${(v.concepto || '').replace(/"/g, '""')}"`,
+                    v.cantidad,
+                    v.total,
+                    `"${v.metodo}"`,
+                    `"${v.cajero}"`
+                ].join(',');
+                csvContent += fila + "\n";
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `Corte_Taquilla_Xilotzin_Jueves_Miercoles_${new Date().toISOString().split('T')[0]}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            mostrarToast("Archivo Excel/CSV descargado correctamente");
+        }
+
+        // ==========================================================
+        // 2. INVENTARIO MAESTRO & ENTRADAS DE MERCANCÍA
+        // ==========================================================
+        function renderInventarioCompleto() {
+            const inventario = XilotzinDB.get('inventario') || [];
+            const tbody = document.getElementById('tabla-inventario-body');
+            if (!tbody) return;
+
+            tbody.innerHTML = inventario.map((item, i) => {
+                const stockDisplay = item.esFraccionado ? `${item.stockRebanadas} reb.` : item.stock;
+                const alerta = (item.esFraccionado ? item.stockRebanadas : item.stock) <= (item.min || 10);
+                const margen = item.precio > 0 ? (((item.precio - item.costo) / item.precio) * 100).toFixed(0) : 0;
+
+                return `
+                <tr class="hover:bg-pmdark/50 transition-colors">
+                    <td class="p-4 font-mono text-pmtext font-bold">${item.sku}</td>
+                    <td class="p-4 font-bold text-white uppercase">${item.nombre}</td>
+                    <td class="p-4 text-center"><span class="px-2 py-0.5 rounded text-[10px] border border-pmborder text-pmtext uppercase">${item.cat}</span></td>
+                    <td class="p-4 text-center">
+                        <span class="font-black text-sm ${alerta ? 'text-red-500 animate-pulse' : 'text-white'}">${stockDisplay}</span>
+                        ${alerta ? '<span class="block text-[8px] text-red-500 font-bold uppercase tracking-wider">¡Stock Bajo!</span>' : ''}
+                    </td>
+                    <td class="p-4 text-center text-pmtext font-mono">${item.min || 10}</td>
+                    <td class="p-4 text-right text-pmtext font-mono">$${item.costo.toFixed(2)}</td>
+                    <td class="p-4 text-right text-green-400 font-mono font-black text-sm">$${item.precio.toFixed(2)}</td>
+                    <td class="p-4 text-right text-pmorange font-mono font-bold">${margen}%</td>
+                    <td class="p-4 text-right">
+                        <button onclick="abrirModalInventario(${i})" class="text-pmtext hover:text-white p-1 mr-2" title="Editar Ficha"><i class="fa-solid fa-pen"></i></button>
+                    </td>
+                </tr>
+                `;
+            }).join('');
+        }
+
+        function renderEntradasMercancia() {
+            const entradas = XilotzinDB.get('entradas_mercancia') || [];
+            const tbody = document.getElementById('tabla-entradas-body');
+            if (!tbody) return;
+
+            tbody.innerHTML = entradas.map(e => `
+                <tr class="hover:bg-pmdark/40 transition-colors">
+                    <td class="py-2.5 font-mono font-bold text-pmblue">${e.id}</td>
+                    <td class="py-2.5 text-pmtext">${e.fecha}</td>
+                    <td class="py-2.5 font-bold text-white">${e.proveedor}</td>
+                    <td class="py-2.5 text-pmtext font-mono">${e.factura}</td>
+                    <td class="py-2.5 text-white">${e.producto}</td>
+                    <td class="py-2.5 text-center font-bold text-white font-mono">${e.cantidad}</td>
+                    <td class="py-2.5 text-right font-mono font-bold text-green-400">$${e.total.toFixed(2)}</td>
+                </tr>
+            `).join('');
+
+            // Llenar select del modal de entrada
+            const select = document.getElementById('entrada-sku');
+            const inventario = XilotzinDB.get('inventario') || [];
+            if (select) {
+                select.innerHTML = inventario.map(p => `
+                    <option value="${p.sku}">${p.nombre} (SKU: ${p.sku})</option>
+                `).join('');
+            }
+        }
+
+        function abrirModalEntradaMercancia() {
+            const overlay = document.getElementById('modal-overlay');
+            const modal = document.getElementById('modal-entrada-mercancia');
+            overlay.classList.remove('hidden'); overlay.classList.add('flex');
+            setTimeout(() => { overlay.classList.remove('opacity-0'); modal.classList.remove('hidden', 'scale-95'); }, 10);
+        }
+
+        function guardarEntradaMercancia(e) {
+            e.preventDefault();
+            const sku = document.getElementById('entrada-sku').value;
+            const cantidad = parseInt(document.getElementById('entrada-cantidad').value);
+            const costoUnitario = parseFloat(document.getElementById('entrada-costo').value);
+            const proveedor = document.getElementById('entrada-proveedor').value;
+            const factura = document.getElementById('entrada-factura').value;
+
+            let inventario = XilotzinDB.get('inventario') || [];
+            const prod = inventario.find(p => p.sku === sku);
+
+            if (prod) {
+                if (prod.esFraccionado) {
+                    prod.stockRebanadas += (cantidad * (prod.rebanadasPorPizza || 8));
+                } else {
+                    prod.stock += cantidad;
+                }
+                prod.costo = costoUnitario;
+                XilotzinDB.set('inventario', inventario);
+            }
+
+            let entradas = XilotzinDB.get('entradas_mercancia') || [];
+            entradas.unshift({
+                id: `ENT-00${entradas.length + 1}`,
+                fecha: new Date().toISOString().split('T')[0],
+                proveedor: proveedor,
+                factura: factura,
+                producto: prod ? prod.nombre : sku,
+                cantidad: cantidad,
+                costoUnitario: costoUnitario,
+                total: cantidad * costoUnitario
+            });
+            XilotzinDB.set('entradas_mercancia', entradas);
+
+            cerrarModales();
+            renderInventarioCompleto();
+            renderEntradasMercancia();
+            mostrarToast("Entrada de mercancía registrada y stock actualizado.");
+        }
+
+        function abrirModalInventario(i) {
+            const inventario = XilotzinDB.get('inventario') || [];
+            const item = inventario[i];
+            if (!item) return;
+
+            document.getElementById('inv-index').value = i;
+            document.getElementById('inv-sku').value = item.sku;
+            document.getElementById('inv-nombre').value = item.nombre;
+            document.getElementById('inv-cat').value = item.cat;
+            document.getElementById('inv-stock').value = item.esFraccionado ? item.stockRebanadas : item.stock;
+            document.getElementById('inv-min').value = item.min || 10;
+            document.getElementById('inv-costo').value = item.costo;
+            document.getElementById('inv-precio').value = item.precio;
+
+            const overlay = document.getElementById('modal-overlay');
+            const modal = document.getElementById('modal-inventario');
+            overlay.classList.remove('hidden'); overlay.classList.add('flex');
+            setTimeout(() => { overlay.classList.remove('opacity-0'); modal.classList.remove('hidden', 'scale-95'); }, 10);
+        }
+
+        function guardarInventario(e) {
+            e.preventDefault();
+            const index = parseInt(document.getElementById('inv-index').value);
+            let inventario = XilotzinDB.get('inventario') || [];
+
+            if (index > -1 && inventario[index]) {
+                const item = inventario[index];
+                item.sku = document.getElementById('inv-sku').value;
+                item.nombre = document.getElementById('inv-nombre').value;
+                item.cat = document.getElementById('inv-cat').value;
+                
+                if (item.esFraccionado) {
+                    item.stockRebanadas = parseInt(document.getElementById('inv-stock').value);
+                } else {
+                    item.stock = parseInt(document.getElementById('inv-stock').value);
+                }
+
+                item.min = parseInt(document.getElementById('inv-min').value);
+                item.costo = parseFloat(document.getElementById('inv-costo').value);
+                item.precio = parseFloat(document.getElementById('inv-precio').value);
+
+                XilotzinDB.set('inventario', inventario);
+                renderInventarioCompleto();
+                cerrarModales();
+                mostrarToast("Ficha de producto modificada con éxito.");
+            }
+        }
+
+        function cerrarModales() {
+            const overlay = document.getElementById('modal-overlay');
+            ['modal-entrada-mercancia', 'modal-inventario'].forEach(id => {
+                const m = document.getElementById(id);
+                if (m) {
+                    m.classList.add('scale-95');
+                    setTimeout(() => m.classList.add('hidden'), 200);
+                }
+            });
+            overlay.classList.add('opacity-0');
+            setTimeout(() => { overlay.classList.add('hidden'); overlay.classList.remove('flex'); }, 300);
+        }
+
+        // ==========================================================
+        // 3. CONTROL DE ACCESOS, ROLES, IP & HORARIOS
+        // ==========================================================
+        function sincronizarControlesSeguridad() {
+            const cfg = XilotzinDB.get('config_seguridad') || {};
+            const elIpCine = document.getElementById('sec-ip-cine');
+            const elInicio = document.getElementById('sec-horario-inicio');
+            const elFin = document.getElementById('sec-horario-fin');
+            const elExc = document.getElementById('sec-excepcion');
+
+            if (elIpCine && cfg.ipCineAutorizada) elIpCine.value = cfg.ipCineAutorizada;
+            if (elInicio && cfg.horarioInicioVendedor) elInicio.value = cfg.horarioInicioVendedor;
+            if (elFin && cfg.horarioFinVendedor) elFin.value = cfg.horarioFinVendedor;
+            if (elExc) elExc.checked = !!cfg.excepcionHorasExtras;
+
+            actualizarBotonSimulacionIP(cfg.ipActualSimulada === cfg.ipCineAutorizada);
+        }
+
+        function toggleSimulacionIP() {
+            let cfg = XilotzinDB.get('config_seguridad') || {};
+            const esMismaRed = cfg.ipActualSimulada === cfg.ipCineAutorizada;
+
+            if (esMismaRed) {
+                // Simular que el vendedor se conecta desde IP externa (fuera de la red del cine)
+                cfg.ipActualSimulada = '187.190.22.40';
+                mostrarToast("Simulación cambiada a: IP EXTERNA (Fuera de la red del cine)", true);
+            } else {
+                cfg.ipActualSimulada = cfg.ipCineAutorizada || '192.168.1.105';
+                mostrarToast("Simulación cambiada a: RED DEL CINE (IP Autorizada)");
+            }
+
+            XilotzinDB.set('config_seguridad', cfg);
+            actualizarBotonSimulacionIP(!esMismaRed);
+        }
+
+        function actualizarBotonSimulacionIP(estaEnRedCine) {
+            const btn = document.getElementById('btn-toggle-ip');
+            const desc = document.getElementById('sec-ip-actual-desc');
+            if (estaEnRedCine) {
+                btn.className = 'bg-green-900/40 text-green-400 border border-green-700 px-3 py-1.5 rounded-lg text-xs font-bold uppercase';
+                btn.innerText = 'Red Cine OK';
+                if (desc) desc.innerText = 'Actualmente: Red Local Cine (192.168.1.105)';
+            } else {
+                btn.className = 'bg-red-900/40 text-red-400 border border-red-700 px-3 py-1.5 rounded-lg text-xs font-bold uppercase';
+                btn.innerText = 'IP Externa (Bloqueo)';
+                if (desc) desc.innerText = 'Actualmente: IP Externa (187.190.22.40 - Probar Bloqueo en Login)';
+            }
+        }
+
+        function toggleExcepcionHoras(activa) {
+            let cfg = XilotzinDB.get('config_seguridad') || {};
+            cfg.excepcionHorasExtras = activa;
+            XilotzinDB.set('config_seguridad', cfg);
+            mostrarToast(activa ? "Excepción de horas extras ACTIVADA para Vendedor" : "Excepción DESACTIVADA");
+        }
+
+        // ==========================================================
+        // 4. MARKETING, NEWSLETTER & NOTIFICACIONES
+        // ==========================================================
+        function renderSuscriptores() {
+            const emails = XilotzinDB.get('suscriptores_newsletter') || [];
+            document.getElementById('marketing-total-emails').innerText = emails.length;
+
+            const tbody = document.getElementById('tabla-suscriptores-body');
+            if (tbody) {
+                tbody.innerHTML = emails.map(email => `
+                    <tr class="hover:bg-pmdark/40 transition-colors">
+                        <td class="py-3 text-white font-mono">${email}</td>
+                        <td class="py-3"><span class="bg-green-900/40 text-green-400 border border-green-700 text-[9px] font-bold uppercase px-2 py-0.5 rounded">Activo</span></td>
+                        <td class="py-3 text-right text-pmtext text-[11px]">Preventas y Estrenos</td>
+                    </tr>
+                `).join('');
+            }
+        }
+
+        function enviarCampanaNewsletter(e) {
+            e.preventDefault();
+            const titulo = document.getElementById('campana-titulo').value;
+            const pelicula = document.getElementById('campana-pelicula').value;
+            const suscriptores = XilotzinDB.get('suscriptores_newsletter') || [];
+
+            alert(`¡Campaña Enviada Exitosamente!\n----------------------------------------\nAsunto: ${titulo}\nPelícula: ${pelicula}\nDestinatarios: ${suscriptores.length} suscriptores del Cine Xilotzin.\n\nLos correos han sido despachados en cola con plantilla optimizada para móviles.`);
+            mostrarToast(`Aviso enviado a ${suscriptores.length} suscriptores`);
+        }
+
+        function enviarReportePorCorreo() {
+            const correoGerencia = "gerencia@cinexilotzin.com";
+            const ventas = XilotzinDB.get('ventas') || [];
+            const total = ventas.reduce((acc, v) => acc + v.total, 0);
+
+            alert(`CORREO ENVIADO A GERENCIA\n----------------------------------------\nDestinatario: ${correoGerencia}\nAsunto: Corte de Caja y Taquilla Cine Xilotzin - Semana Oficial\nTotal Reportado: $${total}.00 MXN\nTransacciones: ${ventas.length}\nEstado: Entregado en bandeja de entrada.`);
+            mostrarToast("Corte enviado a gerencia@cinexilotzin.com");
+        }
+
+        // Toast de retroalimentación
+        let toastTimeout;
+        function mostrarToast(msg, isError = false) {
+            const toast = document.getElementById('toast');
+            const icon = document.getElementById('toast-icon');
+            document.getElementById('toast-msg').innerText = msg;
+            
+            if (isError) {
+                toast.classList.replace('border-pmborder', 'border-red-500');
+                icon.className = 'fa-solid fa-triangle-exclamation text-red-500';
+            } else {
+                toast.classList.replace('border-red-500', 'border-pmborder');
+                icon.className = 'fa-solid fa-check text-green-500';
+            }
+
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => toast.classList.add('translate-y-20', 'opacity-0'), 3500);
+        }
+    </script>
+</body>
+</html>

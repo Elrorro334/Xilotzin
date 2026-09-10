@@ -1,0 +1,24 @@
+{
+  "name": "Cine Teatro Xilotzin - POS & Cartelera",
+  "short_name": "Cine Xilotzin",
+  "description": "Sistema Integral de Gestión Cinematográfica (POS & Marketing) para Cine Xilotzin",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#0A0A0A",
+  "theme_color": "#E11D2F",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTmU78ReuLCf8T4T3Rv6K8-yAB13kXuZX7_TQ&s",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTmU78ReuLCf8T4T3Rv6K8-yAB13kXuZX7_TQ&s",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

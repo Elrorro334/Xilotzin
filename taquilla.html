@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POS Taquilla Inteligente | Cine Teatro Xilotzin</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#D81B60">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        pmdark: '#050505',
+                        pmcard: '#111111',
+                        pmborder: '#262626',
+                        pmmagenta: '#D81B60',
+                        pmorange: '#F57C00',
+                        pmblue: '#0288D1',
+                        pmpurple: '#7B1FA2',
+                        pmlight: '#f3f4f6',
+                        pmtext: '#a3a3a3',
+                        posbg: '#0a0a0a'
+                    },
+                    fontFamily: {
+                        sans: ['Montserrat', 'sans-serif'],
+                        serif: ['"Playfair Display"', 'serif'],
+                        mono: ['"Space Mono"', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700;900&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .step-active { color: #fff; border-bottom: 2px solid #D81B60; }
+        .step-inactive { color: #a3a3a3; border-bottom: 2px solid transparent; }
+        .toggle-checkbox:checked { right: 0; border-color: #D81B60; }
+        .toggle-checkbox:checked + .toggle-label { background-color: #D81B60; }
+    </style>
+</head>
+
+<body class="bg-posbg text-pmlight antialiased h-screen flex flex-col overflow-hidden selection:bg-pmmagenta selection:text-white">
+
+    <!-- Header POS -->
+    <header class="bg-pmcard border-b border-pmborder shrink-0 z-50 px-4 py-3 flex justify-between items-center shadow-md">
+        <div class="flex items-center gap-4">
+            <div class="bg-pmmagenta/15 p-2 rounded-xl border border-pmmagenta/40">
+                <i class="fa-solid fa-cash-register text-pmmagenta text-xl"></i>
+            </div>
+            <div>
+                <div class="flex items-center gap-2">
+                    <h1 class="text-lg font-sans font-black uppercase text-white tracking-widest leading-none">Xilotzin POS</h1>
+                    <span class="bg-green-950 text-green-400 border border-green-800 text-[9px] font-bold uppercase px-2 py-0.5 rounded">Caja 01 • En Línea</span>
+                </div>
+                <p class="text-[9px] font-sans font-bold uppercase tracking-[0.2em] text-pmtext mt-0.5" id="reloj-pos">--:--</p>
+            </div>
+        </div>
+        
+        <div class="flex items-center gap-2 md:gap-3">
+            <!-- Botón de Escáner QR de Pre-órdenes -->
+            <button onclick="abrirModalEscanerQR()" class="bg-pmmagenta/20 text-white border border-pmmagenta hover:bg-pmmagenta px-3 md:px-4 py-2 rounded-lg font-sans font-bold text-[10px] md:text-xs uppercase tracking-widest transition-all flex items-center gap-2 shadow-[0_0_15px_rgba(216,27,96,0.3)] animate-pulse">
+                <i class="fa-solid fa-qrcode text-base"></i> <span class="hidden sm:inline">Escanear QR Pre-orden</span>
+            </button>
+
+            <button onclick="saltarADulceria()" class="bg-pmdark text-pmorange border border-pmorange/50 hover:bg-pmorange hover:text-white px-3 md:px-4 py-2 rounded-lg font-sans font-bold text-[10px] md:text-xs uppercase tracking-widest transition-colors flex items-center gap-2">
+                <i class="fa-solid fa-store"></i> <span class="hidden sm:inline">Dulcería</span>
+            </button>
+            <div class="w-px h-6 bg-pmborder mx-1"></div>
+            <button onclick="cancelarVenta()" class="bg-red-900/30 text-red-500 hover:bg-red-600 hover:text-white border border-red-900 px-3 md:px-4 py-2 rounded-lg font-sans font-bold text-[10px] md:text-xs uppercase tracking-widest transition-colors flex items-center gap-2">
+                <i class="fa-solid fa-ban"></i> <span class="hidden sm:inline">Cancelar</span>
+            </button>
+            <div class="w-px h-6 bg-pmborder mx-1"></div>
+            <a href="login.html" class="bg-pmcard text-pmtext hover:text-white border border-pmborder hover:border-pmtext px-3 md:px-4 py-2 rounded-lg font-sans font-bold text-[10px] md:text-xs uppercase tracking-widest transition-colors flex items-center gap-2">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i> <span class="hidden sm:inline">Salir</span>
+            </a>
+        </div>
+    </header>
+
+    <!-- Barra de Navegación de Pasos (Wizard) -->
+    <div class="bg-pmcard/60 border-b border-pmborder px-6 py-2.5 flex justify-between items-center shrink-0 shadow-sm">
+        <div class="flex gap-8">
+            <div id="nav-step-1" class="step-active pb-1 font-sans font-bold text-xs uppercase tracking-widest transition-all cursor-pointer" onclick="cambiarPaso(1)">
+                <i class="fa-solid fa-ticket text-pmmagenta mr-1"></i> 1. Boletaje (Acceso General)
+            </div>
+            <div id="nav-step-2" class="step-inactive pb-1 font-sans font-bold text-xs uppercase tracking-widest transition-all cursor-pointer" onclick="cambiarPaso(2)">
+                <i class="fa-solid fa-cookie-bite text-pmorange mr-1"></i> 2. Dulcería & Combos
+            </div>
+            <div id="nav-step-3" class="step-inactive pb-1 font-sans font-bold text-xs uppercase tracking-widest transition-all cursor-pointer" onclick="cambiarPaso(3)">
+                <i class="fa-solid fa-credit-card text-pmblue mr-1"></i> 3. Cobro & Ticket Térmico
+            </div>
+        </div>
+
+        <!-- Indicador de Insumos / Alerta Stock -->
+        <div class="hidden md:flex items-center gap-3 text-[11px] font-mono text-pmtext">
+            <span id="pos-indicador-pizza" class="bg-pmdark px-2.5 py-1 rounded border border-pmborder">
+                🍕 Rebanadas Pizza: <strong class="text-white">--</strong>
+            </span>
+        </div>
+    </div>
+
+    <!-- Contenido Principal -->
+    <main class="flex-grow flex overflow-hidden">
+        
+        <!-- Área de Selección (Izquierda) -->
+        <section class="w-full lg:w-2/3 bg-posbg flex flex-col h-full relative overflow-y-auto hide-scroll" id="main-view-container">
+            
+            <!-- PASO 1: BOLETAJE RÁPIDO (ACCESO GENERAL SIN ASIGNACIÓN DE BUTACAS) -->
+            <div id="view-1-boletos" class="block animate-[fadeIn_0.3s_ease-out] flex flex-col h-full">
+                <!-- Filtros y Búsqueda -->
+                <div class="p-4 border-b border-pmborder bg-pmcard/50 flex gap-4 shrink-0 justify-between items-center sticky top-0 z-10 backdrop-blur-md">
+                    <div class="relative w-full md:w-1/2">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fa-solid fa-magnifying-glass text-pmtext"></i>
+                        </div>
+                        <input type="text" id="busqueda-peli" placeholder="Buscar función o película..." class="w-full bg-pmdark text-white pl-10 pr-3 py-2 text-sm rounded-lg border border-pmborder focus:outline-none focus:border-pmmagenta transition-colors font-sans uppercase tracking-wider">
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <div class="flex items-center gap-3 bg-pmdark px-4 py-2 rounded-lg border border-pmborder whitespace-nowrap">
+                            <span class="text-[10px] font-bold text-pmtext uppercase tracking-widest">Solo Próximas</span>
+                            <div class="relative inline-block w-8 align-middle select-none transition duration-200 ease-in mt-0.5">
+                                <input type="checkbox" id="toggle-proximos" checked onchange="aplicarFiltrosBoletos()" class="toggle-checkbox absolute block w-4 h-4 rounded-full bg-white border-4 appearance-none cursor-pointer outline-none"/>
+                                <label for="toggle-proximos" class="toggle-label block overflow-hidden h-4 rounded-full bg-pmborder cursor-pointer transition-colors"></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notificación de Modo Venta Ágil -->
+                <div class="bg-pmmagenta/10 border-b border-pmmagenta/30 px-6 py-2.5 flex items-center justify-between text-xs">
+                    <span class="text-white font-bold flex items-center gap-2">
+                        <i class="fa-solid fa-bolt text-pmmagenta"></i> Venta Ágil de Boletos: Cobro por función y horario sin asignación de asientos.
+                    </span>
+                    <span class="text-pmtext text-[11px]">Acceso General ($50 MXN)</span>
+                </div>
+                
+                <!-- Grid de Películas y Horarios para Taquilla -->
+                <div class="grid grid-cols-1 xl:grid-cols-2 gap-4 p-6" id="grid-boletos">
+                    <div class="col-span-full py-10 text-center text-pmtext"><i class="fa-solid fa-spinner fa-spin text-2xl mb-2 text-pmmagenta"></i><br>Cargando cartelera oficial...</div>
+                </div>
+            </div>
+
+            <!-- PASO 2: CATÁLOGO DE DULCERÍA CON SCANNER DE BARRAS & INVENTARIO FRACCIONADO -->
+            <div id="view-2-dulceria" class="hidden animate-[fadeIn_0.3s_ease-out] p-6 flex flex-col">
+                <!-- Barra de Lector de Código de Barras -->
+                <div class="bg-pmcard border border-pmborder rounded-2xl p-4 mb-6 flex flex-col md:flex-row items-center justify-between gap-4 shadow-lg">
+                    <div class="flex items-center gap-3 w-full md:w-auto">
+                        <div class="w-10 h-10 rounded-xl bg-pmorange/15 border border-pmorange/40 flex items-center justify-center text-pmorange text-xl">
+                            <i class="fa-solid fa-barcode"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xs font-sans font-bold uppercase text-white tracking-wider">Lector de Código de Barras</h3>
+                            <p class="text-[10px] text-pmtext">Escanea el SKU con el lector óptico o escríbelo para agregar directo al carrito</p>
+                        </div>
+                    </div>
+
+                    <form onsubmit="procesarEscaneoBarcode(event)" class="flex gap-2 w-full md:w-80">
+                        <input type="text" id="input-barcode-scanner" placeholder="Escanear SKU (Ej: 7501001)..." class="w-full bg-pmdark text-white px-3 py-2 text-xs rounded-lg border border-pmborder focus:border-pmorange outline-none font-mono uppercase">
+                        <button type="submit" class="bg-pmorange hover:bg-orange-600 text-white px-3 py-2 rounded-lg font-bold text-xs uppercase transition-colors">
+                            <i class="fa-solid fa-plus"></i>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Sección Especial de Pizza Fraccionada -->
+                <div class="bg-gradient-to-r from-orange-950/40 via-pmcard to-pmcard border border-orange-900/50 rounded-2xl p-5 mb-6 shadow-md">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
+                        <div class="flex items-center gap-2.5">
+                            <span class="text-2xl">🍕</span>
+                            <div>
+                                <h4 class="text-sm font-sans font-black uppercase text-white tracking-wide">Control de Inventario Fraccionado: Pizzas</h4>
+                                <p class="text-[10px] text-pmtext">Descuento automático proporcional de insumos (1 rebanada o unidad completa de 8 rebanadas)</p>
+                            </div>
+                        </div>
+                        <span id="pizza-stock-badge" class="bg-orange-900/40 text-orange-400 border border-orange-700/60 font-mono text-xs font-bold px-3 py-1.5 rounded-lg">
+                            Stock: 56 rebanadas (7 pizzas)
+                        </span>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                        <button onclick="agregarPizzaFraccionada('rebanada')" class="bg-pmdark hover:bg-orange-950/60 border border-pmborder hover:border-orange-500 p-4 rounded-xl flex items-center justify-between transition-all text-left group">
+                            <div class="flex flex-col">
+                                <span class="text-xs font-black uppercase text-white group-hover:text-pmorange">Rebanada Individual</span>
+                                <span class="text-[10px] text-pmtext">Descuenta 1 rebanada del stock</span>
+                            </div>
+                            <span class="text-lg font-serif font-black text-pmorange">$35.00</span>
+                        </button>
+                        <button onclick="agregarPizzaFraccionada('completa')" class="bg-pmdark hover:bg-orange-950/60 border border-pmborder hover:border-orange-500 p-4 rounded-xl flex items-center justify-between transition-all text-left group">
+                            <div class="flex flex-col">
+                                <span class="text-xs font-black uppercase text-white group-hover:text-pmorange">Pizza Completa (8 Rebanadas)</span>
+                                <span class="text-[10px] text-pmtext">Descuenta 8 rebanadas del stock</span>
+                            </div>
+                            <span class="text-lg font-serif font-black text-pmorange">$180.00</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Catálogo Visual de Dulcería -->
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-sm font-serif font-black uppercase text-white tracking-widest">Catálogo de Snacks y Bebidas</h2>
+                    <span class="text-[10px] text-pmtext font-mono">Haz clic para agregar</span>
+                </div>
+                <div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-4" id="grid-dulceria">
+                    <!-- Inyectado por script -->
+                </div>
+            </div>
+
+            <!-- PASO 3: COBRO Y TERMINAL DE PAGOS -->
+            <div id="view-3-cobro" class="hidden animate-[fadeIn_0.3s_ease-out] flex-col items-center justify-center h-full p-6 relative">
+                
+                <div class="bg-pmcard border border-pmborder rounded-3xl p-8 w-full max-w-xl text-center shadow-[0_20px_50px_rgba(0,0,0,0.5)] relative overflow-hidden transition-all duration-300">
+                    
+                    <!-- Selector Principal de Método de Pago -->
+                    <div id="panel-cobro-selector" class="block animate-[fadeIn_0.3s_ease-out]">
+                        <i class="fa-solid fa-receipt text-5xl text-pmmagenta mb-4 opacity-80"></i>
+                        <h2 class="text-xs font-sans font-bold uppercase text-pmtext tracking-widest mb-1">Monto Total a Cobrar</h2>
+                        <p class="text-5xl font-serif font-black text-white mb-8">$<span id="cobro-total-final">0</span></p>
+                        
+                        <div class="grid grid-cols-2 gap-4">
+                            <button onclick="prepararCobro('EFECTIVO')" class="bg-pmdark hover:bg-green-950/40 text-white font-black py-6 rounded-2xl uppercase tracking-widest transition-all border border-pmborder hover:border-green-500 flex flex-col items-center gap-3 group active:scale-95 shadow-lg">
+                                <div class="w-14 h-14 rounded-full bg-green-500/10 flex items-center justify-center group-hover:bg-green-500 transition-colors">
+                                    <i class="fa-solid fa-money-bill-wave text-2xl text-green-500 group-hover:text-white"></i>
+                                </div>
+                                <span class="text-xs">Pago en Efectivo</span>
+                            </button>
+                            <button onclick="prepararCobro('TARJETA')" class="bg-pmdark hover:bg-blue-950/40 text-white font-black py-6 rounded-2xl uppercase tracking-widest transition-all border border-pmborder hover:border-pmblue flex flex-col items-center gap-3 group active:scale-95 shadow-lg">
+                                <div class="w-14 h-14 rounded-full bg-pmblue/10 flex items-center justify-center group-hover:bg-pmblue transition-colors">
+                                    <i class="fa-solid fa-credit-card text-2xl text-pmblue group-hover:text-white"></i>
+                                </div>
+                                <span class="text-xs">Tarjeta (Mercado Pago)</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Panel de Efectivo con Cálculo de Cambio -->
+                    <div id="panel-cobro-efectivo" class="hidden flex-col animate-[fadeIn_0.2s_ease-out]">
+                        <div class="flex items-center justify-between mb-6 border-b border-pmborder pb-4">
+                            <button onclick="volverSelectorPago()" class="text-pmtext hover:text-white transition-colors text-xl p-2"><i class="fa-solid fa-arrow-left"></i></button>
+                            <h2 class="text-sm font-sans font-bold uppercase text-white tracking-widest flex items-center gap-2"><i class="fa-solid fa-money-bill-wave text-green-500"></i> Cobro en Efectivo</h2>
+                            <div class="w-8"></div>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-4 mb-6 text-left">
+                            <div class="bg-pmdark p-4 rounded-xl border border-pmborder">
+                                <p class="text-[10px] font-bold text-pmtext uppercase tracking-widest mb-1">Total a Pagar</p>
+                                <p class="text-3xl font-black text-white">$<span id="efectivo-total-display">0</span></p>
+                            </div>
+                            <div class="bg-pmdark p-4 rounded-xl border border-pmorange/50">
+                                <p class="text-[10px] font-bold text-pmorange uppercase tracking-widest mb-1">Cambio a Entregar</p>
+                                <p class="text-3xl font-black text-pmorange">$<span id="efectivo-cambio-display">0.00</span></p>
+                            </div>
+                        </div>
+
+                        <div class="mb-6">
+                            <label class="block text-left text-xs font-bold text-pmtext uppercase tracking-widest mb-2">Efectivo Recibido del Cliente:</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-white font-black text-2xl pointer-events-none">$</span>
+                                <input type="number" id="input-efectivo-recibido" oninput="calcularCambio()" placeholder="0.00" class="w-full bg-pmdark text-white pl-12 pr-4 py-3 text-2xl font-black rounded-xl border-2 border-pmborder focus:outline-none focus:border-green-500 transition-colors text-right font-mono">
+                            </div>
+                            
+                            <div class="flex gap-2 mt-3">
+                                <button type="button" onclick="setEfectivoRapido('exacto')" class="flex-1 bg-pmdark hover:bg-pmborder text-white text-xs font-bold py-2 rounded-lg border border-pmborder uppercase transition-colors">Exacto</button>
+                                <button type="button" onclick="setEfectivoRapido(100)" class="flex-1 bg-pmdark hover:bg-pmborder text-white text-xs font-bold py-2 rounded-lg border border-pmborder uppercase transition-colors">$100</button>
+                                <button type="button" onclick="setEfectivoRapido(200)" class="flex-1 bg-pmdark hover:bg-pmborder text-white text-xs font-bold py-2 rounded-lg border border-pmborder uppercase transition-colors">$200</button>
+                                <button type="button" onclick="setEfectivoRapido(500)" class="flex-1 bg-pmdark hover:bg-pmborder text-white text-xs font-bold py-2 rounded-lg border border-pmborder uppercase transition-colors">$500</button>
+                            </div>
+                        </div>
+
+                        <button id="btn-confirmar-efectivo" disabled onclick="finalizarVentaYMostrarTicket('Efectivo')" class="w-full bg-gradient-to-r from-green-700 to-green-600 hover:from-green-600 hover:to-green-500 text-white font-sans font-black py-4 rounded-xl uppercase tracking-widest transition-all shadow-lg flex justify-center items-center gap-3 disabled:opacity-40 disabled:cursor-not-allowed">
+                            Registrar Venta e Imprimir Ticket Térmico <i class="fa-solid fa-print"></i>
+                        </button>
+                    </div>
+
+                    <!-- Panel de Tarjeta Mercado Pago -->
+                    <div id="panel-cobro-tarjeta" class="hidden flex-col animate-[fadeIn_0.2s_ease-out]">
+                        <div class="flex items-center justify-between mb-6 border-b border-pmborder pb-4">
+                            <button onclick="volverSelectorPago()" class="text-pmtext hover:text-white transition-colors text-xl p-2"><i class="fa-solid fa-arrow-left"></i></button>
+                            <h2 class="text-sm font-sans font-bold uppercase text-white tracking-widest flex items-center gap-2"><i class="fa-solid fa-credit-card text-pmblue"></i> Terminal Mercado Pago</h2>
+                            <div class="w-8"></div>
+                        </div>
+
+                        <div class="bg-pmblue/15 border border-pmblue/30 rounded-xl p-5 mb-6 text-center">
+                            <p class="text-[10px] font-bold text-pmblue uppercase tracking-widest mb-1">Monto en Terminal:</p>
+                            <p class="text-4xl font-black text-white">$<span id="tarjeta-total-display">0</span></p>
+                        </div>
+
+                        <div class="mb-6 text-left">
+                            <label class="block text-xs font-bold text-pmtext uppercase tracking-widest mb-2"><i class="fa-solid fa-receipt"></i> Folio de Autorización / Voucher:</label>
+                            <input type="text" id="input-tarjeta-auth" placeholder="Ej. MP-849102" oninput="validarAutorizacionTarjeta()" class="w-full bg-pmdark text-white px-4 py-3 text-lg font-mono font-bold rounded-xl border-2 border-pmborder focus:outline-none focus:border-pmblue transition-colors uppercase">
+                            <p class="text-[10px] text-pmtext mt-2 font-medium">Ingresa el folio de la transacción para cuadre de caja de fin de turno.</p>
+                        </div>
+
+                        <button id="btn-confirmar-tarjeta" disabled onclick="finalizarVentaYMostrarTicket('Tarjeta Mercado Pago')" class="w-full bg-gradient-to-r from-pmblue to-[#029cea] hover:from-[#029cea] hover:to-[#4fc3f7] text-white font-sans font-black py-4 rounded-xl uppercase tracking-widest transition-all shadow-lg flex justify-center items-center gap-3 disabled:opacity-40 disabled:cursor-not-allowed">
+                            Registrar Venta e Imprimir Ticket Térmico <i class="fa-solid fa-print"></i>
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Resumen Lateral de Carrito (Derecha) -->
+        <section class="hidden lg:flex lg:w-1/3 bg-pmcard border-l border-pmborder flex-col h-full shadow-2xl z-10 relative">
+            
+            <div class="p-4 border-b border-pmborder shrink-0 bg-pmdark flex justify-between items-center">
+                <h2 class="text-xs font-sans font-black uppercase tracking-[0.2em] text-white flex items-center gap-2">
+                    <i class="fa-solid fa-cart-shopping text-pmmagenta"></i> Resumen de Venta
+                </h2>
+                <span id="badge-articulos" class="bg-pmmagenta text-white text-[10px] font-bold px-2 py-0.5 rounded-full hidden">0 items</span>
+            </div>
+            
+            <div class="flex-grow p-4 flex flex-col overflow-y-auto hide-scroll bg-pmcard" id="carrito-container">
+                <div id="carrito-vacio" class="flex flex-col items-center justify-center h-full opacity-30 text-center">
+                    <i class="fa-solid fa-cart-arrow-down text-4xl mb-4 text-pmtext"></i>
+                    <p class="font-sans text-xs uppercase tracking-widest font-bold">Carrito vacío</p>
+                    <p class="text-[10px] text-pmtext mt-1">Agrega boletos o escanea un QR de pre-orden</p>
+                </div>
+                <div id="carrito-lista" class="hidden flex-col gap-2.5">
+                    <!-- Inyectado por js -->
+                </div>
+            </div>
+
+            <!-- Footer del Carrito y Acciones de Paso -->
+            <div class="p-4 border-t border-pmborder bg-pmdark shrink-0">
+                <div class="flex justify-between items-end mb-4">
+                    <span class="font-sans font-bold uppercase text-pmtext tracking-widest text-xs">Total Venta</span>
+                    <span class="text-4xl font-serif font-black text-white">$<span id="carrito-total">0</span></span>
+                </div>
+
+                <div id="cart-actions-1" class="flex gap-2">
+                    <button onclick="cambiarPaso(3)" class="flex-1 bg-pmcard text-pmtext border border-pmborder hover:text-white px-2 py-3 rounded-lg font-sans font-bold text-[10px] uppercase tracking-widest transition-colors">
+                        Omitir Dulcería
+                    </button>
+                    <button onclick="cambiarPaso(2)" class="flex-[2] bg-pmmagenta text-white hover:bg-pink-600 px-4 py-3 rounded-lg font-sans font-black text-xs uppercase tracking-widest transition-colors shadow-lg flex justify-center items-center gap-2">
+                        Paso 2: Dulcería <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+
+                <div id="cart-actions-2" class="hidden flex gap-2">
+                    <button onclick="cambiarPaso(1)" class="w-12 bg-pmcard text-pmtext border border-pmborder hover:text-white rounded-lg transition-colors flex justify-center items-center">
+                        <i class="fa-solid fa-arrow-left"></i>
+                    </button>
+                    <button onclick="cambiarPaso(3)" class="flex-1 bg-pmorange text-white hover:bg-orange-500 px-4 py-3 rounded-lg font-sans font-black text-xs uppercase tracking-widest transition-colors shadow-lg flex justify-center items-center gap-2">
+                        Paso 3: Cobrar <i class="fa-solid fa-cash-register"></i>
+                    </button>
+                </div>
+
+                <div id="cart-actions-3" class="hidden flex gap-2">
+                    <button onclick="cambiarPaso(2)" class="w-full bg-pmcard text-pmtext border border-pmborder hover:text-white px-4 py-3 rounded-lg font-sans font-bold text-xs uppercase tracking-widest transition-colors flex justify-center items-center gap-2">
+                        <i class="fa-solid fa-arrow-left"></i> Regresar a Editar Carrito
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- MODAL ESCÁNER QR PRE-ORDEN (VALIDADOR EN CAJA FÍSICA A CONTRA ENTREGA) -->
+    <div id="modal-escaner-qr" class="fixed inset-0 z-[150] hidden flex items-center justify-center p-4 bg-pmdark/95 backdrop-blur-md">
+        <div class="bg-pmcard border-2 border-pmmagenta rounded-3xl max-w-lg w-full p-6 relative shadow-[0_0_50px_rgba(216,27,96,0.35)] text-center">
+            <button onclick="cerrarModalEscanerQR()" class="absolute top-4 right-4 text-pmtext hover:text-white text-xl">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <span class="bg-pmmagenta text-white text-[10px] font-bold uppercase tracking-[0.3em] px-3.5 py-1 rounded-full inline-block mb-3">
+                Hardware / Escáner de Pre-orden
+            </span>
+            <h3 class="text-xl font-serif font-black uppercase text-white mb-2">Lectura de Código QR en Caja</h3>
+            <p class="text-xs text-pmtext mb-5">Escanea el ticket digital del cliente o selecciona una pre-orden activa</p>
+
+            <!-- Animación de Cámara / Láser QR -->
+            <div class="relative w-56 h-56 mx-auto bg-black rounded-2xl border-2 border-dashed border-pmmagenta/70 flex items-center justify-center overflow-hidden mb-5">
+                <i class="fa-solid fa-qrcode text-7xl text-pmtext/20"></i>
+                <div class="laser-scanner-line"></div>
+                <div class="absolute bottom-3 text-[10px] text-pmmagenta font-mono uppercase font-bold tracking-wider bg-black/60 px-2 py-0.5 rounded">
+                    Buscando código QR...
+                </div>
+            </div>
+
+            <!-- Entrada Manual o de Lector Óptico -->
+            <form onsubmit="procesarCodigoQRManual(event)" class="space-y-3 mb-5">
+                <div class="relative">
+                    <input type="text" id="input-codigo-qr" placeholder="Escanear o escribir código (Ej: PRE-XIL-84920)..." class="w-full bg-pmdark text-white px-4 py-3 rounded-xl border border-pmborder focus:border-pmmagenta outline-none font-mono text-xs uppercase text-center font-bold">
+                </div>
+                <button type="submit" class="w-full bg-pmmagenta hover:bg-pink-600 text-white font-bold text-xs uppercase tracking-widest py-3 rounded-xl transition-all shadow-lg">
+                    Validar y Cargar en Caja
+                </button>
+            </form>
+
+            <!-- Pre-órdenes activas para prueba rápida (Demostración) -->
+            <div class="border-t border-pmborder pt-3 text-left">
+                <span class="text-[10px] font-bold uppercase tracking-widest text-pmtext block mb-2">Pre-órdenes Activas Disponibles (Demostración):</span>
+                <div id="lista-preordenes-demo" class="space-y-1.5 max-h-36 overflow-y-auto hide-scroll">
+                    <!-- Inyectado por script -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE IMPRESIÓN DE TICKET TÉRMICO (58mm / 80mm) -->
+    <div id="modal-ticket-termico" class="fixed inset-0 z-[160] hidden flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
+        <div class="max-w-md w-full flex flex-col items-center">
+            
+            <div id="modal-ticket-print-area" class="ticket-termico text-left mb-4 shadow-2xl">
+                <div class="text-center mb-3">
+                    <h2 class="text-lg font-black uppercase tracking-wider">CINE TEATRO XILOTZIN</h2>
+                    <p class="text-[9px] uppercase">Jilotepec, Estado de México</p>
+                    <p class="text-[8px]">RFC: CTX-260414-9X0 • TEL: (55) 1234 5678</p>
+                    <div class="border-b border-dashed border-black my-2"></div>
+                    <p class="text-[10px] font-bold uppercase">TICKET DE VENTA OFICIAL</p>
+                    <p class="text-[9px]">FOLIO: <span id="ticket-termico-folio" class="font-bold">VT-1092</span></p>
+                    <p class="text-[8px]" id="ticket-termico-fecha">2026-04-14 15:30:12</p>
+                </div>
+
+                <div class="border-b border-dashed border-black my-2"></div>
+
+                <!-- Desglose de Artículos -->
+                <div class="text-[10px] space-y-1 mb-2" id="ticket-termico-items">
+                    <!-- Inyectado por js -->
+                </div>
+
+                <div class="border-b border-dashed border-black my-2"></div>
+
+                <div class="text-[10px] space-y-1">
+                    <div class="flex justify-between font-black text-xs">
+                        <span>TOTAL:</span>
+                        <span id="ticket-termico-total">$0.00</span>
+                    </div>
+                    <div class="flex justify-between text-[9px]">
+                        <span>MÉTODO:</span>
+                        <span id="ticket-termico-metodo" class="font-bold">Efectivo</span>
+                    </div>
+                    <div class="flex justify-between text-[9px]" id="ticket-termico-cambio-row">
+                        <span>PAGADO / CAMBIO:</span>
+                        <span id="ticket-termico-pagado">$0 / $0</span>
+                    </div>
+                </div>
+
+                <div class="border-b border-dashed border-black my-3"></div>
+
+                <!-- Código de Barras Térmico -->
+                <div class="barcode-strip my-2"></div>
+                <p class="text-center text-[8px] tracking-widest" id="ticket-termico-barcode-num">7501092840192</p>
+
+                <div class="text-center mt-3 text-[8px] uppercase leading-tight">
+                    <p class="font-bold">¡GRACIAS POR SU PREFERENCIA!</p>
+                    <p>CONSERVE ESTE COMPROBANTE PARA ACCESO A SALA</p>
+                    <p class="mt-1 font-mono">Xilotzin POS • Rodnix</p>
+                </div>
+            </div>
+
+            <!-- Botones de Acción de Impresión -->
+            <div class="flex gap-3 w-full max-w-[320px] no-print">
+                <button onclick="window.print()" class="flex-1 bg-white text-black font-sans font-bold text-xs uppercase tracking-widest py-3 rounded-xl hover:bg-neutral-200 transition-colors shadow-lg flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-print"></i> Imprimir
+                </button>
+                <button onclick="cerrarTicketTermicoYNuevaVenta()" class="flex-1 bg-pmmagenta text-white font-sans font-bold text-xs uppercase tracking-widest py-3 rounded-xl hover:bg-pink-600 transition-colors shadow-lg">
+                    Nueva Venta
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts de Datos y Lógica POS -->
+    <script src="js/data.js"></script>
+    <script>
+        let carrito = [];
+        let pasoActual = 1;
+        let totalGeneral = 0;
+        let preordenCanjeadaActual = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Reloj en tiempo real
+            setInterval(() => {
+                const reloj = document.getElementById('reloj-pos');
+                if (reloj) reloj.innerText = new Date().toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            }, 1000);
+
+            actualizarIndicadoresInventario();
+            renderProductosDulceria();
+
+            document.addEventListener('CarteleraLista', () => {
+                aplicarFiltrosBoletos();
+                document.getElementById('busqueda-peli')?.addEventListener('input', aplicarFiltrosBoletos);
+            });
+            if (window.cineData && window.cineData.peliculas) aplicarFiltrosBoletos();
+        });
+
+        // ==========================================================
+        // 1. RENDER DE CARTELERA PARA BOLETAJE ÁGIL (ACCESO GENERAL)
+        // ==========================================================
+        function aplicarFiltrosBoletos() {
+            const texto = document.getElementById('busqueda-peli')?.value.toLowerCase() || '';
+            const soloProximos = document.getElementById('toggle-proximos')?.checked;
+            const ahora = new Date();
+            const horaActualMinutos = (ahora.getHours() * 60) + ahora.getMinutes();
+            const margenTolerancia = 20;
+
+            const peliculas = window.cineData?.peliculas || [];
+            const filtradas = peliculas.map(p => {
+                const copiaPeli = { ...p };
+                if (soloProximos) {
+                    copiaPeli.horarios = p.horarios.filter(h => {
+                        const horaLimpia = h.split(' ')[0];
+                        const [hrs, mins] = horaLimpia.split(':').map(Number);
+                        if (isNaN(hrs) || isNaN(mins)) return true;
+                        const horaFuncionMinutos = (hrs * 60) + mins;
+                        return horaFuncionMinutos >= (horaActualMinutos - margenTolerancia);
+                    });
+                }
+                return copiaPeli;
+            }).filter(p => {
+                return p.titulo.toLowerCase().includes(texto) && p.horarios.length > 0;
+            });
+            
+            renderCartelera(filtradas);
+        }
+
+        function renderCartelera(peliculas) {
+            const grid = document.getElementById('grid-boletos');
+            if (!grid) return;
+
+            if (peliculas.length === 0) {
+                grid.innerHTML = '<div class="col-span-full py-12 text-center text-pmtext font-bold uppercase tracking-widest">No hay funciones en este horario</div>';
+                return;
+            }
+
+            const precioBase = window.cineData.precioBoleto || 50;
+
+            grid.innerHTML = peliculas.map(p => `
+                <div class="bg-pmcard border border-pmborder p-4 rounded-2xl flex flex-col gap-3 hover:border-pmmagenta/60 transition-all group shadow-lg">
+                    <div class="flex items-start gap-4">
+                        <img src="${p.poster}" class="w-16 h-24 object-cover rounded-xl shadow-md border border-pmborder bg-pmdark shrink-0">
+                        <div class="flex flex-col flex-grow">
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="text-[9px] font-sans font-bold bg-pmdark border border-pmborder text-pmmagenta px-2 py-0.5 rounded uppercase tracking-widest">${p.clasificacion || 'B'}</span>
+                                <span class="text-[10px] text-pmtext">${p.duracion}</span>
+                            </div>
+                            <h3 class="font-serif font-black text-white uppercase text-sm mb-1 leading-tight group-hover:text-pmmagenta transition-colors line-clamp-2">${p.titulo}</h3>
+                            <span class="text-[10px] text-pmtext font-semibold uppercase">${p.genero}</span>
+                        </div>
+                    </div>
+
+                    <!-- Horarios de cobro directo sin asignación de asientos (Acceso General) -->
+                    <div class="pt-3 border-t border-pmborder border-dashed flex flex-wrap gap-2 mt-auto">
+                        ${p.horarios.map(h => `
+                            <button onclick="agregarBoleto('${p.id}', '${p.titulo}', '${h}', ${precioBase})" class="flex-1 bg-pmdark hover:bg-pmmagenta text-white text-xs font-bold px-3 py-2.5 rounded-xl border border-pmborder hover:border-pmmagenta uppercase tracking-wider transition-all active:scale-95 whitespace-nowrap shadow flex items-center justify-center gap-1.5">
+                                <i class="fa-solid fa-ticket text-pmmagenta group-hover:text-white text-[10px]"></i> ${h}
+                            </button>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ==========================================================
+        // 2. DULCERÍA CON BARCODE SCANNER & INVENTARIO FRACCIONADO
+        // ==========================================================
+        function renderProductosDulceria() {
+            const inventario = XilotzinDB.get('inventario') || [];
+            const grid = document.getElementById('grid-dulceria');
+            if (!grid) return;
+
+            // Omitir pizzas de la grilla general para mostrarlas en su módulo fraccionado exclusivo
+            const snacks = inventario.filter(p => !p.esFraccionado && !p.esPizzaCompleta);
+
+            grid.innerHTML = snacks.map(p => `
+                <div class="bg-pmcard border border-pmborder rounded-xl flex flex-col overflow-hidden hover:border-pmorange transition-all cursor-pointer group active:scale-95 shadow-lg" onclick="agregarDulce('${p.sku}')">
+                    <div class="h-24 w-full bg-pmdark overflow-hidden relative">
+                        <img src="${p.img}" class="w-full h-full object-cover opacity-75 group-hover:opacity-100 transition-opacity">
+                        <div class="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-pmcard to-transparent"></div>
+                        <span class="absolute top-1.5 left-1.5 bg-black/70 font-mono text-[9px] text-pmtext px-1.5 py-0.5 rounded border border-white/10">${p.sku}</span>
+                    </div>
+                    <div class="p-3 text-center flex flex-col flex-grow">
+                        <h3 class="font-sans font-bold text-white uppercase text-xs leading-tight mb-1">${p.nombre}</h3>
+                        <p class="text-sm font-black text-pmorange mt-auto">$${p.precio}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function actualizarIndicadoresInventario() {
+            const inventario = XilotzinDB.get('inventario') || [];
+            const pizza = inventario.find(i => i.esFraccionado);
+            const rebanadas = pizza ? pizza.stockRebanadas : 56;
+            const pizzasEnteras = Math.floor(rebanadas / 8);
+
+            const badge = document.getElementById('pizza-stock-badge');
+            const indNav = document.getElementById('pos-indicador-pizza');
+
+            const txt = `Stock: ${rebanadas} rebanadas (${pizzasEnteras} pizzas)`;
+            if (badge) badge.innerText = txt;
+            if (indNav) indNav.innerHTML = `🍕 Rebanadas Pizza: <strong class="text-white">${rebanadas}</strong> (${pizzasEnteras} ent.)`;
+        }
+
+        function agregarPizzaFraccionada(tipo) {
+            if (tipo === 'rebanada') {
+                añadirAlCarrito('pizza_rebanada', 'dulceria', 'Pizza (Rebanada Individual)', 35, 1, { descuentaRebanadas: 1 });
+            } else {
+                añadirAlCarrito('pizza_completa', 'dulceria', 'Pizza Completa (8 Rebanadas)', 180, 1, { descuentaRebanadas: 8 });
+            }
+        }
+
+        function procesarEscaneoBarcode(e) {
+            if (e) e.preventDefault();
+            const input = document.getElementById('input-barcode-scanner');
+            const sku = input.value.trim();
+            if (!sku) return;
+
+            const inventario = XilotzinDB.get('inventario') || [];
+            const producto = inventario.find(p => p.sku === sku);
+
+            if (producto) {
+                if (producto.esFraccionado) {
+                    agregarPizzaFraccionada('rebanada');
+                } else if (producto.esPizzaCompleta) {
+                    agregarPizzaFraccionada('completa');
+                } else {
+                    añadirAlCarrito(`sku_${producto.sku}`, 'dulceria', producto.nombre, producto.precio);
+                }
+                input.value = '';
+            } else {
+                alert(`SKU "${sku}" no encontrado en catálogo.`);
+            }
+        }
+
+        // ==========================================================
+        // 3. LÓGICA DEL CARRITO POS
+        // ==========================================================
+        function agregarBoleto(id_peli, titulo, horario, precio) {
+            const id_unico = `bol_${id_peli}_${horario}`;
+            const nombreMostrar = `${titulo} - Acceso General (${horario})`;
+            añadirAlCarrito(id_unico, 'boleto', nombreMostrar, precio);
+        }
+
+        function agregarDulce(sku) {
+            const inventario = XilotzinDB.get('inventario') || [];
+            const prod = inventario.find(x => x.sku === sku);
+            if (!prod) return;
+            const id_unico = `dul_${prod.sku}`;
+            añadirAlCarrito(id_unico, 'dulceria', prod.nombre, prod.precio);
+        }
+
+        function añadirAlCarrito(id, tipo, nombre, precio, cantidad = 1, metadata = {}) {
+            const existente = carrito.find(item => item.id === id);
+            if (existente) {
+                existente.cantidad += cantidad;
+            } else {
+                carrito.push({ id, tipo, nombre, precio, cantidad, metadata });
+            }
+            actualizarCarritoUI();
+        }
+
+        function ajustarCantidad(index, cambio) {
+            carrito[index].cantidad += cambio;
+            if (carrito[index].cantidad <= 0) carrito.splice(index, 1);
+            actualizarCarritoUI();
+        }
+
+        function actualizarCarritoUI() {
+            const container = document.getElementById('carrito-lista');
+            const vacio = document.getElementById('carrito-vacio');
+            const badge = document.getElementById('badge-articulos');
+            
+            totalGeneral = 0;
+            let numItems = 0;
+
+            if (carrito.length === 0) {
+                container.classList.add('hidden');
+                container.classList.remove('flex');
+                vacio.classList.remove('hidden');
+                vacio.classList.add('flex');
+                badge.classList.add('hidden');
+            } else {
+                container.classList.remove('hidden');
+                container.classList.add('flex');
+                vacio.classList.add('hidden');
+                vacio.classList.remove('flex');
+                badge.classList.remove('hidden');
+
+                container.innerHTML = carrito.map((item, index) => {
+                    const subtotal = item.precio * item.cantidad;
+                    totalGeneral += subtotal;
+                    numItems += item.cantidad;
+                    const colorAcento = item.tipo === 'boleto' ? 'text-pmmagenta' : 'text-pmorange';
+                    
+                    return `
+                    <div class="bg-pmdark border border-pmborder p-3 rounded-xl flex justify-between items-center shadow-sm">
+                        <div class="flex flex-col flex-grow pr-2 truncate">
+                            <span class="text-[9px] uppercase ${colorAcento} font-bold tracking-wider">${item.tipo === 'boleto' ? 'Taquilla • Acceso General' : 'Dulcería'}</span>
+                            <span class="font-bold text-white text-xs leading-tight truncate" title="${item.nombre}">${item.nombre}</span>
+                        </div>
+                        <div class="flex items-center gap-3 shrink-0">
+                            <div class="flex items-center bg-pmcard rounded-lg border border-pmborder">
+                                <button onclick="ajustarCantidad(${index}, -1)" class="w-7 h-7 text-pmtext hover:text-white transition-colors text-xs font-bold">-</button>
+                                <span class="w-5 text-center text-xs font-bold text-white font-mono">${item.cantidad}</span>
+                                <button onclick="ajustarCantidad(${index}, 1)" class="w-7 h-7 text-pmtext hover:text-white transition-colors text-xs font-bold">+</button>
+                            </div>
+                            <span class="font-black text-white text-sm w-12 text-right font-mono">$${subtotal}</span>
+                        </div>
+                    </div>
+                    `;
+                }).join('');
+                
+                badge.innerText = `${numItems} items`;
+            }
+
+            document.getElementById('carrito-total').innerText = totalGeneral;
+            document.getElementById('cobro-total-final').innerText = totalGeneral;
+            document.getElementById('efectivo-total-display').innerText = totalGeneral;
+            document.getElementById('tarjeta-total-display').innerText = totalGeneral;
+        }
+
+        // ==========================================================
+        // 4. CONTROL DE PASOS DEL WIZARD POS
+        // ==========================================================
+        function cambiarPaso(paso) {
+            if (paso === 3 && carrito.length === 0) {
+                alert("El carrito está vacío. Agrega boletos o snacks para cobrar.");
+                return;
+            }
+
+            pasoActual = paso;
+            if (paso === 3) volverSelectorPago();
+
+            [1, 2, 3].forEach(i => {
+                const tab = document.getElementById(`nav-step-${i}`);
+                if (tab) {
+                    if (i === paso) {
+                        tab.classList.add('step-active');
+                        tab.classList.remove('step-inactive');
+                    } else {
+                        tab.classList.remove('step-active');
+                        tab.classList.add('step-inactive');
+                    }
+                }
+
+                const view = document.getElementById(`view-${i}-${i===1?'boletos':i===2?'dulceria':'cobro'}`);
+                if (view) {
+                    view.classList.toggle('hidden', i !== paso);
+                    view.classList.toggle('flex', i === paso && i !== 2);
+                    view.classList.toggle('block', i === 2 && i === paso);
+                }
+
+                const action = document.getElementById(`cart-actions-${i}`);
+                if (action) {
+                    action.classList.toggle('hidden', i !== paso);
+                    action.classList.toggle('flex', i === paso);
+                }
+            });
+        }
+
+        function saltarADulceria() { cambiarPaso(2); }
+
+        function cancelarVenta() {
+            if (carrito.length > 0) {
+                if (!confirm("¿Seguro que deseas cancelar toda la venta actual?")) return;
+            }
+            carrito = [];
+            preordenCanjeadaActual = null;
+            actualizarCarritoUI();
+            cambiarPaso(1);
+        }
+
+        // ==========================================================
+        // 5. TERMINAL DE COBRO (EFECTIVO Y TARJETA)
+        // ==========================================================
+        function prepararCobro(metodo) {
+            document.getElementById('panel-cobro-selector').classList.add('hidden');
+
+            if (metodo === 'EFECTIVO') {
+                document.getElementById('panel-cobro-efectivo').classList.remove('hidden');
+                document.getElementById('panel-cobro-efectivo').classList.add('flex');
+                document.getElementById('input-efectivo-recibido').value = '';
+                calcularCambio();
+                setTimeout(() => document.getElementById('input-efectivo-recibido').focus(), 100);
+            } else if (metodo === 'TARJETA') {
+                document.getElementById('panel-cobro-tarjeta').classList.remove('hidden');
+                document.getElementById('panel-cobro-tarjeta').classList.add('flex');
+                document.getElementById('input-tarjeta-auth').value = '';
+                validarAutorizacionTarjeta();
+                setTimeout(() => document.getElementById('input-tarjeta-auth').focus(), 100);
+            }
+        }
+
+        function volverSelectorPago() {
+            document.getElementById('panel-cobro-efectivo')?.classList.add('hidden');
+            document.getElementById('panel-cobro-efectivo')?.classList.remove('flex');
+            document.getElementById('panel-cobro-tarjeta')?.classList.add('hidden');
+            document.getElementById('panel-cobro-tarjeta')?.classList.remove('flex');
+            
+            document.getElementById('panel-cobro-selector')?.classList.remove('hidden');
+            document.getElementById('panel-cobro-selector')?.classList.add('block');
+        }
+
+        function setEfectivoRapido(monto) {
+            const input = document.getElementById('input-efectivo-recibido');
+            input.value = monto === 'exacto' ? totalGeneral : monto;
+            calcularCambio();
+        }
+
+        function calcularCambio() {
+            const recibido = parseFloat(document.getElementById('input-efectivo-recibido').value) || 0;
+            const cambio = recibido - totalGeneral;
+            const displayCambio = document.getElementById('efectivo-cambio-display');
+            const btn = document.getElementById('btn-confirmar-efectivo');
+
+            if (recibido >= totalGeneral && totalGeneral > 0) {
+                displayCambio.innerText = cambio.toFixed(2);
+                displayCambio.classList.replace('text-red-500', 'text-pmorange');
+                btn.disabled = false;
+            } else {
+                displayCambio.innerText = "0.00";
+                displayCambio.classList.replace('text-pmorange', 'text-red-500');
+                btn.disabled = true;
+            }
+        }
+
+        function validarAutorizacionTarjeta() {
+            const auth = document.getElementById('input-tarjeta-auth').value.trim();
+            const btn = document.getElementById('btn-confirmar-tarjeta');
+            btn.disabled = auth.length < 3;
+        }
+
+        // ==========================================================
+        // 6. CIERRE DE VENTA, DESCUENTO DE STOCK Y TICKET TÉRMICO
+        // ==========================================================
+        function finalizarVentaYMostrarTicket(metodo) {
+            const folioVenta = `VT-${Math.floor(1000 + Math.random() * 9000)}`;
+            const hoy = new Date();
+            const fechaHora = hoy.toLocaleString('es-MX');
+
+            // 1. Descontar inventario fraccionado y regular
+            let inventario = XilotzinDB.get('inventario') || [];
+            let pizzaItem = inventario.find(i => i.esFraccionado);
+
+            carrito.forEach(item => {
+                if (item.metadata && item.metadata.descuentaRebanadas && pizzaItem) {
+                    pizzaItem.stockRebanadas = Math.max(0, pizzaItem.stockRebanadas - (item.metadata.descuentaRebanadas * item.cantidad));
+                }
+            });
+            XilotzinDB.set('inventario', inventario);
+            actualizarIndicadoresInventario();
+
+            // 2. Si venía de una Pre-orden, marcarla como CANJEADA
+            if (preordenCanjeadaActual) {
+                let preordenes = XilotzinDB.get('preordenes') || [];
+                const pIndex = preordenes.findIndex(p => p.codigo === preordenCanjeadaActual.codigo);
+                if (pIndex > -1) {
+                    preordenes[pIndex].estado = 'CANJEADO';
+                    XilotzinDB.set('preordenes', preordenes);
+                }
+            }
+
+            // 3. Registrar en ventas históricas para cortes de caja
+            let ventas = XilotzinDB.get('ventas') || [];
+            ventas.unshift({
+                folio: folioVenta,
+                fecha: hoy.toISOString().split('T')[0],
+                hora: hoy.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' }),
+                tipo: carrito.some(i => i.tipo === 'boleto') ? 'Taquilla' : 'Dulcería',
+                concepto: carrito.map(i => `${i.nombre} (x${i.cantidad})`).join(', '),
+                cantidad: carrito.reduce((acc, i) => acc + i.cantidad, 0),
+                total: totalGeneral,
+                metodo: metodo,
+                cajero: 'Cajero Taquilla 01'
+            });
+            XilotzinDB.set('ventas', ventas);
+
+            // 4. Llenar y mostrar Ticket Térmico
+            document.getElementById('ticket-termico-folio').innerText = folioVenta;
+            document.getElementById('ticket-termico-fecha').innerText = fechaHora;
+            document.getElementById('ticket-termico-total').innerText = `$${totalGeneral}.00 MXN`;
+            document.getElementById('ticket-termico-metodo').innerText = metodo;
+
+            const itemsContainer = document.getElementById('ticket-termico-items');
+            itemsContainer.innerHTML = carrito.map(item => `
+                <div class="flex justify-between items-start">
+                    <span>${item.cantidad}x ${item.nombre.substring(0, 24)}</span>
+                    <span class="font-bold">$${item.precio * item.cantidad}</span>
+                </div>
+            `).join('');
+
+            const rowCambio = document.getElementById('ticket-termico-cambio-row');
+            if (metodo === 'Efectivo') {
+                const recibido = document.getElementById('input-efectivo-recibido').value;
+                const cambio = document.getElementById('efectivo-cambio-display').innerText;
+                rowCambio.innerHTML = `<span>RECIBIDO / CAMBIO:</span><span class="font-bold">$${recibido} / $${cambio}</span>`;
+            } else {
+                const auth = document.getElementById('input-tarjeta-auth').value.toUpperCase();
+                rowCambio.innerHTML = `<span>AUTORIZACIÓN MP:</span><span class="font-bold">${auth}</span>`;
+            }
+
+            // Abrir modal de ticket térmico
+            document.getElementById('modal-ticket-termico').classList.remove('hidden');
+        }
+
+        function cerrarTicketTermicoYNuevaVenta() {
+            document.getElementById('modal-ticket-termico').classList.add('hidden');
+            carrito = [];
+            preordenCanjeadaActual = null;
+            actualizarCarritoUI();
+            cambiarPaso(1);
+        }
+
+        // ==========================================================
+        // 7. VALIDADOR DE PRE-ÓRDENES QR EN CAJA
+        // ==========================================================
+        function abrirModalEscanerQR() {
+            const modal = document.getElementById('modal-escaner-qr');
+            modal.classList.remove('hidden');
+
+            const listaDemo = document.getElementById('lista-preordenes-demo');
+            const preordenes = XilotzinDB.get('preordenes') || [];
+
+            if (listaDemo) {
+                if (preordenes.length === 0) {
+                    listaDemo.innerHTML = '<p class="text-xs text-pmtext">No hay pre-órdenes registradas</p>';
+                } else {
+                    listaDemo.innerHTML = preordenes.slice(0, 4).map(p => `
+                        <div onclick="aplicarPreordenACaja('${p.codigo}')" class="p-2.5 rounded-xl border transition-all cursor-pointer flex items-center justify-between ${p.estado === 'CANJEADO' ? 'bg-black/30 border-pmborder opacity-50' : 'bg-pmdark border-pmborder hover:border-pmmagenta'}">
+                            <div class="flex flex-col">
+                                <span class="font-mono font-bold text-xs text-white">${p.codigo} - ${p.cliente}</span>
+                                <span class="text-[10px] text-pmtext">${p.pelicula} (${p.horario}) • ${p.boletosGeneral} Boletos</span>
+                            </div>
+                            <span class="text-[10px] font-black uppercase px-2 py-1 rounded ${p.estado === 'CANJEADO' ? 'bg-gray-800 text-gray-400' : 'bg-pmmagenta text-white'}">
+                                ${p.estado}
+                            </span>
+                        </div>
+                    `).join('');
+                }
+            }
+        }
+
+        function cerrarModalEscanerQR() {
+            document.getElementById('modal-escaner-qr').classList.add('hidden');
+        }
+
+        function procesarCodigoQRManual(e) {
+            if (e) e.preventDefault();
+            const input = document.getElementById('input-codigo-qr');
+            const codigo = input.value.trim().toUpperCase();
+            aplicarPreordenACaja(codigo);
+        }
+
+        function aplicarPreordenACaja(codigo) {
+            const preordenes = XilotzinDB.get('preordenes') || [];
+            const encontrada = preordenes.find(p => p.codigo === codigo || p.codigo === `PRE-XIL-${codigo}`);
+
+            if (!encontrada) {
+                alert(`Código QR "${codigo}" no encontrado en el sistema.`);
+                return;
+            }
+
+            if (encontrada.estado === 'CANJEADO') {
+                alert(`El ticket "${codigo}" ya fue canjeado previamente.`);
+                return;
+            }
+
+            // Verificar vigencia (Debe estar dentro del rango válido de 8 a 15 días)
+            const hoy = new Date();
+            const vence = new Date(encontrada.fechaVencimiento);
+            if (hoy > vence) {
+                alert(`El ticket "${codigo}" ha expirado (venció el ${encontrada.fechaVencimiento}).`);
+                return;
+            }
+
+            // Cargar automáticamente en carrito
+            carrito = [];
+            preordenCanjeadaActual = encontrada;
+
+            // Boletos de la pre-orden
+            añadirAlCarrito(
+                `pre_bol_${encontrada.codigo}`,
+                'boleto',
+                `${encontrada.pelicula} - Acceso General (${encontrada.horario})`,
+                encontrada.precioBoleto || 50,
+                encontrada.boletosGeneral
+            );
+
+            // Combos de la pre-orden
+            if (encontrada.combos && encontrada.combos.length > 0) {
+                encontrada.combos.forEach(c => {
+                    añadirAlCarrito(`pre_combo_${c.nombre}`, 'dulceria', c.nombre, c.precio, c.cantidad);
+                });
+            }
+
+            cerrarModalEscanerQR();
+            cambiarPaso(3); // Saltar directamente a cobro a contra-entrega
+            alert(`¡Pre-orden "${encontrada.codigo}" validada con éxito! Se cargaron ${encontrada.boletosGeneral} boletos y sus combos. Procede a cobrar a contra-entrega.`);
+        }
+    </script>
+</body>
+</html>

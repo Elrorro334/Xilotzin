@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceso al Sistema POS & Administración | Cine Teatro Xilotzin</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#D81B60">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        pmdark: '#050505',
+                        pmcard: '#111111',
+                        pmborder: '#262626',
+                        pmmagenta: '#D81B60',
+                        pmorange: '#F57C00',
+                        pmblue: '#0288D1',
+                        pmpurple: '#7B1FA2',
+                        pmlight: '#f3f4f6',
+                        pmtext: '#a3a3a3'
+                    },
+                    fontFamily: {
+                        sans: ['Montserrat', 'sans-serif'],
+                        serif: ['"Playfair Display"', 'serif'],
+                        mono: ['"Space Mono"', 'monospace']
+                    },
+                    keyframes: {
+                        shake: {
+                            '0%, 100%': { transform: 'translateX(0)' },
+                            '10%, 30%, 50%, 70%, 90%': { transform: 'translateX(-6px)' },
+                            '20%, 40%, 60%, 80%': { transform: 'translateX(6px)' },
+                        }
+                    },
+                    animation: {
+                        'shake': 'shake 0.4s cubic-bezier(.36,.07,.19,.97) both'
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700;900&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body class="bg-pmdark text-pmlight antialiased min-h-screen flex items-center justify-center p-4 relative overflow-x-hidden selection:bg-pmmagenta selection:text-white">
+
+    <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1519114056088-b877fe073a5e?q=80&w=2069&auto=format&fit=crop')] bg-cover bg-center bg-no-repeat opacity-15 bg-fixed blur-sm"></div>
+    <div class="absolute inset-0 bg-gradient-to-t from-pmdark via-pmdark/85 to-pmdark/50"></div>
+    
+    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-pmblue via-pmmagenta to-pmorange z-10"></div>
+    <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-pmmagenta/10 rounded-full blur-[100px] pointer-events-none"></div>
+
+    <div class="relative z-20 w-full max-w-lg">
+        
+        <!-- Tarjeta de Login -->
+        <div id="login-card" class="bg-pmcard/95 backdrop-blur-xl border border-pmborder rounded-3xl p-8 shadow-[0_20px_50px_rgba(0,0,0,0.6)] relative overflow-hidden transition-all duration-300">
+            
+            <div class="text-center mb-6 relative z-10">
+                <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-pmdark border border-pmborder mb-3 shadow-inner">
+                    <img style="border-radius: 50px; height: 46px; width: 46px;" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTmU78ReuLCf8T4T3Rv6K8-yAB13kXuZX7_TQ&s" alt="Jilotepec" class="object-cover grayscale brightness-125">
+                </div>
+                <h1 class="text-3xl font-serif font-black tracking-widest uppercase text-white leading-none">Xilotzin</h1>
+                <p class="text-[9px] font-sans font-bold tracking-[0.3em] text-pmorange uppercase mt-2">Control de Acceso & Autenticación de Roles</p>
+            </div>
+
+            <!-- Banner de Diagnóstico de Seguridad e IP Detectada -->
+            <div class="bg-pmdark border border-pmborder rounded-2xl p-3.5 mb-6 text-xs flex items-center justify-between font-mono">
+                <div class="flex items-center gap-2.5">
+                    <span class="w-2.5 h-2.5 rounded-full" id="indicador-ip-dot"></span>
+                    <div class="flex flex-col">
+                        <span class="text-[10px] text-pmtext uppercase font-bold tracking-wider">Red Detectada:</span>
+                        <span id="indicador-ip-texto" class="text-white font-bold">192.168.1.105 (Red Cine Xilotzin)</span>
+                    </div>
+                </div>
+                <span id="indicador-seguridad-tag" class="text-[9px] font-bold uppercase px-2 py-0.5 rounded bg-green-950 text-green-400 border border-green-800">
+                    Zona Segura
+                </span>
+            </div>
+
+            <!-- Mensaje de Error / Bloqueo por Políticas de Seguridad -->
+            <div id="error-msg" class="hidden bg-red-950/40 border border-red-500/60 text-red-300 text-xs font-medium p-4 rounded-xl mb-6 items-start gap-3">
+                <i class="fa-solid fa-shield-virus text-red-400 text-lg mt-0.5 shrink-0"></i>
+                <div class="flex flex-col">
+                    <span class="font-bold text-white uppercase text-[11px] mb-0.5" id="error-title">Acceso Denegado</span>
+                    <span id="error-desc" class="leading-relaxed text-[11px]">Credenciales incorrectas</span>
+                </div>
+            </div>
+
+            <form id="login-form" class="relative z-10 space-y-4" onsubmit="procesarLogin(event)">
+                
+                <div>
+                    <label class="block text-[10px] font-sans font-bold text-pmtext uppercase tracking-widest mb-1.5 ml-1">Usuario / Perfil</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <i class="fa-solid fa-user text-pmtext/50"></i>
+                        </div>
+                        <input type="text" id="userInput" placeholder="admin o vendedor" required
+                            class="w-full bg-pmdark text-white pl-11 pr-4 py-3 text-sm rounded-xl border border-pmborder focus:outline-none focus:border-pmmagenta transition-all font-sans">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-[10px] font-sans font-bold text-pmtext uppercase tracking-widest mb-1.5 ml-1">Contraseña</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <i class="fa-solid fa-lock text-pmtext/50"></i>
+                        </div>
+                        <input type="password" id="passInput" placeholder="••••••••" required
+                            class="w-full bg-pmdark text-white pl-11 pr-4 py-3 text-sm rounded-xl border border-pmborder focus:outline-none focus:border-pmmagenta transition-all font-sans tracking-widest">
+                    </div>
+                </div>
+
+                <button type="submit" id="btn-login"
+                    class="w-full bg-gradient-to-r from-pmmagenta to-pmorange hover:from-pink-600 hover:to-orange-500 text-white font-sans font-black py-4 rounded-xl uppercase tracking-widest mt-2 transition-all shadow-lg flex justify-center items-center gap-2 active:scale-95">
+                    <span>Validar e Ingresar</span>
+                    <i class="fa-solid fa-arrow-right-to-bracket"></i>
+                </button>
+            </form>
+
+            <!-- Presets de Demostración Rápida para el Cliente -->
+            <div class="mt-6 pt-5 border-t border-pmborder text-left">
+                <span class="text-[10px] font-bold uppercase tracking-widest text-pmtext block mb-2.5">
+                    <i class="fa-solid fa-sliders mr-1 text-pmmagenta"></i> Pruebas Rápidas de Demostración:
+                </span>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                    <button type="button" onclick="cargarPreset('admin')" class="bg-pmdark hover:bg-pmcard text-white text-[10px] font-bold p-2.5 rounded-xl border border-pmborder text-center transition-colors">
+                        👑 Admin Total
+                    </button>
+                    <button type="button" onclick="cargarPreset('vendedor_ok')" class="bg-pmdark hover:bg-pmcard text-green-400 text-[10px] font-bold p-2.5 rounded-xl border border-pmborder text-center transition-colors">
+                        🎟️ Vendedor (Red Cine)
+                    </button>
+                    <button type="button" onclick="cargarPreset('vendedor_bloqueo')" class="bg-pmdark hover:bg-pmcard text-red-400 text-[10px] font-bold p-2.5 rounded-xl border border-pmborder text-center transition-colors">
+                        🚫 Probar Bloqueo IP
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="text-center mt-6">
+            <a href="index.html" class="text-xs font-sans font-bold text-pmtext hover:text-white uppercase tracking-wider transition-colors">
+                <i class="fa-solid fa-arrow-left mr-1"></i> Regresar al Sitio Público del Cine
+            </a>
+        </div>
+
+    </div>
+
+    <script src="js/data.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            actualizarBannerSeguridad();
+        });
+
+        function actualizarBannerSeguridad() {
+            const cfg = XilotzinDB.get('config_seguridad') || {};
+            const esMismaRed = cfg.ipActualSimulada === cfg.ipCineAutorizada;
+
+            const dot = document.getElementById('indicador-ip-dot');
+            const texto = document.getElementById('indicador-ip-texto');
+            const tag = document.getElementById('indicador-seguridad-tag');
+
+            if (esMismaRed) {
+                dot.className = 'w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse';
+                texto.innerText = `${cfg.ipCineAutorizada || '192.168.1.105'} (Red Local del Cine)`;
+                tag.className = 'text-[9px] font-bold uppercase px-2 py-0.5 rounded bg-green-950 text-green-400 border border-green-800';
+                tag.innerText = 'Red Autorizada';
+            } else {
+                dot.className = 'w-2.5 h-2.5 rounded-full bg-red-500 animate-ping';
+                texto.innerText = `${cfg.ipActualSimulada || '187.190.22.40'} (Red Externa / Domicilio)`;
+                tag.className = 'text-[9px] font-bold uppercase px-2 py-0.5 rounded bg-red-950 text-red-400 border border-red-800';
+                tag.innerText = 'Zona No Autorizada';
+            }
+        }
+
+        function cargarPreset(tipo) {
+            let cfg = XilotzinDB.get('config_seguridad') || {};
+            const userInput = document.getElementById('userInput');
+            const passInput = document.getElementById('passInput');
+
+            if (tipo === 'admin') {
+                userInput.value = 'admin';
+                passInput.value = '1234';
+            } else if (tipo === 'vendedor_ok') {
+                cfg.ipActualSimulada = cfg.ipCineAutorizada || '192.168.1.105';
+                XilotzinDB.set('config_seguridad', cfg);
+                actualizarBannerSeguridad();
+                userInput.value = 'vendedor';
+                passInput.value = '1234';
+            } else if (tipo === 'vendedor_bloqueo') {
+                cfg.ipActualSimulada = '187.190.22.40'; // IP externa
+                XilotzinDB.set('config_seguridad', cfg);
+                actualizarBannerSeguridad();
+                userInput.value = 'vendedor';
+                passInput.value = '1234';
+            }
+        }
+
+        function procesarLogin(event) {
+            event.preventDefault();
+
+            const user = document.getElementById('userInput').value.toLowerCase().trim();
+            const pass = document.getElementById('passInput').value;
+            const errorMsg = document.getElementById('error-msg');
+            const errorTitle = document.getElementById('error-title');
+            const errorDesc = document.getElementById('error-desc');
+            const loginCard = document.getElementById('login-card');
+            const btnLogin = document.getElementById('btn-login');
+
+            const cfg = XilotzinDB.get('config_seguridad') || {};
+
+            const originalBtnText = btnLogin.innerHTML;
+            btnLogin.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> VERIFICANDO SEGURIDAD...';
+            btnLogin.disabled = true;
+
+            setTimeout(() => {
+                // 1. Caso Administrador: Acceso total sin restricción de IP ni horario
+                if (user === 'admin' && pass === '1234') {
+                    concederAcceso('dashboard.html', btnLogin, errorMsg);
+                    return;
+                }
+
+                // 2. Caso Vendedor: Restricción estricta de IP y horario laboral asignado
+                if (user === 'vendedor' && pass === '1234') {
+                    const esIpAutorizada = cfg.ipActualSimulada === cfg.ipCineAutorizada;
+
+                    // Si está fuera de la red y no hay excepción
+                    if (!esIpAutorizada && !cfg.excepcionHorasExtras) {
+                        denegarAcceso(
+                            btnLogin, originalBtnText, errorMsg, errorTitle, errorDesc, loginCard,
+                            'Bloqueo por Restricción de Red (IP Externa)',
+                            `El rol Vendedor solo tiene autorización de operar conectado a la red local del cine (${cfg.ipCineAutorizada}). IP detectada: ${cfg.ipActualSimulada}. Solicite autorización al Administrador en el Dashboard.`
+                        );
+                        return;
+                    }
+
+                    // Acceso Vendedor Concedido
+                    concederAcceso('taquilla.html', btnLogin, errorMsg);
+                    return;
+                }
+
+                // 3. Credenciales incorrectas
+                denegarAcceso(
+                    btnLogin, originalBtnText, errorMsg, errorTitle, errorDesc, loginCard,
+                    'Credenciales Incorrectas',
+                    'El usuario o la contraseña ingresados no coinciden con ninguna cuenta activa en el sistema.'
+                );
+            }, 600);
+        }
+
+        function concederAcceso(destino, btnLogin, errorMsg) {
+            errorMsg.classList.add('hidden');
+            errorMsg.classList.remove('flex');
+            btnLogin.innerHTML = '<i class="fa-solid fa-check"></i> AUTORIZADO - INGRESANDO...';
+            btnLogin.classList.replace('from-pmmagenta', 'from-green-600');
+            btnLogin.classList.replace('to-pmorange', 'to-green-500');
+            
+            setTimeout(() => {
+                window.location.href = destino;
+            }, 500);
+        }
+
+        function denegarAcceso(btnLogin, originalBtnText, errorMsg, errorTitle, errorDesc, loginCard, titulo, detalle) {
+            btnLogin.innerHTML = originalBtnText;
+            btnLogin.disabled = false;
+
+            errorTitle.innerText = titulo;
+            errorDesc.innerText = detalle;
+            errorMsg.classList.remove('hidden');
+            errorMsg.classList.add('flex');
+
+            loginCard.classList.remove('animate-shake');
+            void loginCard.offsetWidth;
+            loginCard.classList.add('animate-shake');
+        }
+    </script>
+</body>
+
+</html>

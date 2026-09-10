@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cine Teatro Xilotzin | Cartelera Inteligente, Pre-orden y Tradición</title>
+    
+    <!-- Metadatos PWA y Tema -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#E11D2F">
+    <meta name="description" content="Sistema Integral de Gestión Cinematográfica para Cine Xilotzin. Consulta cartelera, aparta con Pre-orden QR y disfruta del cine tradicional en Jilotepec.">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cneRed: '#E11D2F',
+                        cneDark: '#0A0A0A',
+                        cneCard: '#121212',
+                        cneBorder: '#262626',
+                        cneLight: '#F5F5F5',
+                        cneText: '#E0E0E0',
+                        cneMuted: '#A0A0A0',
+                        cneGold: '#DCA54C'
+                    },
+                    fontFamily: {
+                        sans: ['Montserrat', 'sans-serif'],
+                        serif: ['"Playfair Display"', 'serif'],
+                        mono: ['"Space Mono"', 'monospace']
+                    },
+                    keyframes: {
+                        shimmer: {
+                            '0%': { backgroundPosition: '200% center' },
+                            '100%': { backgroundPosition: '-200% center' }
+                        }
+                    },
+                    animation: {
+                        'shimmer': 'shimmer 3s linear infinite'
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.9.10/dist/dotlottie-wc.js" type="module"></script>
+</head>
+
+<body class="theme-traditional bg-cneDark text-cneLight antialiased selection:bg-cneRed selection:text-white max-w-[1600px] mx-auto min-h-screen shadow-2xl pb-20 md:pb-0 flex flex-col relative overflow-x-hidden">
+
+    <!-- Loader Cinemático -->
+    <div id="premium-loader" class="fixed inset-0 z-[99999] bg-[#050505] flex flex-col items-center justify-center transition-all duration-700 ease-out overflow-hidden">
+        <dotlottie-wc src="https://lottie.host/e688d63e-ba8c-443e-bc74-b0bfa450c329/ZLbm83l3x2.lottie" style="width: 260px; height: 260px;" autoplay loop></dotlottie-wc>
+        <h2 class="text-4xl md:text-5xl font-serif font-black tracking-[0.2em] uppercase text-transparent bg-clip-text bg-gradient-to-r from-cneRed via-white to-cneRed bg-[length:200%_auto] animate-shimmer mt-2 drop-shadow-sm">
+            XILOTZIN
+        </h2>
+        <p class="text-cneText/70 text-xs tracking-[0.4em] font-medium uppercase border-t border-cneBorder/30 pt-3 mt-3 flex items-center gap-2">
+            <span class="w-1.5 h-1.5 rounded-full bg-cneRed"></span>
+            Cine Tradicional & Ecosistema Digital
+            <span class="w-1.5 h-1.5 rounded-full bg-white"></span>
+        </p>
+    </div>
+
+    <!-- Barra de Selección de Temática Estacional y Avisos -->
+    <div class="bg-black/90 border-b border-cneBorder/60 px-4 py-2 text-xs flex flex-wrap items-center justify-between gap-3 relative z-50">
+        <div class="flex items-center gap-2">
+            <span id="theme-current-badge" class="bg-cneRed/20 text-cneRed border border-cneRed/40 text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full flex items-center gap-1.5">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> 🎬 Cine Tradicional
+            </span>
+            <span class="hidden sm:inline text-cneMuted text-[11px]">Sistema de Plantillas Estacionales</span>
+        </div>
+
+        <div class="flex items-center gap-3">
+            <label for="theme-selector" class="text-[10px] uppercase font-bold text-cneMuted tracking-wider hidden md:inline">
+                <i class="fa-solid fa-palette mr-1 text-cneRed"></i> Motor de Temáticas:
+            </label>
+            <select id="theme-selector" onchange="aplicarTema(this.value, true)" class="bg-cneCard text-white text-[11px] font-bold uppercase tracking-wider py-1 px-3 rounded-lg border border-cneBorder focus:border-cneRed outline-none cursor-pointer">
+                <option value="traditional">🎬 Tradicional (Xilotzin Clásico)</option>
+                <option value="halloween">🎃 Noche de Terror (Halloween)</option>
+                <option value="christmas">🎄 Especial Navideño (Invierno)</option>
+                <option value="blockbuster">🍿 Verano Blockbuster (Neón)</option>
+            </select>
+
+            <a href="login.html" class="bg-white/10 hover:bg-cneRed text-white hover:text-white px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-colors flex items-center gap-1.5 border border-white/20">
+                <i class="fa-solid fa-lock text-[9px]"></i> Acceso POS
+            </a>
+        </div>
+    </div>
+
+    <!-- Header Principal -->
+    <header class="bg-cneDark/95 backdrop-blur-md border-b border-cneBorder sticky top-0 z-40 shadow-xl">
+        <div class="max-w-7xl mx-auto px-4 h-20 md:h-24 flex items-center justify-between">
+            <a href="index.html" class="flex items-center gap-4 cursor-pointer group">
+                <div class="flex items-center gap-3 relative">
+                    <div class="absolute inset-0 bg-cneRed blur-xl opacity-20 group-hover:opacity-40 transition-opacity"></div>
+                    <i class="fa-solid fa-film text-white text-3xl relative z-10"></i>
+                </div>
+                <div class="flex flex-col">
+                    <h1 class="text-2xl md:text-4xl font-serif font-black tracking-widest uppercase leading-none text-white drop-shadow-[0_0_15px_rgba(225,29,47,0.3)]">Xilotzin</h1>
+                    <span class="text-[9px] md:text-xs font-sans font-bold tracking-[0.3em] text-gradient uppercase mt-1">Cine Tradicional</span>
+                </div>
+            </a>
+
+            <div class="hidden md:flex items-center gap-8">
+                <nav class="flex gap-8 font-sans font-bold text-xs tracking-widest text-cneText uppercase">
+                    <a href="index.html" class="flex items-center gap-2 text-white transition-colors relative after:content-[''] after:absolute after:-bottom-2 after:left-0 after:w-full after:h-0.5 after:bg-cneRed">
+                        <i class="fa-solid fa-clapperboard text-cneRed"></i> Cartelera
+                    </a>
+                    <a href="dulceria.html" class="flex items-center gap-2 hover:text-white transition-colors relative after:content-[''] after:absolute after:-bottom-2 after:left-0 after:w-0 after:h-0.5 after:bg-white hover:after:w-full after:transition-all after:duration-300">
+                        <i class="fa-solid fa-store text-cneRed"></i> Dulcería & Combos
+                    </a>
+                    <button onclick="abrirPreorden(null, null)" class="flex items-center gap-2 bg-cneRed/15 hover:bg-cneRed text-white px-3.5 py-1.5 rounded-lg border border-cneRed/40 transition-all shadow-md">
+                        <i class="fa-solid fa-qrcode text-cneRed group-hover:text-white"></i> Pre-orden QR
+                    </button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <div class="relative w-full h-[40vh] md:h-[50vh] flex items-center justify-center overflow-hidden bg-cneDark border-b border-cneBorder">
+        <div class="absolute inset-0 bg-[url('./CINE.png')] bg-cover bg-center bg-no-repeat opacity-50 bg-fixed"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-cneDark via-cneDark/60 to-transparent"></div>
+        <div class="absolute inset-0 bg-gradient-to-r from-cneRed/25 via-transparent to-white/10"></div>
+
+        <div class="relative z-10 text-center px-6 max-w-4xl mx-auto flex flex-col items-center">
+            <span class="bg-cneRed/30 border border-cneRed/50 text-white font-sans font-bold text-[10px] md:text-xs uppercase tracking-[0.3em] px-4 py-1.5 rounded-full mb-4 shadow-lg flex items-center gap-2">
+                <i class="fa-solid fa-sparkles text-cneGold"></i> Pantalla Gigante • Sonido Digital • Jilotepec
+            </span>
+            <h2 class="text-4xl md:text-6xl lg:text-7xl font-serif font-black uppercase tracking-tight text-white mb-3 leading-none drop-shadow-[0_4px_10px_rgba(0,0,0,0.8)]">
+                La Magia del <br><span class="text-gradient bg-gradient-to-r from-white to-cneRed bg-clip-text text-transparent">Cine Tradicional</span>
+            </h2>
+            <p class="text-white/90 text-xs md:text-sm font-sans tracking-widest uppercase max-w-xl mx-auto mt-2 font-bold leading-relaxed drop-shadow-[0_2px_5px_rgba(0,0,0,0.8)]">
+                Consulta cartelera oficial en tiempo real, genera tu Pre-orden con código QR y canjéala directamente en caja sin hacer fila.
+            </p>
+        </div>
+    </div>
+
+    <!-- Sección de Noticias y Avisos Generales (Carrusel Dinámico) -->
+    <section class="max-w-7xl mx-auto px-4 md:px-6 pt-10 pb-4 w-full">
+        <div class="flex items-center justify-between mb-4">
+            <h4 class="text-xs font-sans font-bold uppercase tracking-[0.25em] text-cneMuted flex items-center gap-2">
+                <i class="fa-solid fa-bullhorn text-cneRed"></i> Avisos & Novedades del Cine
+            </h4>
+        </div>
+        <div id="carrusel-noticias" class="w-full">
+            <!-- El contenido se inyecta desde js/app.js con Store.get('noticias') -->
+        </div>
+    </section>
+
+    <!-- Main Content: Cartelera Inteligente -->
+    <main class="flex-grow max-w-7xl mx-auto px-4 md:px-6 py-12 relative z-20 w-full">
+        <div class="flex flex-col items-center mb-12 relative text-center">
+            <h3 class="text-3xl md:text-4xl font-serif font-black uppercase tracking-widest text-white z-10 relative inline-block">
+                En Exhibición
+                <div class="absolute -bottom-4 left-1/2 -translate-x-1/2 w-16 h-1 bg-cneRed rounded-full shadow-lg shadow-cneRed/50"></div>
+            </h3>
+            <p class="text-cneMuted text-xs font-sans uppercase tracking-[0.2em] font-semibold mt-6 max-w-md">
+                Haz clic en cualquier película para ver sinopsis completa, ficha oficial, horarios y apartar tus accesos en Pre-orden.
+            </p>
+        </div>
+
+        <!-- Grid de Películas (Tarjetas limpias sin horarios ni calificaciones en portada) -->
+        <div id="movie-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 pb-10">
+            <div class="col-span-full py-20 text-center text-cneMuted font-sans text-xs uppercase tracking-widest">
+                <i class="fa-solid fa-spinner fa-spin text-3xl mb-3 text-cneRed"></i><br>
+                Sincronizando cartelera oficial con TMDB...
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal de Película (Horarios, Sinopsis y Botón Pre-orden) -->
+    <div id="movie-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 md:p-6 bg-cneDark/95 backdrop-blur-md">
+        <div class="bg-cneCard border border-cneBorder rounded-2xl max-w-5xl w-full max-h-[90vh] overflow-y-auto relative shadow-2xl flex flex-col md:flex-row hide-scroll">
+            <button onclick="closeModal()" class="absolute top-4 right-4 w-10 h-10 bg-cneDark rounded-full flex items-center justify-center text-white hover:bg-cneRed hover:scale-110 transition-all z-20 shadow-lg border border-cneBorder">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+
+            <div class="w-full md:w-[42%] relative h-72 md:h-auto shrink-0 bg-black">
+                <img id="modal-image" src="" alt="" class="w-full h-full object-cover">
+                <div class="absolute inset-0 bg-gradient-to-t from-cneCard via-transparent to-transparent md:bg-gradient-to-r"></div>
+            </div>
+
+            <div class="w-full md:w-[58%] p-6 md:p-10 flex flex-col relative z-10">
+                <div class="mb-4">
+                    <span id="modal-genre" class="inline-block text-[10px] font-sans font-bold tracking-[0.2em] text-white bg-cneBorder px-3 py-1.5 rounded-full uppercase mb-3"></span>
+                    <h2 id="modal-title" class="text-3xl md:text-5xl font-serif font-black text-white uppercase leading-none tracking-tight mb-2"></h2>
+                    <p id="modal-tagline" class="text-sm font-sans italic text-cneRed opacity-90 tracking-wide"></p>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-3 mb-6 text-xs font-sans text-cneText uppercase tracking-widest font-bold">
+                    <span class="flex items-center gap-2 bg-cneDark px-3 py-1.5 rounded-md border border-cneBorder"><i class="fa-solid fa-clock text-cneRed"></i> <span id="modal-duration"></span></span>
+                    <span class="flex items-center gap-2 bg-cneDark px-3 py-1.5 rounded-md border border-cneBorder"><i class="fa-solid fa-calendar-day text-cneRed"></i> <span id="modal-year"></span></span>
+                    <span class="flex items-center gap-2 bg-cneDark px-3 py-1.5 rounded-md border border-cneBorder"><i class="fa-solid fa-star text-cneGold"></i> <span id="modal-rating"></span>/10</span>
+                </div>
+
+                <!-- Horarios de Funciones Disponibles -->
+                <div class="mb-6 bg-cneDark/70 p-4 rounded-xl border border-cneBorder">
+                    <h4 class="font-sans font-bold text-white uppercase tracking-widest text-xs mb-3 flex items-center justify-between">
+                        <span><i class="fa-regular fa-clock text-cneRed mr-2"></i> Horarios Disponibles:</span>
+                        <span class="text-[10px] text-cneMuted font-normal">Acceso General ($50 MXN)</span>
+                    </h4>
+                    <div class="flex flex-wrap gap-2.5" id="modal-horarios-container">
+                        <!-- Botones de horarios inyectados por js/app.js -->
+                    </div>
+                </div>
+
+                <div class="mb-6 flex-grow">
+                    <h4 class="font-sans font-bold text-white uppercase tracking-widest text-xs mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-align-left text-cneRed"></i> Sinopsis Oficial
+                    </h4>
+                    <p id="modal-description" class="text-cneText leading-relaxed text-sm font-sans font-medium mb-5"></p>
+
+                    <div class="space-y-2 text-xs font-sans bg-cneDark/50 p-4 rounded-xl border border-cneBorder/50">
+                        <p class="text-cneText flex flex-col sm:flex-row sm:gap-2">
+                            <span class="font-bold text-white uppercase tracking-widest">Director:</span>
+                            <span id="modal-director" class="text-cneLight"></span>
+                        </p>
+                        <p class="text-cneText flex flex-col sm:flex-row sm:gap-2">
+                            <span class="font-bold text-white uppercase tracking-widest">Elenco:</span>
+                            <span id="modal-cast" class="text-cneLight"></span>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="mt-auto pt-6 border-t border-cneBorder flex flex-col sm:flex-row gap-3">
+                    <button onclick="abrirPreorden(null, null)" class="flex-1 bg-gradient-to-r from-cneRed to-red-700 text-white px-6 py-4 rounded-xl font-sans font-black text-xs uppercase tracking-widest hover:scale-[1.02] hover:shadow-[0_0_25px_rgba(225,29,47,0.45)] transition-all flex items-center justify-center gap-3 text-center leading-tight shadow-lg">
+                        <i class="fa-solid fa-qrcode text-lg shrink-0"></i>
+                        <span>Apartar en Pre-orden (Generar QR)</span>
+                    </button>
+                    <a id="modal-trailer-btn" href="#" target="_blank" class="hidden sm:flex items-center justify-center gap-2 px-6 py-4 rounded-xl border border-cneBorder text-white hover:bg-cneBorder hover:border-white transition-all font-sans font-bold text-xs uppercase tracking-widest shrink-0">
+                        <i class="fa-brands fa-youtube text-cneRed text-lg"></i> Tráiler
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Configuración de Pre-orden (Módulo 1: Pre-orden y Ticket Digital) -->
+    <div id="modal-preorden" class="fixed inset-0 z-[110] hidden flex items-center justify-center p-4 bg-cneDark/95 backdrop-blur-md">
+        <div class="bg-cneCard border border-cneBorder rounded-3xl max-w-2xl w-full max-h-[92vh] overflow-y-auto p-6 md:p-8 relative shadow-2xl hide-scroll">
+            <button onclick="cerrarModalPreorden()" class="absolute top-5 right-5 text-cneMuted hover:text-white text-xl">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="flex items-center gap-3 mb-6 border-b border-cneBorder pb-4">
+                <div class="w-12 h-12 rounded-xl bg-cneRed/20 border border-cneRed flex items-center justify-center text-cneRed text-2xl">
+                    <i class="fa-solid fa-ticket"></i>
+                </div>
+                <div>
+                    <h3 class="text-xl md:text-2xl font-serif font-black uppercase text-white tracking-wide">
+                        Pre-orden de Boletos & Dulcería
+                    </h3>
+                    <p class="text-xs text-cneMuted font-sans uppercase tracking-widest">
+                        Aparta tus accesos sin compras online • Paga a contra-entrega en caja física
+                    </p>
+                </div>
+            </div>
+
+            <form onsubmit="confirmarPreorden(event)" class="space-y-6 font-sans">
+                <!-- Función Seleccionada -->
+                <div class="bg-cneDark p-4 rounded-2xl border border-cneBorder flex items-center justify-between">
+                    <div>
+                        <span class="text-[10px] text-cneRed font-bold uppercase tracking-widest block mb-0.5">Función Seleccionada</span>
+                        <h4 id="preorden-pelicula" class="text-base font-black text-white uppercase">Cargando...</h4>
+                    </div>
+                    <div class="bg-cneCard px-3.5 py-2 rounded-xl border border-cneBorder text-right">
+                        <span class="text-[9px] text-cneMuted uppercase font-bold tracking-widest block">Horario</span>
+                        <span id="preorden-horario" class="text-sm font-black text-white">--:--</span>
+                    </div>
+                </div>
+
+                <!-- Selección Ágil de Boletos (Acceso General) -->
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <label class="text-xs font-bold uppercase tracking-wider text-white flex items-center gap-2">
+                            <i class="fa-solid fa-users text-cneRed"></i> Boletos de Acceso General ($50 MXN c/u)
+                        </label>
+                        <span id="preorden-subtotal-boletos" class="text-xs font-black text-cneGold">$100 MXN</span>
+                    </div>
+                    <div class="bg-cneDark p-4 rounded-2xl border border-cneBorder flex items-center justify-between">
+                        <span class="text-xs text-cneMuted font-medium">Entrada general sin asignación de butacas (flujo ágil):</span>
+                        <div class="flex items-center gap-3 bg-cneCard p-1 rounded-xl border border-cneBorder">
+                            <button type="button" onclick="ajustarBoletosPreorden(-1)" class="w-8 h-8 rounded-lg bg-cneDark hover:bg-cneBorder text-white font-bold transition-colors">-</button>
+                            <span id="preorden-cant-boletos" class="w-8 text-center font-black text-white text-base">2</span>
+                            <button type="button" onclick="ajustarBoletosPreorden(1)" class="w-8 h-8 rounded-lg bg-cneDark hover:bg-cneBorder text-white font-bold transition-colors">+</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Combos de Dulcería Opcionales -->
+                <div>
+                    <label class="text-xs font-bold uppercase tracking-wider text-white block mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-cookie-bite text-cneRed"></i> Combos de Dulcería (Opcional):
+                    </label>
+                    <div id="preorden-combos-lista" class="space-y-2.5">
+                        <!-- Inyectado dinámicamente por js/app.js -->
+                    </div>
+                </div>
+
+                <!-- Datos de Contacto para el Ticket -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-[10px] font-bold uppercase tracking-widest text-cneMuted block mb-1">Nombre Completo</label>
+                        <input type="text" id="preorden-nombre" required placeholder="Ej. Roberto Sánchez" class="w-full bg-cneDark text-white px-4 py-3 rounded-xl border border-cneBorder focus:border-cneRed outline-none text-xs font-bold">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-bold uppercase tracking-widest text-cneMuted block mb-1">Teléfono / WhatsApp</label>
+                        <input type="tel" id="preorden-telefono" required placeholder="Ej. 55 1234 5678" class="w-full bg-cneDark text-white px-4 py-3 rounded-xl border border-cneBorder focus:border-cneRed outline-none text-xs font-bold">
+                    </div>
+                </div>
+
+                <!-- Total y Confirmación -->
+                <div class="pt-4 border-t border-cneBorder flex items-center justify-between">
+                    <div>
+                        <span class="text-[10px] text-cneMuted uppercase font-bold tracking-widest block">Total a Pagar en Taquilla</span>
+                        <span id="preorden-total" class="text-3xl font-serif font-black text-cneRed">$100 MXN</span>
+                    </div>
+                    <button type="submit" class="bg-gradient-to-r from-cneRed to-red-700 text-white font-bold text-xs uppercase tracking-widest px-6 py-4 rounded-xl hover:scale-105 transition-all shadow-xl flex items-center gap-2">
+                        <i class="fa-solid fa-qrcode"></i> Generar Ticket QR
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de Ticket Digital Generado (con Código QR Único y Vigencia 8 a 15 días) -->
+    <div id="modal-ticket-digital" class="fixed inset-0 z-[120] hidden flex items-center justify-center p-4 bg-cneDark/95 backdrop-blur-md">
+        <div class="bg-cneCard border-2 border-cneRed/80 rounded-3xl max-w-md w-full p-6 md:p-8 relative shadow-[0_0_50px_rgba(225,29,47,0.3)] text-center">
+            <button onclick="cerrarTicketDigital()" class="absolute top-4 right-4 text-cneMuted hover:text-white text-xl">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <span class="bg-cneRed text-white text-[10px] font-bold uppercase tracking-[0.3em] px-3.5 py-1 rounded-full inline-block mb-3 shadow-md">
+                Ticket Digital de Pre-orden
+            </span>
+            <h3 id="ticket-pelicula" class="text-2xl font-serif font-black uppercase text-white leading-tight mb-1">Película</h3>
+            <p id="ticket-horario" class="text-xs font-sans font-bold text-cneRed uppercase tracking-widest mb-4">Horario: --:--</p>
+
+            <!-- Código QR Generado -->
+            <div class="bg-white p-4 rounded-2xl w-60 h-60 mx-auto mb-4 shadow-inner flex items-center justify-center relative">
+                <img id="ticket-qr-img" src="" alt="QR Pre-orden" class="w-full h-full object-contain">
+            </div>
+
+            <!-- Folio y Vigencia (8 a 15 días) -->
+            <div class="bg-cneDark p-4 rounded-2xl border border-cneBorder text-left space-y-2 mb-5 font-sans">
+                <div class="flex justify-between items-center text-xs">
+                    <span class="text-cneMuted uppercase font-bold tracking-widest text-[10px]">Folio Único:</span>
+                    <span id="ticket-folio" class="font-mono font-bold text-white text-sm">PRE-XIL-00000</span>
+                </div>
+                <div class="flex justify-between items-center text-xs">
+                    <span class="text-cneMuted uppercase font-bold tracking-widest text-[10px]">Boletos:</span>
+                    <span id="ticket-boletos" class="font-bold text-white">2 Accesos Generales</span>
+                </div>
+                <div class="flex justify-between items-start text-xs border-t border-cneBorder/50 pt-1.5">
+                    <span class="text-cneMuted uppercase font-bold tracking-widest text-[10px]">Combos:</span>
+                    <span id="ticket-combos-resumen" class="font-bold text-cneText text-right text-[11px]">Sin combos</span>
+                </div>
+                <div class="flex justify-between items-center text-xs border-t border-cneBorder/50 pt-1.5">
+                    <span class="text-cneMuted uppercase font-bold tracking-widest text-[10px]">Titular:</span>
+                    <span id="ticket-cliente" class="font-bold text-white">Cliente</span>
+                </div>
+                <div class="flex justify-between items-center text-xs border-t border-cneBorder/50 pt-1.5">
+                    <span class="text-cneRed uppercase font-bold tracking-widest text-[10px]">Vigencia:</span>
+                    <span id="ticket-vigencia" class="font-bold text-cneRed text-[10px]">Válido 12 días</span>
+                </div>
+                <div class="flex justify-between items-center text-sm border-t border-cneBorder pt-2">
+                    <span class="uppercase font-black text-white">Importe a Pagar:</span>
+                    <span id="ticket-total" class="font-serif font-black text-cneGold text-lg">$0 MXN</span>
+                </div>
+            </div>
+
+            <p class="text-[10px] text-cneMuted font-sans mb-5 leading-relaxed">
+                <i class="fa-solid fa-circle-info text-cneRed mr-1"></i> Presenta este código QR en la caja física de Cine Xilotzin para pagar y recoger tus accesos y productos a contra-entrega.
+            </p>
+
+            <div class="flex gap-3">
+                <button onclick="window.print()" class="flex-1 bg-cneDark hover:bg-cneBorder text-white text-xs font-bold uppercase tracking-wider py-3 rounded-xl border border-cneBorder transition-colors flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-print"></i> Imprimir
+                </button>
+                <button onclick="cerrarTicketDigital()" class="flex-1 bg-cneRed text-white text-xs font-black uppercase tracking-wider py-3 rounded-xl hover:bg-red-700 transition-colors shadow-lg">
+                    Listo, Guardar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast de Marketing / Newsletter (Captación de Correos) -->
+    <div id="notification-toast" class="fixed bottom-6 right-4 md:right-8 z-[100] max-w-sm w-full transform transition-all duration-500 translate-y-4 opacity-0 pointer-events-none">
+        <div class="bg-cneCard border-2 border-cneRed rounded-2xl shadow-2xl overflow-hidden pointer-events-auto">
+            <div class="bg-gradient-to-r from-cneRed to-red-800 px-5 py-3 flex items-center justify-between">
+                <div class="flex items-center gap-2.5 text-white">
+                    <i class="fa-solid fa-envelope-open-text text-lg"></i>
+                    <h4 class="font-sans font-bold uppercase tracking-wider text-xs">Preventas y Estrenos</h4>
+                </div>
+                <button onclick="cerrarToastNewsletter()" class="text-white/80 hover:text-white text-sm">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="p-5 bg-cneCard">
+                <p class="text-cneText text-xs font-medium mb-3 leading-relaxed">
+                    Sé el primero en enterarte de las funciones especiales, estrenos de medianoche y promociones 2x1 en Jilotepec.
+                </p>
+                <form onsubmit="procesarSuscripcionNewsletter(event)" class="space-y-3">
+                    <input type="email" id="newsletter-email-input" required placeholder="tu-correo@ejemplo.com" class="w-full bg-cneDark text-white px-3.5 py-2.5 rounded-xl border border-cneBorder focus:border-cneRed outline-none text-xs font-medium">
+                    <div class="flex gap-2 justify-end">
+                        <button type="button" onclick="cerrarToastNewsletter()" class="px-4 py-2 text-[10px] font-bold uppercase tracking-wider text-cneMuted hover:text-white transition-colors border border-cneBorder rounded-lg">
+                            Ahora no
+                        </button>
+                        <button type="submit" class="px-4 py-2 bg-cneRed text-white text-[10px] font-bold uppercase tracking-wider rounded-lg hover:bg-red-700 transition-colors shadow-md shadow-cneRed/20 flex items-center gap-2">
+                            <i class="fa-solid fa-bell"></i> Suscribirme
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer Tradicional -->
+    <footer class="bg-cneCard border-t border-cneBorder pt-16 pb-24 md:pb-8 mt-16 relative z-20 overflow-hidden">
+        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-white via-cneRed to-white opacity-60"></div>
+        <div class="max-w-7xl mx-auto px-4 md:px-6 relative z-10">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 md:gap-8 mb-12">
+                <div class="flex flex-col gap-4">
+                    <div class="flex items-center gap-3">
+                        <img style="border-radius: 50px; height: 45px; width: 45px;" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTmU78ReuLCf8T4T3Rv6K8-yAB13kXuZX7_TQ&s" alt="Jilotepec" class="object-cover border border-white/10 shadow-lg grayscale hover:grayscale-0 transition-all duration-500">
+                        <div class="flex flex-col">
+                            <h2 class="text-2xl font-serif font-black tracking-widest uppercase leading-none text-white">Xilotzin</h2>
+                            <span class="text-[9px] font-sans font-bold tracking-[0.3em] text-cneRed uppercase mt-1">Cine Tradicional</span>
+                        </div>
+                    </div>
+                    <p class="text-cneText text-xs font-sans leading-relaxed mt-2 pr-4 font-medium">
+                        El último gran refugio del séptimo arte en Jilotepec, Estado de México. Pantalla gigante, sonido digital y ecosistema digital sin complicaciones.
+                    </p>
+                </div>
+
+                <div>
+                    <h3 class="text-white font-sans font-bold uppercase tracking-widest text-xs mb-6 flex items-center gap-2">
+                        <i class="fa-solid fa-link text-cneRed"></i> Navegación Rápida
+                    </h3>
+                    <ul class="flex flex-col gap-3 text-xs font-sans uppercase tracking-wider font-bold text-cneText">
+                        <li><a href="index.html" class="hover:text-white transition-colors flex items-center gap-2"><i class="fa-solid fa-angle-right text-cneRed/50"></i> Cartelera</a></li>
+                        <li><a href="dulceria.html" class="hover:text-white transition-colors flex items-center gap-2"><i class="fa-solid fa-angle-right text-cneRed/50"></i> Dulcería & Combos</a></li>
+                        <li><button onclick="abrirPreorden(null, null)" class="hover:text-white transition-colors flex items-center gap-2"><i class="fa-solid fa-angle-right text-cneRed/50"></i> Pre-orden con QR</button></li>
+                        <li><a href="login.html" class="hover:text-white transition-colors flex items-center gap-2"><i class="fa-solid fa-angle-right text-cneRed/50"></i> Acceso Sistema POS</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="text-white font-sans font-bold uppercase tracking-widest text-xs mb-6 flex items-center gap-2">
+                        <i class="fa-solid fa-location-dot text-cneRed"></i> Ubicación
+                    </h3>
+                    <ul class="flex flex-col gap-4 text-xs font-sans text-cneText font-medium">
+                        <li class="flex items-start gap-3">
+                            <i class="fa-solid fa-map-pin mt-1 text-cneRed text-base"></i>
+                            <span class="leading-relaxed">Centro de Jilotepec<br>Estado de México, C.P. 54240</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <i class="fa-brands fa-whatsapp text-cneRed text-base"></i>
+                            <span>Atención: +52 (55) 1234 5678</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="text-white font-sans font-bold uppercase tracking-widest text-xs mb-6 flex items-center gap-2">
+                        <i class="fa-solid fa-hashtag text-cneRed"></i> Redes & Promoción
+                    </h3>
+                    <div class="flex gap-3 mb-6">
+                        <a href="#" class="w-10 h-10 rounded-full bg-cneDark border border-cneBorder flex items-center justify-center text-cneText hover:text-white hover:border-cneRed transition-all shadow-lg"><i class="fa-brands fa-facebook-f"></i></a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-cneDark border border-cneBorder flex items-center justify-center text-cneText hover:text-white hover:border-cneRed transition-all shadow-lg"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-cneDark border border-cneBorder flex items-center justify-center text-cneText hover:text-white hover:border-cneRed transition-all shadow-lg"><i class="fa-brands fa-tiktok"></i></a>
+                    </div>
+                    <span class="inline-block bg-cneDark px-3 py-1.5 rounded-lg border border-cneBorder text-[10px] text-cneMuted font-mono">
+                        PWA v1.0 • Cine Xilotzin
+                    </span>
+                </div>
+            </div>
+
+            <div class="border-t border-cneBorder pt-6 flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
+                <p class="text-cneText/50 text-[10px] font-sans font-bold uppercase tracking-[0.2em]">
+                    &copy; 2026 Cine Teatro Xilotzin. Desarrollado por Rodnix.
+                </p>
+                <p class="text-cneText/40 text-[9px] font-sans font-bold uppercase tracking-[0.3em] flex items-center gap-2">
+                    Hecho con <i class="fa-solid fa-heart text-cneRed"></i> en Jilotepec, Edo. Méx.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Navegación Móvil Inferior -->
+    <nav class="md:hidden fixed bottom-0 left-0 w-full bg-cneDark/95 backdrop-blur-lg border-t border-cneBorder flex justify-around z-50 h-16 shadow-[0_-10px_30px_rgba(0,0,0,0.5)] px-2">
+        <a href="index.html" class="flex-1 flex flex-col items-center justify-center gap-1 text-cneRed">
+            <i class="fa-solid fa-clapperboard text-lg"></i>
+            <span class="text-[9px] font-sans font-bold uppercase tracking-widest mt-0.5">Cartelera</span>
+        </a>
+        <a href="dulceria.html" class="flex-1 flex flex-col items-center justify-center gap-1 text-cneMuted hover:text-white transition-colors">
+            <i class="fa-solid fa-store text-lg"></i>
+            <span class="text-[9px] font-sans font-bold uppercase tracking-widest mt-0.5">Dulcería</span>
+        </a>
+        <button onclick="abrirPreorden(null, null)" class="flex-1 flex flex-col items-center justify-center gap-1 text-cneGold">
+            <i class="fa-solid fa-qrcode text-lg"></i>
+            <span class="text-[9px] font-sans font-bold uppercase tracking-widest mt-0.5">Pre-orden</span>
+        </button>
+        <a href="login.html" class="flex-1 flex flex-col items-center justify-center gap-1 text-cneMuted hover:text-white transition-colors">
+            <i class="fa-solid fa-cash-register text-lg"></i>
+            <span class="text-[9px] font-sans font-bold uppercase tracking-widest mt-0.5">POS</span>
+        </a>
+    </nav>
+
+    <script src="js/data.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+        // Transición de loader suave
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const loader = document.getElementById('premium-loader');
+                if (loader) {
+                    loader.classList.add('opacity-0', 'scale-105', 'blur-sm');
+                    setTimeout(() => loader.remove(), 700);
+                }
+            }, 1800);
+        });
+    </script>
+</body>
+
+</html>
