@@ -391,7 +391,7 @@
             if (!cont || !cineData || !cineData.peliculas) return;
 
             cont.innerHTML = cineData.peliculas.map(p => `
-                <div onclick="seleccionarPelicula(${p.id})" id="card-peli-${p.id}" class="cursor-pointer peli-card-item rounded-xl overflow-hidden border-2 border-cneBorder hover:border-cneRed/60 bg-cneDark transition-all duration-300 flex flex-col">
+                <div onclick="seleccionarPelicula('${p.id}')" id="card-peli-${p.id}" class="cursor-pointer peli-card-item rounded-xl overflow-hidden border-2 border-cneBorder hover:border-cneRed/60 bg-cneDark transition-all duration-300 flex flex-col">
                     <div class="aspect-[2/3] w-full relative overflow-hidden bg-black">
                         <img src="${p.poster}" alt="${p.titulo}" class="w-full h-full object-cover">
                         <span class="absolute top-1.5 right-1.5 bg-cneRed text-white text-[9px] font-black px-1.5 py-0.5 rounded">${p.clasificacion}</span>
@@ -405,7 +405,10 @@
         }
 
         function seleccionarPelicula(idPeli, horarioDeseado = null) {
-            const peli = cineData.peliculas.find(p => p.id === idPeli) || cineData.peliculas[0];
+            const pelis = (window.cineData && window.cineData.peliculas && window.cineData.peliculas.length > 0)
+                ? window.cineData.peliculas
+                : (typeof catalogoLocal !== 'undefined' ? catalogoLocal : []);
+            const peli = pelis.find(p => p.id == idPeli) || pelis[0];
             if (!peli) return;
 
             estadoPreorden.pelicula = peli;

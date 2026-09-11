@@ -592,7 +592,7 @@
                 return `
                 <div id="card-peli-${p.id}" class="bg-pmcard border border-pmborder hover:border-pmmagenta/70 p-3 sm:p-4 rounded-xl sm:rounded-2xl flex flex-col gap-2.5 sm:gap-3 transition-all group shadow-lg select-none">
                     <!-- Ficha Superior de Película: Clickeable para selección rápida -->
-                    <div onclick="agregarBoletoPorId(${p.id}, '${primerHorario}')" class="flex items-start gap-2.5 sm:gap-4 cursor-pointer active:scale-[0.98] transition-all hover:opacity-95" title="Toca para agregar boleto (${primerHorario})">
+                    <div onclick="agregarBoletoPorId('${p.id}', '${primerHorario}')" class="flex items-start gap-2.5 sm:gap-4 cursor-pointer active:scale-[0.98] transition-all hover:opacity-95" title="Toca para agregar boleto (${primerHorario})">
                         <div class="relative shrink-0 overflow-hidden rounded-lg sm:rounded-xl shadow-md border border-pmborder bg-pmdark">
                             <img src="${p.poster}" class="w-14 h-20 sm:w-16 sm:h-24 object-cover">
                             <span class="absolute bottom-1 right-1 bg-pmmagenta text-white text-[8px] font-black px-1.5 py-0.5 rounded shadow flex items-center gap-0.5">
@@ -620,7 +620,7 @@
                         </div>
                         <div class="grid grid-cols-2 sm:grid-cols-3 gap-1.5 sm:gap-2">
                             ${(p.horarios || [primerHorario]).map(h => `
-                                <button type="button" onclick="event.stopPropagation(); agregarBoletoPorId(${p.id}, '${h}')" class="bg-pmdark hover:bg-pmmagenta active:bg-pink-600 text-white text-[11px] sm:text-xs font-bold py-2 px-1.5 sm:px-2 rounded-lg sm:rounded-xl border border-pmborder hover:border-pmmagenta uppercase tracking-wider transition-all active:scale-95 shadow flex items-center justify-center gap-1.5 touch-manipulation group/btn">
+                                <button type="button" onclick="event.stopPropagation(); agregarBoletoPorId('${p.id}', '${h}')" class="bg-pmdark hover:bg-pmmagenta active:bg-pink-600 text-white text-[11px] sm:text-xs font-bold py-2 px-1.5 sm:px-2 rounded-lg sm:rounded-xl border border-pmborder hover:border-pmmagenta uppercase tracking-wider transition-all active:scale-95 shadow flex items-center justify-center gap-1.5 touch-manipulation group/btn">
                                     <i class="fa-solid fa-ticket text-pmmagenta group-hover/btn:text-white text-[9px] sm:text-[10px]"></i>
                                     <span>${h}</span>
                                 </button>

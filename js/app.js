@@ -404,7 +404,7 @@ function renderIndex() {
 let peliculaModalActual = null;
 
 function openModal(id) {
-    const p = cineData.peliculas.find(m => m.id === id);
+    const p = cineData?.peliculas ? cineData.peliculas.find(m => m.id == id) : null;
     if (!p) return;
 
     peliculaModalActual = p;
@@ -424,7 +424,7 @@ function openModal(id) {
     const contHorarios = document.getElementById('modal-horarios-container');
     if (contHorarios) {
         contHorarios.innerHTML = p.horarios.map(h => `
-            <button onclick="abrirPreorden(${p.id}, '${h}')" class="bg-cneDark hover:bg-cneRed text-white border border-cneBorder hover:border-cneRed font-sans font-bold px-4 py-2.5 rounded-lg text-xs uppercase tracking-widest transition-all shadow flex items-center justify-center gap-2 group">
+            <button onclick="abrirPreorden('${p.id}', '${h}')" class="bg-cneDark hover:bg-cneRed text-white border border-cneBorder hover:border-cneRed font-sans font-bold px-4 py-2.5 rounded-lg text-xs uppercase tracking-widest transition-all shadow flex items-center justify-center gap-2 group">
                 <i class="fa-solid fa-ticket text-cneRed group-hover:text-white transition-colors"></i> ${h}
             </button>
         `).join('');
@@ -458,7 +458,7 @@ function closeModal() {
 function abrirPreorden(idPeli, horario) {
     closeModal();
     const peli = (typeof cineData !== 'undefined' && cineData.peliculas) 
-        ? (cineData.peliculas.find(p => p.id === idPeli) || peliculaModalActual)
+        ? (cineData.peliculas.find(p => p.id == idPeli) || peliculaModalActual)
         : null;
     const idParam = peli ? peli.id : (idPeli || 1);
     const horParam = horario || (peli && peli.horarios ? peli.horarios[0] : '');
