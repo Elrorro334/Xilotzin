@@ -41,6 +41,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700;900&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/styles.css">
+    <script src="js/jsQR.min.js"></script>
     <script src="js/html5-qrcode.min.js"></script>
     <script src="js/qrcode.min.js"></script>
     <style>
@@ -466,13 +467,16 @@
             <p class="text-[10px] sm:text-xs text-pmtext mb-4">Escanea el ticket digital del cliente o selecciona una pre-orden activa</p>
 
             <!-- Visor de Cámara Real para Escaneo QR -->
-            <div class="relative w-full max-w-[280px] sm:max-w-[320px] aspect-square mx-auto bg-black rounded-2xl border-2 border-pmmagenta overflow-hidden mb-3 shadow-[0_0_30px_rgba(216,27,96,0.35)] flex items-center justify-center">
-                <!-- Contenedor donde Html5Qrcode monta la cámara real -->
-                <div id="qr-reader-container" class="w-full h-full flex items-center justify-center"></div>
+            <div id="qr-camera-wrapper" class="relative w-full max-w-[280px] sm:max-w-[320px] aspect-square mx-auto bg-black rounded-2xl border-2 border-pmmagenta overflow-hidden mb-3 shadow-[0_0_30px_rgba(216,27,96,0.35)] flex items-center justify-center">
+                <!-- Video en vivo -->
+                <video id="qr-video" autoplay playsinline muted class="w-full h-full object-cover rounded-2xl"></video>
+
+                <!-- Canvas de detección y resaltado de código -->
+                <canvas id="qr-canvas-overlay" class="absolute inset-0 w-full h-full pointer-events-none rounded-2xl"></canvas>
 
                 <!-- Overlay de escaneo con marco guía y línea láser -->
                 <div id="qr-scanner-overlay" class="absolute inset-0 pointer-events-none flex items-center justify-center">
-                    <div class="w-44 h-44 sm:w-52 sm:h-52 border-2 border-dashed border-pmmagenta/70 rounded-2xl relative flex items-center justify-center">
+                    <div id="qr-target-box" class="w-44 h-44 sm:w-52 sm:h-52 border-2 border-dashed border-pmmagenta/70 rounded-2xl relative flex items-center justify-center transition-all">
                         <div class="laser-scanner-line"></div>
                         <div class="absolute -top-1.5 -left-1.5 w-4 h-4 border-t-2 border-l-2 border-pink-400"></div>
                         <div class="absolute -top-1.5 -right-1.5 w-4 h-4 border-t-2 border-r-2 border-pink-400"></div>
@@ -487,14 +491,18 @@
                 </div>
             </div>
 
-            <!-- Controles de Cámara (Cambiar Cámara / Reintentar) -->
-            <div class="flex items-center justify-center gap-2 mb-3">
+            <!-- Controles de Cámara (Cambiar Cámara / Reintentar / Subir Archivo) -->
+            <div class="flex items-center justify-center gap-2 mb-3 flex-wrap">
                 <button type="button" id="btn-cambiar-camara" onclick="alternarCamaraPOS()" class="hidden bg-pmdark hover:bg-neutral-800 text-pmtext hover:text-white text-[10px] font-bold py-1.5 px-3 rounded-lg border border-pmborder items-center gap-1.5 transition-all">
                     <i class="fa-solid fa-camera-rotate text-pmmagenta"></i> <span>Cambiar Cámara</span>
                 </button>
                 <button type="button" onclick="iniciarCamaraEscaner()" class="bg-pmdark hover:bg-neutral-800 text-pmtext hover:text-white text-[10px] font-bold py-1.5 px-3 rounded-lg border border-pmborder flex items-center gap-1.5 transition-all">
                     <i class="fa-solid fa-arrows-rotate text-green-400"></i> <span>Reactivar Cámara</span>
                 </button>
+                <label for="qr-file-input" class="bg-pmdark hover:bg-neutral-800 text-pmtext hover:text-white text-[10px] font-bold py-1.5 px-3 rounded-lg border border-pmborder flex items-center gap-1.5 transition-all cursor-pointer">
+                    <i class="fa-solid fa-image text-pmblue"></i> <span>Subir Archivo QR</span>
+                    <input type="file" id="qr-file-input" accept="image/*" class="hidden" onchange="procesarArchivoQR(event)">
+                </label>
             </div>
 
             <!-- Entrada Manual o de Lector Óptico -->
@@ -1434,16 +1442,34 @@
         }
 
         // ==========================================================
-        // 7. VALIDADOR DE PRE-ÓRDENES QR EN CAJA (CON CÁMARA REAL)
+        // 7. VALIDADOR DE PRE-ÓRDENES QR EN CAJA (CON CÁMARA REAL & JSQR)
         // ==========================================================
-        let html5QrScannerInstance = null;
+        let mediaStreamActual = null;
         let camarasDisponibles = [];
         let indiceCamaraActual = 0;
-        let camaraActiva = false;
+        let escaneoActivo = false;
+        let animFrameId = null;
+        let offscreenCanvas = null;
+        let offscreenCtx = null;
+        let barcodeDetectorInstancia = null;
+
+        // Intentar instanciar BarcodeDetector si el navegador lo soporta de forma nativa
+        try {
+            if ('BarcodeDetector' in window) {
+                barcodeDetectorInstancia = new BarcodeDetector({ formats: ['qr_code'] });
+            }
+        } catch (e) {
+            barcodeDetectorInstancia = null;
+        }
 
         function abrirModalEscanerQR() {
             const modal = document.getElementById('modal-escaner-qr');
-            modal.classList.remove('hidden');
+            if (modal) modal.classList.remove('hidden');
+
+            const targetBox = document.getElementById('qr-target-box');
+            if (targetBox) {
+                targetBox.className = 'w-44 h-44 sm:w-52 sm:h-52 border-2 border-dashed border-pmmagenta/70 rounded-2xl relative flex items-center justify-center transition-all';
+            }
 
             const listaDemo = document.getElementById('lista-preordenes-demo');
             const preordenes = XilotzinDB.get('preordenes') || [];
@@ -1466,126 +1492,223 @@
                 }
             }
 
-            // Iniciar cámara web / móvil
+            // Iniciar cámara con retardo para permitir que el modal se renderice en pantalla
             setTimeout(() => {
                 iniciarCamaraEscaner();
-            }, 100);
+            }, 80);
         }
 
         async function iniciarCamaraEscaner() {
             const statusElem = document.getElementById('qr-camera-status');
-            const readerDiv = document.getElementById('qr-reader-container');
-            if (!readerDiv) return;
+            const video = document.getElementById('qr-video');
+            if (!video) return;
 
             if (statusElem) {
                 statusElem.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-pmmagenta mr-1.5"></i> Solicitando acceso a la cámara...';
             }
 
-            await detenerCamaraEscaner();
+            detenerCamaraEscaner();
 
+            // 1. Detectar cámaras disponibles
             try {
-                if (typeof Html5Qrcode === 'undefined') {
-                    throw new Error('Librería Html5Qrcode no encontrada');
+                if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
+                    const devices = await navigator.mediaDevices.enumerateDevices();
+                    camarasDisponibles = devices.filter(d => d.kind === 'videoinput');
+                    const btnCambiar = document.getElementById('btn-cambiar-camara');
+                    if (btnCambiar) {
+                        btnCambiar.style.display = (camarasDisponibles.length > 1) ? 'inline-flex' : 'none';
+                    }
                 }
-
-                html5QrScannerInstance = new Html5Qrcode("qr-reader-container");
-
-                try {
-                    camarasDisponibles = await Html5Qrcode.getCameras();
-                } catch (camErr) {
-                    camarasDisponibles = [];
-                }
-
-                const btnCambiar = document.getElementById('btn-cambiar-camara');
-                if (btnCambiar) {
-                    btnCambiar.style.display = (camarasDisponibles && camarasDisponibles.length > 1) ? 'inline-flex' : 'none';
-                }
-
-                const cameraConfig = (camarasDisponibles.length > 0 && camarasDisponibles[indiceCamaraActual])
-                    ? camarasDisponibles[indiceCamaraActual].id
-                    : { facingMode: "environment" };
-
-                const scanConfig = {
-                    fps: 15,
-                    qrbox: (viewfinderWidth, viewfinderHeight) => {
-                        const minEdge = Math.min(viewfinderWidth, viewfinderHeight);
-                        const edge = Math.max(160, Math.floor(minEdge * 0.75));
-                        return { width: edge, height: edge };
-                    },
-                    aspectRatio: 1.0
-                };
-
-                await html5QrScannerInstance.start(
-                    cameraConfig,
-                    scanConfig,
-                    (decodedText) => {
-                        onQrCodeScanned(decodedText);
-                    },
-                    () => {}
-                );
-
-                camaraActiva = true;
-                if (statusElem) {
-                    statusElem.innerHTML = '<i class="fa-solid fa-circle text-green-400 mr-1.5 animate-pulse"></i> Cámara activa • Enfoca el código QR';
-                }
-
-            } catch (err) {
-                console.warn('Fallo al inicializar Html5Qrcode, aplicando fallback nativo getUserMedia:', err);
-                camaraActiva = false;
-                iniciarCamaraNativaFallback(statusElem, readerDiv);
+            } catch (e) {
+                camarasDisponibles = [];
             }
-        }
 
-        async function iniciarCamaraNativaFallback(statusElem, readerDiv) {
-            try {
-                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                    throw new Error('getUserMedia no disponible en este contexto');
+            // 2. Opciones de restricciones progresivas para garantizar apertura en cualquier webcam o celular
+            const selectedDeviceId = (camarasDisponibles.length > 0 && camarasDisponibles[indiceCamaraActual]?.deviceId)
+                ? camarasDisponibles[indiceCamaraActual].deviceId
+                : null;
+
+            const constraintOptions = [];
+            if (selectedDeviceId) {
+                constraintOptions.push({ video: { deviceId: { exact: selectedDeviceId } }, audio: false });
+            }
+            constraintOptions.push({ video: { facingMode: { ideal: "environment" }, width: { ideal: 1280 }, height: { ideal: 720 } }, audio: false });
+            constraintOptions.push({ video: { facingMode: { ideal: "user" } }, audio: false });
+            constraintOptions.push({ video: true, audio: false });
+
+            let streamObtenido = null;
+            let ultimoError = null;
+
+            for (const constraint of constraintOptions) {
+                try {
+                    streamObtenido = await navigator.mediaDevices.getUserMedia(constraint);
+                    if (streamObtenido) break;
+                } catch (err) {
+                    ultimoError = err;
                 }
+            }
 
-                const stream = await navigator.mediaDevices.getUserMedia({
-                    video: { facingMode: { ideal: "environment" } },
-                    audio: false
-                });
-
-                readerDiv.innerHTML = '';
-                const video = document.createElement('video');
-                video.autoplay = true;
-                video.playsInline = true;
-                video.muted = true;
-                video.srcObject = stream;
-                video.className = 'w-full h-full object-cover rounded-2xl';
-                readerDiv.appendChild(video);
-
-                camaraActiva = true;
-                if (statusElem) {
-                    statusElem.innerHTML = '<i class="fa-solid fa-circle text-green-400 mr-1.5 animate-pulse"></i> Cámara activa • Enfoca el código QR';
-                }
-
-                // BarcodeDetector nativo si está disponible en Chromium
-                if ('BarcodeDetector' in window) {
-                    const detector = new BarcodeDetector({ formats: ['qr_code'] });
-                    const interval = setInterval(async () => {
-                        if (!camaraActiva) {
-                            clearInterval(interval);
-                            return;
-                        }
-                        try {
-                            const barcodes = await detector.detect(video);
-                            if (barcodes.length > 0) {
-                                clearInterval(interval);
-                                onQrCodeScanned(barcodes[0].rawValue);
-                            }
-                        } catch (e) {}
-                    }, 250);
-                }
-
-            } catch (fallbackErr) {
-                console.warn('No se pudo acceder a la cámara:', fallbackErr);
-                camaraActiva = false;
+            if (!streamObtenido) {
+                console.warn('No se pudo acceder a ninguna cámara:', ultimoError);
                 if (statusElem) {
                     statusElem.innerHTML = '<i class="fa-solid fa-camera-slash text-amber-400 mr-1.5"></i> Cámara no disponible o permiso denegado. Ingresa el folio abajo.';
                 }
+                return;
             }
+
+            mediaStreamActual = streamObtenido;
+            video.srcObject = streamObtenido;
+
+            try {
+                await video.play();
+            } catch (e) {
+                video.onloadedmetadata = () => video.play().catch(() => {});
+            }
+
+            escaneoActivo = true;
+            if (statusElem) {
+                statusElem.innerHTML = '<i class="fa-solid fa-circle text-green-400 mr-1.5 animate-pulse"></i> Cámara activa • Escaneando código QR en vivo...';
+            }
+
+            // Iniciar bucle de escaneo óptico frame por frame
+            ejecutarBucleEscaneo();
+        }
+
+        function ejecutarBucleEscaneo() {
+            if (!escaneoActivo) return;
+
+            const video = document.getElementById('qr-video');
+            if (!video || video.readyState < video.HAVE_CURRENT_DATA) {
+                animFrameId = requestAnimationFrame(ejecutarBucleEscaneo);
+                return;
+            }
+
+            const vw = video.videoWidth;
+            const vh = video.videoHeight;
+            if (vw === 0 || vh === 0) {
+                animFrameId = requestAnimationFrame(ejecutarBucleEscaneo);
+                return;
+            }
+
+            if (!offscreenCanvas) {
+                offscreenCanvas = document.createElement('canvas');
+                offscreenCtx = offscreenCanvas.getContext('2d', { willReadFrequently: true });
+            }
+
+            offscreenCanvas.width = vw;
+            offscreenCanvas.height = vh;
+            offscreenCtx.drawImage(video, 0, 0, vw, vh);
+
+            let textoDetectado = null;
+
+            // 1. Detección con jsQR (Motor de ultra-alta velocidad y tolerancia a brillo de pantallas)
+            if (typeof jsQR === 'function') {
+                try {
+                    const imgData = offscreenCtx.getImageData(0, 0, vw, vh);
+                    
+                    // Paso A: Escaneo normal de imagen completa
+                    let qr = jsQR(imgData.data, vw, vh, { inversionAttempts: "dontInvert" });
+
+                    // Paso B: Escaneo con colores invertidos (pantallas oscuras, tickets en modo oscuro o reflejos de pantalla)
+                    if (!qr) {
+                        qr = jsQR(imgData.data, vw, vh, { inversionAttempts: "onlyInvert" });
+                    }
+
+                    // Paso C: Escaneo focalizado en el centro de la cámara (área del marco delimitador)
+                    if (!qr && vw >= 320 && vh >= 240) {
+                        const cropSize = Math.floor(Math.min(vw, vh) * 0.65);
+                        const startX = Math.floor((vw - cropSize) / 2);
+                        const startY = Math.floor((vh - cropSize) / 2);
+                        const cropData = offscreenCtx.getImageData(startX, startY, cropSize, cropSize);
+                        qr = jsQR(cropData.data, cropSize, cropSize, { inversionAttempts: "attemptBoth" });
+                    }
+
+                    if (qr && qr.data) {
+                        textoDetectado = qr.data;
+                    }
+                } catch (e) {
+                    console.warn('Error en escaneo jsQR:', e);
+                }
+            }
+
+            // 2. Detección nativa con BarcodeDetector si está disponible en Chromium y jsQR no detectó aún
+            if (!textoDetectado && barcodeDetectorInstancia) {
+                try {
+                    barcodeDetectorInstancia.detect(video).then(barcodes => {
+                        if (barcodes && barcodes.length > 0 && escaneoActivo) {
+                            procesarHallazgoQR(barcodes[0].rawValue);
+                        }
+                    }).catch(() => {});
+                } catch (e) {}
+            }
+
+            if (textoDetectado) {
+                procesarHallazgoQR(textoDetectado);
+                return;
+            }
+
+            // Programar siguiente ciclo de escaneo throttled (~60ms = ~16 FPS para óptimo rendimiento)
+            setTimeout(() => {
+                if (escaneoActivo) {
+                    animFrameId = requestAnimationFrame(ejecutarBucleEscaneo);
+                }
+            }, 60);
+        }
+
+        function procesarHallazgoQR(texto) {
+            if (!escaneoActivo) return;
+            escaneoActivo = false;
+
+            // Efecto visual de confirmación instantánea en el marco de la cámara
+            const targetBox = document.getElementById('qr-target-box');
+            if (targetBox) {
+                targetBox.classList.remove('border-pmmagenta/70');
+                targetBox.classList.add('border-green-400', 'bg-green-500/20', 'shadow-[0_0_35px_rgba(74,222,128,0.9)]');
+            }
+
+            const statusElem = document.getElementById('qr-camera-status');
+            if (statusElem) {
+                statusElem.innerHTML = '<i class="fa-solid fa-circle-check text-green-400 mr-1.5 animate-bounce"></i> ¡Código QR escaneado con éxito!';
+            }
+
+            reproducirBeepExito();
+
+            setTimeout(() => {
+                onQrCodeScanned(texto);
+            }, 300);
+        }
+
+        function procesarArchivoQR(event) {
+            const file = event.target.files && event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0);
+                    const imgData = ctx.getImageData(0, 0, img.width, img.height);
+
+                    let detectado = null;
+                    if (typeof jsQR === 'function') {
+                        const code = jsQR(imgData.data, img.width, img.height, { inversionAttempts: "attemptBoth" });
+                        if (code && code.data) detectado = code.data;
+                    }
+
+                    if (detectado) {
+                        reproducirBeepExito();
+                        onQrCodeScanned(detectado);
+                    } else {
+                        alert('No se detectó un código QR en la imagen seleccionada. Por favor verifica que el código sea nítido.');
+                    }
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
         }
 
         async function alternarCamaraPOS() {
@@ -1594,42 +1717,55 @@
             await iniciarCamaraEscaner();
         }
 
-        async function detenerCamaraEscaner() {
-            if (html5QrScannerInstance && camaraActiva) {
-                try {
-                    await html5QrScannerInstance.stop();
-                    await html5QrScannerInstance.clear();
-                } catch (e) {}
-                html5QrScannerInstance = null;
+        function detenerCamaraEscaner() {
+            escaneoActivo = false;
+            if (animFrameId) {
+                cancelAnimationFrame(animFrameId);
+                animFrameId = null;
             }
 
-            const readerDiv = document.getElementById('qr-reader-container');
-            if (readerDiv) {
-                const video = readerDiv.querySelector('video');
-                if (video && video.srcObject) {
-                    const tracks = video.srcObject.getTracks();
+            if (mediaStreamActual) {
+                try {
+                    const tracks = mediaStreamActual.getTracks();
                     tracks.forEach(track => track.stop());
-                    video.srcObject = null;
-                }
-                readerDiv.innerHTML = '';
+                } catch (e) {}
+                mediaStreamActual = null;
             }
-            camaraActiva = false;
+
+            const video = document.getElementById('qr-video');
+            if (video) {
+                video.srcObject = null;
+            }
+
+            const canvasOverlay = document.getElementById('qr-canvas-overlay');
+            if (canvasOverlay) {
+                const ctx = canvasOverlay.getContext('2d');
+                if (ctx) ctx.clearRect(0, 0, canvasOverlay.width, canvasOverlay.height);
+            }
         }
 
         function cerrarModalEscanerQR() {
             detenerCamaraEscaner();
-            document.getElementById('modal-escaner-qr').classList.add('hidden');
+            const modal = document.getElementById('modal-escaner-qr');
+            if (modal) modal.classList.add('hidden');
         }
 
         function onQrCodeScanned(textoEscaneado) {
             if (!textoEscaneado) return;
 
-            reproducirBeepExito();
             detenerCamaraEscaner();
 
-            let codigo = textoEscaneado.trim();
+            let raw = textoEscaneado.trim();
+            let codigo = raw;
+
+            // Extraer folio si viene con prefijo institucional o dentro de una URL
             if (codigo.includes('CINE_XILOTZIN_PREORDEN:')) {
                 codigo = codigo.replace('CINE_XILOTZIN_PREORDEN:', '').trim();
+            } else {
+                const matchFolio = codigo.match(/PRE-XIL-[A-Z0-9]+/i);
+                if (matchFolio) {
+                    codigo = matchFolio[0].toUpperCase();
+                }
             }
 
             const input = document.getElementById('input-codigo-qr');
@@ -1650,10 +1786,10 @@
                 osc.type = 'sine';
                 osc.frequency.setValueAtTime(880, ctx.currentTime);
                 osc.frequency.setValueAtTime(1760, ctx.currentTime + 0.08);
-                gain.gain.setValueAtTime(0.3, ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
+                gain.gain.setValueAtTime(0.35, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.22);
                 osc.start(ctx.currentTime);
-                osc.stop(ctx.currentTime + 0.2);
+                osc.stop(ctx.currentTime + 0.22);
             } catch (e) {}
         }
 
@@ -1679,7 +1815,7 @@
             );
 
             if (!encontrada) {
-                alert(`Código QR "${limpio}" no encontrado en la base de datos.`);
+                alert(`Código detectado: "${limpio}".\n\nNo se encontró una pre-orden con este folio en la base de datos local. Si es una pre-orden nueva, puedes generarla desde "preorden.html" o elegir una de las pre-órdenes activas de prueba.`);
                 return;
             }
 
