@@ -152,17 +152,26 @@
         </div>
     </div>
 
-    <!-- Sidebar de Navegación del Dashboard -->
-    <aside class="w-64 bg-pmcard border-r border-pmborder flex flex-col h-full shrink-0 shadow-2xl relative z-20">
-        <div class="h-20 border-b border-pmborder flex items-center px-6 gap-3">
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTmU78ReuLCf8T4T3Rv6K8-yAB13kXuZX7_TQ&s" class="h-10 w-10 rounded-full grayscale brightness-125 object-cover border border-pmborder">
-            <div class="flex flex-col">
-                <h1 class="text-xl font-serif font-black tracking-widest uppercase leading-none text-white">Xilotzin</h1>
-                <span class="text-[8px] font-sans font-bold tracking-[0.3em] text-pmmagenta uppercase mt-1">Administración</span>
+    <!-- Backdrop Oscuro para el Drawer Móvil en Pantallas < 1024px -->
+    <div id="dashboard-sidebar-backdrop" onclick="toggleDashboardSidebar(false)" class="fixed inset-0 bg-black/75 z-40 backdrop-blur-sm hidden lg:hidden mobile-drawer-backdrop"></div>
+
+    <!-- Sidebar de Navegación del Dashboard (Fijo en Desktop, Drawer Deslizable en Móvil/Tablet) -->
+    <aside id="dashboard-sidebar" class="fixed inset-y-0 left-0 z-50 w-72 lg:w-64 bg-pmcard border-r border-pmborder flex flex-col h-full shrink-0 shadow-2xl transition-transform duration-300 ease-in-out -translate-x-full lg:translate-x-0 lg:static">
+        <div class="h-20 border-b border-pmborder flex items-center justify-between px-6">
+            <div class="flex items-center gap-3">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTmU78ReuLCf8T4T3Rv6K8-yAB13kXuZX7_TQ&s" class="h-10 w-10 rounded-full grayscale brightness-125 object-cover border border-pmborder">
+                <div class="flex flex-col">
+                    <h1 class="text-xl font-serif font-black tracking-widest uppercase leading-none text-white">Xilotzin</h1>
+                    <span class="text-[8px] font-sans font-bold tracking-[0.3em] text-pmmagenta uppercase mt-1">Administración</span>
+                </div>
             </div>
+            <!-- Botón para cerrar drawer en móviles -->
+            <button onclick="toggleDashboardSidebar(false)" class="lg:hidden text-pmtext hover:text-white p-2 rounded-xl bg-pmdark border border-pmborder" aria-label="Cerrar menú">
+                <i class="fa-solid fa-xmark text-base"></i>
+            </button>
         </div>
 
-        <nav class="flex-grow p-4 flex flex-col gap-2 mt-2">
+        <nav class="flex-grow p-4 flex flex-col gap-2 mt-2 overflow-y-auto hide-scroll">
             <button onclick="cambiarVista('dashboard')" class="w-full text-left px-4 py-3 rounded-xl font-sans font-bold text-xs uppercase tracking-widest transition-all text-white bg-pmmagenta shadow-[0_0_15px_rgba(216,27,96,0.3)] flex items-center gap-3" id="nav-dashboard">
                 <i class="fa-solid fa-chart-line w-4"></i> Cortes & Reportes
             </button>
@@ -196,21 +205,30 @@
 
     <!-- Área Principal de Contenido -->
     <main class="flex-grow flex flex-col h-full overflow-hidden bg-pmdark relative">
-        <header class="h-20 border-b border-pmborder px-8 flex items-center justify-between shrink-0 bg-pmcard relative z-10 shadow-md">
-            <div>
-                <h2 class="text-xl font-serif font-black uppercase text-white" id="titulo-seccion">Reporte de Ventas & Cortes</h2>
-                <p class="text-xs font-sans text-pmtext uppercase tracking-widest mt-1" id="fecha-hoy"></p>
+        <header class="h-16 md:h-20 border-b border-pmborder px-4 md:px-8 flex items-center justify-between shrink-0 bg-pmcard relative z-10 shadow-md">
+            <div class="flex items-center gap-3">
+                <!-- Botón Hamburguesa Móvil para Abrir Sidebar -->
+                <button onclick="toggleDashboardSidebar(true)" class="lg:hidden p-2.5 rounded-xl bg-pmdark text-white border border-pmborder hover:bg-pmcard active:scale-95 transition-transform" aria-label="Abrir menú de navegación">
+                    <i class="fa-solid fa-bars text-lg"></i>
+                </button>
+                <div>
+                    <h2 class="text-base sm:text-lg md:text-xl font-serif font-black uppercase text-white leading-tight" id="titulo-seccion">Reporte de Ventas & Cortes</h2>
+                    <p class="text-[10px] md:text-xs font-sans text-pmtext uppercase tracking-widest mt-0.5" id="fecha-hoy"></p>
+                </div>
             </div>
 
             <!-- Botones Rápidos de Alertas y Correo a Gerencia -->
-            <div class="flex items-center gap-3">
-                <button onclick="enviarReportePorCorreo()" class="bg-pmdark hover:bg-pmcard text-pmblue border border-pmblue/40 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors flex items-center gap-2">
-                    <i class="fa-solid fa-paper-plane"></i> Enviar Corte a Gerencia
+            <div class="flex items-center gap-2 md:gap-3">
+                <button onclick="enviarReportePorCorreo()" class="bg-pmdark hover:bg-pmcard text-pmblue border border-pmblue/40 px-3 md:px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors flex items-center gap-2">
+                    <i class="fa-solid fa-paper-plane"></i>
+                    <span class="hidden sm:inline">Enviar Corte a Gerencia</span>
+                    <span class="sm:hidden">Corte</span>
                 </button>
             </div>
         </header>
 
-        <div class="flex-grow overflow-y-auto p-8 hide-scroll relative z-0">
+        <div class="flex-grow overflow-y-auto p-4 sm:p-6 md:p-8 hide-scroll relative z-0">
+
 
             <!-- ========================================== -->
             <!-- VISTA 1: CORTES CINEMATOGRÁFICOS JUEVES A MIÉRCOLES & EXCEL -->
@@ -218,17 +236,17 @@
             <div id="vista-dashboard" class="block animate-[fadeInUp_0.3s_ease-out] max-w-6xl space-y-8">
                 
                 <!-- Filtros Oficiales de la Semana Cinematográfica -->
-                <div class="bg-pmcard border border-pmborder p-5 rounded-2xl flex flex-wrap items-center justify-between gap-4 shadow-lg">
+                <div class="bg-pmcard border border-pmborder p-4 sm:p-5 rounded-2xl flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 shadow-lg">
                     <div class="flex items-center gap-3">
-                        <i class="fa-solid fa-calendar-week text-pmmagenta text-2xl"></i>
+                        <i class="fa-solid fa-calendar-week text-pmmagenta text-2xl shrink-0"></i>
                         <div>
                             <h4 class="text-xs font-sans font-bold uppercase text-white tracking-widest">Semana Cinematográfica (Jueves a Miércoles)</h4>
                             <p class="text-[10px] text-pmtext">Ciclo de programación y corte de taquilla estándar de la industria</p>
                         </div>
                     </div>
 
-                    <div class="flex items-center gap-3">
-                        <select id="filtro-periodo" onchange="aplicarFiltroPeriodo()" class="bg-pmdark text-white text-xs font-bold uppercase px-4 py-2.5 rounded-xl border border-pmborder focus:border-pmmagenta outline-none cursor-pointer">
+                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                        <select id="filtro-periodo" onchange="aplicarFiltroPeriodo()" class="w-full sm:w-auto bg-pmdark text-white text-xs font-bold uppercase px-4 py-2.5 rounded-xl border border-pmborder focus:border-pmmagenta outline-none cursor-pointer">
                             <option value="semana_actual">Semana Actual (Jueves - Miércoles)</option>
                             <option value="semana_anterior">Semana Anterior (Jueves - Miércoles)</option>
                             <option value="hoy">Corte del Día (Hoy)</option>
@@ -236,7 +254,7 @@
                         </select>
 
                         <!-- Botón de Exportación Excel / CSV Oficial -->
-                        <button onclick="exportarReporteExcelCSV()" class="bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-widest transition-all shadow-lg flex items-center gap-2">
+                        <button onclick="exportarReporteExcelCSV()" class="w-full sm:w-auto bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-2 shrink-0">
                             <i class="fa-solid fa-file-excel text-base"></i> Exportar Excel / CSV
                         </button>
                     </div>
@@ -287,8 +305,8 @@
                         <h4 class="text-xs font-sans font-bold uppercase tracking-widest text-white">Transacciones del Período</h4>
                         <span class="text-[10px] text-pmtext uppercase font-mono" id="transacciones-count">0 registros</span>
                     </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-xs font-sans whitespace-nowrap">
+                    <div class="overflow-x-auto table-touch-container">
+                        <table class="w-full text-left text-xs font-sans whitespace-nowrap min-w-[600px]">
                             <thead class="bg-pmdark border-b border-pmborder text-[10px] uppercase tracking-widest text-pmtext">
                                 <tr>
                                     <th class="p-4">Folio</th>
@@ -325,8 +343,8 @@
                 </div>
 
                 <!-- Tabla de Stock Maestro -->
-                <div class="bg-pmcard border border-pmborder rounded-2xl overflow-hidden shadow-lg overflow-x-auto">
-                    <table class="w-full text-left text-xs font-sans whitespace-nowrap">
+                <div class="bg-pmcard border border-pmborder rounded-2xl overflow-hidden shadow-lg overflow-x-auto table-touch-container">
+                    <table class="w-full text-left text-xs font-sans whitespace-nowrap min-w-[700px]">
                         <thead class="bg-pmdark border-b border-pmborder text-[10px] uppercase tracking-widest text-pmtext">
                             <tr>
                                 <th class="p-4">SKU / Cód.</th>
@@ -351,8 +369,8 @@
                     <h4 class="text-xs font-bold uppercase tracking-widest text-white mb-4 flex items-center gap-2">
                         <i class="fa-solid fa-clipboard-list text-pmblue"></i> Últimas Entradas de Mercancía Registradas
                     </h4>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-xs font-sans">
+                    <div class="overflow-x-auto table-touch-container">
+                        <table class="w-full text-left text-xs font-sans min-w-[600px]">
                             <thead class="text-[10px] text-pmtext uppercase border-b border-pmborder">
                                 <tr>
                                     <th class="pb-3">ID Entrada</th>
@@ -510,8 +528,8 @@
                 <!-- Lista de Suscriptores -->
                 <div class="bg-pmcard border border-pmborder rounded-2xl p-6 shadow-lg">
                     <h4 class="text-xs font-bold uppercase tracking-widest text-white mb-4">Base de Datos de Suscriptores</h4>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-xs font-sans">
+                    <div class="overflow-x-auto table-touch-container">
+                        <table class="w-full text-left text-xs font-sans min-w-[500px]">
                             <thead class="text-[10px] text-pmtext uppercase border-b border-pmborder">
                                 <tr>
                                     <th class="pb-3">Correo Electrónico</th>
@@ -565,9 +583,30 @@
         });
 
         // ==========================================================
-        // CONTROL DE VISTAS (TABS)
+        // CONTROL DE VISTAS (TABS) & DRAWER MÓVIL
         // ==========================================================
+        function toggleDashboardSidebar(abrir) {
+            const sidebar = document.getElementById('dashboard-sidebar');
+            const backdrop = document.getElementById('dashboard-sidebar-backdrop');
+            if (!sidebar || !backdrop) return;
+
+            if (abrir) {
+                sidebar.classList.remove('-translate-x-full');
+                backdrop.classList.remove('hidden');
+                document.body.classList.add('overflow-hidden');
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                backdrop.classList.add('hidden');
+                document.body.classList.remove('overflow-hidden');
+            }
+        }
+
         function cambiarVista(vista) {
+            // Si está en pantalla pequeña, cerrar el drawer automáticamente
+            if (window.innerWidth < 1024) {
+                toggleDashboardSidebar(false);
+            }
+
             ['dashboard', 'inventario', 'seguridad', 'marketing', 'tematicas'].forEach(v => {
                 const btn = document.getElementById(`nav-${v}`);
                 const panel = document.getElementById(`vista-${v}`);

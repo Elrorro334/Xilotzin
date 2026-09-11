@@ -285,9 +285,41 @@ async function generarCineData() {
     }
 }
 
-window.cineData = { precioBoleto: 50, peliculas: [] };
+const postersFallbackGlobal = {
+    1: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=600',
+    2: 'https://images.unsplash.com/photo-1509281373149-e957c6296406?q=80&w=600',
+    3: 'https://images.unsplash.com/photo-1518676590629-3dcbd9c5a5c9?q=80&w=600',
+    4: 'https://images.unsplash.com/photo-1635805737707-575885ab0820?q=80&w=600',
+    5: 'https://images.unsplash.com/photo-1563089145-599997674d42?q=80&w=600',
+    6: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=600',
+    7: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?q=80&w=600',
+    8: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=600'
+};
+
+const fallbackPeliculasSincronas = catalogoLocal.map(item => ({
+    id: item.id,
+    titulo: item.titulo,
+    eslogan: 'Gran Función en Pantalla Gigante',
+    clasificacion: 'B',
+    duracion: '115 min',
+    genero: 'Estreno',
+    generosCompletos: 'Acción, Aventuras',
+    calificacion: '8.4',
+    poster: postersFallbackGlobal[item.id] || 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?q=80&w=600',
+    fondo: '',
+    descripcion: 'Vive la magia del cine tradicional en el corazón de Jilotepec. Sonido digital y la mejor dulcería.',
+    año: '2026',
+    director: 'Director de Cine',
+    actores: 'Reparto oficial',
+    trailerKey: null,
+    horarios: item.horarios
+}));
+
+window.cineData = { precioBoleto: 50, peliculas: fallbackPeliculasSincronas };
 
 generarCineData().then(data => {
-    window.cineData = data;
+    if (data && data.peliculas && data.peliculas.length > 0) {
+        window.cineData = data;
+    }
     document.dispatchEvent(new Event('CarteleraLista'));
 });

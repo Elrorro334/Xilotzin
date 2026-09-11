@@ -46,58 +46,71 @@
     </style>
 </head>
 
-<body class="bg-posbg text-pmlight antialiased h-screen flex flex-col overflow-hidden selection:bg-pmmagenta selection:text-white">
+<body class="bg-posbg text-pmlight antialiased min-h-[100dvh] h-[100dvh] flex flex-col overflow-hidden selection:bg-pmmagenta selection:text-white">
 
     <!-- Header POS -->
-    <header class="bg-pmcard border-b border-pmborder shrink-0 z-50 px-4 py-3 flex justify-between items-center shadow-md">
-        <div class="flex items-center gap-4">
-            <div class="bg-pmmagenta/15 p-2 rounded-xl border border-pmmagenta/40">
-                <i class="fa-solid fa-cash-register text-pmmagenta text-xl"></i>
+    <header class="bg-pmcard border-b border-pmborder shrink-0 z-50 px-2.5 sm:px-4 py-2 sm:py-3 flex justify-between items-center shadow-md">
+        <!-- Logo / Marca POS -->
+        <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+            <div class="bg-pmmagenta/15 p-1.5 sm:p-2 rounded-lg sm:rounded-xl border border-pmmagenta/40 shrink-0">
+                <i class="fa-solid fa-cash-register text-pmmagenta text-base sm:text-xl"></i>
             </div>
             <div>
-                <div class="flex items-center gap-2">
-                    <h1 class="text-lg font-sans font-black uppercase text-white tracking-widest leading-none">Xilotzin POS</h1>
-                    <span class="bg-green-950 text-green-400 border border-green-800 text-[9px] font-bold uppercase px-2 py-0.5 rounded">Caja 01 • En Línea</span>
+                <div class="flex items-center gap-1.5">
+                    <h1 class="text-xs sm:text-base font-sans font-black uppercase text-white tracking-wider sm:tracking-widest leading-none">Xilotzin POS</h1>
+                    <span class="bg-green-950 text-green-400 border border-green-800 text-[8px] sm:text-[9px] font-bold uppercase px-1 sm:px-1.5 py-0.5 rounded leading-none">En Línea</span>
                 </div>
-                <p class="text-[9px] font-sans font-bold uppercase tracking-[0.2em] text-pmtext mt-0.5" id="reloj-pos">--:--</p>
+                <p class="text-[8px] sm:text-[9px] font-sans font-bold uppercase tracking-[0.2em] text-pmtext mt-0.5" id="reloj-pos">--:--</p>
             </div>
         </div>
         
-        <div class="flex items-center gap-2 md:gap-3">
-            <!-- Botón de Escáner QR de Pre-órdenes -->
-            <button onclick="abrirModalEscanerQR()" class="bg-pmmagenta/20 text-white border border-pmmagenta hover:bg-pmmagenta px-3 md:px-4 py-2 rounded-lg font-sans font-bold text-[10px] md:text-xs uppercase tracking-widest transition-all flex items-center gap-2 shadow-[0_0_15px_rgba(216,27,96,0.3)] animate-pulse">
-                <i class="fa-solid fa-qrcode text-base"></i> <span class="hidden sm:inline">Escanear QR Pre-orden</span>
+        <!-- Botones de Acción Superiores -->
+        <div class="flex items-center gap-1.5 sm:gap-2">
+            <!-- Botón Carrito en Móviles / Tablets (< lg) -->
+            <button onclick="toggleMobileCarrito(true)" class="lg:hidden bg-pmmagenta hover:bg-pink-600 text-white px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-lg font-sans font-bold text-[10px] sm:text-xs uppercase tracking-wider flex items-center gap-1.5 shadow-lg relative active:scale-95 transition-all">
+                <i class="fa-solid fa-cart-shopping text-xs"></i>
+                <span id="header-cart-total" class="font-mono font-black">$0</span>
+                <span id="header-cart-badge" class="w-4 h-4 rounded-full bg-white text-pmmagenta text-[9px] font-black flex items-center justify-center -top-1.5 -right-1.5 absolute border border-pmmagenta shadow hidden">0</span>
             </button>
 
-            <button onclick="saltarADulceria()" class="bg-pmdark text-pmorange border border-pmorange/50 hover:bg-pmorange hover:text-white px-3 md:px-4 py-2 rounded-lg font-sans font-bold text-[10px] md:text-xs uppercase tracking-widest transition-colors flex items-center gap-2">
-                <i class="fa-solid fa-store"></i> <span class="hidden sm:inline">Dulcería</span>
+            <!-- Botón de Escáner QR de Pre-órdenes -->
+            <button onclick="abrirModalEscanerQR()" class="bg-pmmagenta/20 text-white border border-pmmagenta hover:bg-pmmagenta px-2 py-1.5 sm:px-3.5 sm:py-2 rounded-lg font-sans font-bold text-[10px] sm:text-xs uppercase tracking-widest transition-all flex items-center gap-1.5 shadow-[0_0_15px_rgba(216,27,96,0.2)]" title="Escanear QR Pre-orden">
+                <i class="fa-solid fa-qrcode text-sm"></i> <span class="hidden md:inline">Escanear QR</span>
             </button>
-            <div class="w-px h-6 bg-pmborder mx-1"></div>
-            <button onclick="cancelarVenta()" class="bg-red-900/30 text-red-500 hover:bg-red-600 hover:text-white border border-red-900 px-3 md:px-4 py-2 rounded-lg font-sans font-bold text-[10px] md:text-xs uppercase tracking-widest transition-colors flex items-center gap-2">
-                <i class="fa-solid fa-ban"></i> <span class="hidden sm:inline">Cancelar</span>
+
+            <!-- Botón Cancelar Venta -->
+            <button onclick="cancelarVenta()" class="bg-red-900/20 text-red-400 hover:bg-red-600 hover:text-white border border-red-900/60 px-2 py-1.5 sm:px-3 sm:py-2 rounded-lg font-sans font-bold text-[10px] sm:text-xs uppercase tracking-widest transition-colors flex items-center gap-1.5" title="Cancelar venta">
+                <i class="fa-solid fa-ban text-xs sm:text-sm"></i> <span class="hidden md:inline">Cancelar</span>
             </button>
-            <div class="w-px h-6 bg-pmborder mx-1"></div>
-            <a href="login.html" class="bg-pmcard text-pmtext hover:text-white border border-pmborder hover:border-pmtext px-3 md:px-4 py-2 rounded-lg font-sans font-bold text-[10px] md:text-xs uppercase tracking-widest transition-colors flex items-center gap-2">
-                <i class="fa-solid fa-arrow-right-from-bracket"></i> <span class="hidden sm:inline">Salir</span>
+
+            <!-- Botón Salir de Caja -->
+            <a href="login.html" class="bg-pmcard text-pmtext hover:text-white border border-pmborder hover:border-pmtext px-2 py-1.5 sm:px-3 sm:py-2 rounded-lg font-sans font-bold text-[10px] sm:text-xs uppercase tracking-widest transition-colors flex items-center gap-1.5" title="Salir de caja">
+                <i class="fa-solid fa-arrow-right-from-bracket text-xs sm:text-sm"></i> <span class="hidden md:inline">Salir</span>
             </a>
         </div>
     </header>
 
-    <!-- Barra de Navegación de Pasos (Wizard) -->
-    <div class="bg-pmcard/60 border-b border-pmborder px-6 py-2.5 flex justify-between items-center shrink-0 shadow-sm">
-        <div class="flex gap-8">
-            <div id="nav-step-1" class="step-active pb-1 font-sans font-bold text-xs uppercase tracking-widest transition-all cursor-pointer" onclick="cambiarPaso(1)">
-                <i class="fa-solid fa-ticket text-pmmagenta mr-1"></i> 1. Boletaje (Acceso General)
-            </div>
-            <div id="nav-step-2" class="step-inactive pb-1 font-sans font-bold text-xs uppercase tracking-widest transition-all cursor-pointer" onclick="cambiarPaso(2)">
-                <i class="fa-solid fa-cookie-bite text-pmorange mr-1"></i> 2. Dulcería & Combos
-            </div>
-            <div id="nav-step-3" class="step-inactive pb-1 font-sans font-bold text-xs uppercase tracking-widest transition-all cursor-pointer" onclick="cambiarPaso(3)">
-                <i class="fa-solid fa-credit-card text-pmblue mr-1"></i> 3. Cobro & Ticket Térmico
-            </div>
+    <!-- Barra de Navegación de Pasos (Wizard) Adaptada para Móvil -->
+    <div class="bg-pmcard/80 border-b border-pmborder px-2 sm:px-6 py-1 sm:py-2 flex justify-between items-center shrink-0 shadow-sm">
+        <div class="grid grid-cols-3 sm:flex sm:gap-6 w-full sm:w-auto text-[11px] sm:text-xs font-sans font-bold">
+            <button id="nav-step-1" class="step-active py-1.5 sm:py-1 px-1 sm:px-2 uppercase tracking-wider transition-all cursor-pointer flex items-center justify-center sm:justify-start gap-1 text-center" onclick="cambiarPaso(1)">
+                <i class="fa-solid fa-ticket text-pmmagenta text-xs"></i>
+                <span class="sm:hidden">Boletos</span>
+                <span class="hidden sm:inline">1. Boletaje</span>
+            </button>
+            <button id="nav-step-2" class="step-inactive py-1.5 sm:py-1 px-1 sm:px-2 uppercase tracking-wider transition-all cursor-pointer flex items-center justify-center sm:justify-start gap-1 text-center" onclick="cambiarPaso(2)">
+                <i class="fa-solid fa-cookie-bite text-pmorange text-xs"></i>
+                <span class="sm:hidden">Dulcería</span>
+                <span class="hidden sm:inline">2. Dulcería & Combos</span>
+            </button>
+            <button id="nav-step-3" class="step-inactive py-1.5 sm:py-1 px-1 sm:px-2 uppercase tracking-wider transition-all cursor-pointer flex items-center justify-center sm:justify-start gap-1 text-center" onclick="cambiarPaso(3)">
+                <i class="fa-solid fa-credit-card text-pmblue text-xs"></i>
+                <span class="sm:hidden">Cobro</span>
+                <span class="hidden sm:inline">3. Cobro & Ticket</span>
+            </button>
         </div>
 
-        <!-- Indicador de Insumos / Alerta Stock -->
+        <!-- Indicador de Insumos / Alerta Stock (visible en tablets y desktop) -->
         <div class="hidden md:flex items-center gap-3 text-[11px] font-mono text-pmtext">
             <span id="pos-indicador-pizza" class="bg-pmdark px-2.5 py-1 rounded border border-pmborder">
                 🍕 Rebanadas Pizza: <strong class="text-white">--</strong>
@@ -106,198 +119,202 @@
     </div>
 
     <!-- Contenido Principal -->
-    <main class="flex-grow flex overflow-hidden">
+    <main class="flex-grow flex overflow-hidden relative">
         
         <!-- Área de Selección (Izquierda) -->
-        <section class="w-full lg:w-2/3 bg-posbg flex flex-col h-full relative overflow-y-auto hide-scroll" id="main-view-container">
+        <section class="w-full lg:w-2/3 bg-posbg flex flex-col h-full relative overflow-y-auto hide-scroll pb-24 lg:pb-0" id="main-view-container">
             
             <!-- PASO 1: BOLETAJE RÁPIDO (ACCESO GENERAL SIN ASIGNACIÓN DE BUTACAS) -->
             <div id="view-1-boletos" class="block animate-[fadeIn_0.3s_ease-out] flex flex-col h-full">
-                <!-- Filtros y Búsqueda -->
-                <div class="p-4 border-b border-pmborder bg-pmcard/50 flex gap-4 shrink-0 justify-between items-center sticky top-0 z-10 backdrop-blur-md">
-                    <div class="relative w-full md:w-1/2">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <i class="fa-solid fa-magnifying-glass text-pmtext"></i>
+                <!-- Filtros y Búsqueda Móvil Compacta -->
+                <div class="p-2.5 sm:p-4 border-b border-pmborder bg-pmcard/60 flex flex-row gap-2 sm:gap-4 shrink-0 justify-between items-center sticky top-0 z-10 backdrop-blur-md">
+                    <div class="relative flex-grow">
+                        <div class="absolute inset-y-0 left-0 pl-2.5 sm:pl-3 flex items-center pointer-events-none">
+                            <i class="fa-solid fa-magnifying-glass text-pmtext text-xs"></i>
                         </div>
-                        <input type="text" id="busqueda-peli" placeholder="Buscar función o película..." class="w-full bg-pmdark text-white pl-10 pr-3 py-2 text-sm rounded-lg border border-pmborder focus:outline-none focus:border-pmmagenta transition-colors font-sans uppercase tracking-wider">
+                        <input type="text" id="busqueda-peli" placeholder="Buscar película..." class="w-full bg-pmdark text-white pl-8 sm:pl-10 pr-2.5 sm:pr-3 py-1.5 sm:py-2 text-xs sm:text-sm rounded-lg border border-pmborder focus:outline-none focus:border-pmmagenta transition-colors font-sans uppercase tracking-wider">
                     </div>
-                    <div class="flex items-center gap-4">
-                        <div class="flex items-center gap-3 bg-pmdark px-4 py-2 rounded-lg border border-pmborder whitespace-nowrap">
-                            <span class="text-[10px] font-bold text-pmtext uppercase tracking-widest">Solo Próximas</span>
-                            <div class="relative inline-block w-8 align-middle select-none transition duration-200 ease-in mt-0.5">
-                                <input type="checkbox" id="toggle-proximos" checked onchange="aplicarFiltrosBoletos()" class="toggle-checkbox absolute block w-4 h-4 rounded-full bg-white border-4 appearance-none cursor-pointer outline-none"/>
-                                <label for="toggle-proximos" class="toggle-label block overflow-hidden h-4 rounded-full bg-pmborder cursor-pointer transition-colors"></label>
-                            </div>
+                    <div class="flex items-center gap-1.5 sm:gap-2 bg-pmdark px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg border border-pmborder shrink-0">
+                        <span class="text-[9px] sm:text-[10px] font-bold text-pmtext uppercase tracking-wider sm:tracking-widest whitespace-nowrap">Próximas</span>
+                        <div class="relative inline-block w-7 sm:w-8 align-middle select-none transition duration-200 ease-in mt-0.5">
+                            <input type="checkbox" id="toggle-proximos" onchange="aplicarFiltrosBoletos()" class="toggle-checkbox absolute block w-3.5 sm:w-4 h-3.5 sm:h-4 rounded-full bg-white border-4 appearance-none cursor-pointer outline-none"/>
+                            <label for="toggle-proximos" class="toggle-label block overflow-hidden h-3.5 sm:h-4 rounded-full bg-pmborder cursor-pointer transition-colors"></label>
                         </div>
                     </div>
                 </div>
 
                 <!-- Notificación de Modo Venta Ágil -->
-                <div class="bg-pmmagenta/10 border-b border-pmmagenta/30 px-6 py-2.5 flex items-center justify-between text-xs">
-                    <span class="text-white font-bold flex items-center gap-2">
-                        <i class="fa-solid fa-bolt text-pmmagenta"></i> Venta Ágil de Boletos: Cobro por función y horario sin asignación de asientos.
+                <div class="bg-pmmagenta/10 border-b border-pmmagenta/30 px-3 sm:px-6 py-2 flex items-center justify-between gap-1 text-xs shrink-0">
+                    <span class="text-white font-bold flex items-center gap-1.5 text-[10px] sm:text-xs">
+                        <i class="fa-solid fa-bolt text-pmmagenta"></i> Venta Ágil: Acceso General
                     </span>
-                    <span class="text-pmtext text-[11px]">Acceso General ($50 MXN)</span>
+                    <span class="bg-pmmagenta/20 border border-pmmagenta/40 text-pmmagenta text-[10px] sm:text-[11px] font-mono font-bold px-2 py-0.5 rounded">$50 MXN</span>
                 </div>
                 
                 <!-- Grid de Películas y Horarios para Taquilla -->
-                <div class="grid grid-cols-1 xl:grid-cols-2 gap-4 p-6" id="grid-boletos">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 p-3 sm:p-6" id="grid-boletos">
                     <div class="col-span-full py-10 text-center text-pmtext"><i class="fa-solid fa-spinner fa-spin text-2xl mb-2 text-pmmagenta"></i><br>Cargando cartelera oficial...</div>
                 </div>
             </div>
 
             <!-- PASO 2: CATÁLOGO DE DULCERÍA CON SCANNER DE BARRAS & INVENTARIO FRACCIONADO -->
-            <div id="view-2-dulceria" class="hidden animate-[fadeIn_0.3s_ease-out] p-6 flex flex-col">
+            <div id="view-2-dulceria" class="hidden animate-[fadeIn_0.3s_ease-out] p-3 sm:p-6 flex flex-col">
                 <!-- Barra de Lector de Código de Barras -->
-                <div class="bg-pmcard border border-pmborder rounded-2xl p-4 mb-6 flex flex-col md:flex-row items-center justify-between gap-4 shadow-lg">
-                    <div class="flex items-center gap-3 w-full md:w-auto">
-                        <div class="w-10 h-10 rounded-xl bg-pmorange/15 border border-pmorange/40 flex items-center justify-center text-pmorange text-xl">
+                <div class="bg-pmcard border border-pmborder rounded-xl sm:rounded-2xl p-3 sm:p-4 mb-4 sm:mb-6 flex flex-col md:flex-row items-center justify-between gap-3 sm:gap-4 shadow-lg">
+                    <div class="flex items-center gap-2.5 sm:gap-3 w-full md:w-auto">
+                        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-pmorange/15 border border-pmorange/40 flex items-center justify-center text-pmorange text-lg sm:text-xl shrink-0">
                             <i class="fa-solid fa-barcode"></i>
                         </div>
                         <div>
                             <h3 class="text-xs font-sans font-bold uppercase text-white tracking-wider">Lector de Código de Barras</h3>
-                            <p class="text-[10px] text-pmtext">Escanea el SKU con el lector óptico o escríbelo para agregar directo al carrito</p>
+                            <p class="text-[9px] sm:text-[10px] text-pmtext">Escanea el SKU con el lector óptico o escríbelo</p>
                         </div>
                     </div>
 
                     <form onsubmit="procesarEscaneoBarcode(event)" class="flex gap-2 w-full md:w-80">
-                        <input type="text" id="input-barcode-scanner" placeholder="Escanear SKU (Ej: 7501001)..." class="w-full bg-pmdark text-white px-3 py-2 text-xs rounded-lg border border-pmborder focus:border-pmorange outline-none font-mono uppercase">
-                        <button type="submit" class="bg-pmorange hover:bg-orange-600 text-white px-3 py-2 rounded-lg font-bold text-xs uppercase transition-colors">
+                        <input type="text" id="input-barcode-scanner" placeholder="Escanear SKU (Ej: 7501001)..." class="w-full bg-pmdark text-white px-3 py-2 text-sm sm:text-xs rounded-lg border border-pmborder focus:border-pmorange outline-none font-mono uppercase">
+                        <button type="submit" class="bg-pmorange hover:bg-orange-600 text-white px-3.5 py-2 rounded-lg font-bold text-xs uppercase transition-colors shrink-0">
                             <i class="fa-solid fa-plus"></i>
                         </button>
                     </form>
                 </div>
 
                 <!-- Sección Especial de Pizza Fraccionada -->
-                <div class="bg-gradient-to-r from-orange-950/40 via-pmcard to-pmcard border border-orange-900/50 rounded-2xl p-5 mb-6 shadow-md">
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
-                        <div class="flex items-center gap-2.5">
-                            <span class="text-2xl">🍕</span>
+                <div class="bg-gradient-to-r from-orange-950/40 via-pmcard to-pmcard border border-orange-900/50 rounded-xl sm:rounded-2xl p-3.5 sm:p-5 mb-4 sm:mb-6 shadow-md">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3 mb-3">
+                        <div class="flex items-center gap-2">
+                            <span class="text-xl sm:text-2xl">🍕</span>
                             <div>
-                                <h4 class="text-sm font-sans font-black uppercase text-white tracking-wide">Control de Inventario Fraccionado: Pizzas</h4>
-                                <p class="text-[10px] text-pmtext">Descuento automático proporcional de insumos (1 rebanada o unidad completa de 8 rebanadas)</p>
+                                <h4 class="text-xs sm:text-sm font-sans font-black uppercase text-white tracking-wide">Inventario Fraccionado: Pizzas</h4>
+                                <p class="text-[9px] sm:text-[10px] text-pmtext">Descuento automático proporcional de insumos</p>
                             </div>
                         </div>
-                        <span id="pizza-stock-badge" class="bg-orange-900/40 text-orange-400 border border-orange-700/60 font-mono text-xs font-bold px-3 py-1.5 rounded-lg">
+                        <span id="pizza-stock-badge" class="bg-orange-900/40 text-orange-400 border border-orange-700/60 font-mono text-[10px] sm:text-xs font-bold px-2.5 py-1 rounded-lg self-start sm:self-auto">
                             Stock: 56 rebanadas (7 pizzas)
                         </span>
                     </div>
 
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-                        <button onclick="agregarPizzaFraccionada('rebanada')" class="bg-pmdark hover:bg-orange-950/60 border border-pmborder hover:border-orange-500 p-4 rounded-xl flex items-center justify-between transition-all text-left group">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-4 pt-1">
+                        <button onclick="agregarPizzaFraccionada('rebanada')" class="bg-pmdark hover:bg-orange-950/60 border border-pmborder hover:border-orange-500 p-3 sm:p-4 rounded-xl flex items-center justify-between transition-all text-left group active:scale-[0.98]">
                             <div class="flex flex-col">
                                 <span class="text-xs font-black uppercase text-white group-hover:text-pmorange">Rebanada Individual</span>
-                                <span class="text-[10px] text-pmtext">Descuenta 1 rebanada del stock</span>
+                                <span class="text-[9px] sm:text-[10px] text-pmtext">Descuenta 1 rebanada del stock</span>
                             </div>
-                            <span class="text-lg font-serif font-black text-pmorange">$35.00</span>
+                            <span class="text-base sm:text-lg font-serif font-black text-pmorange font-mono">$35.00</span>
                         </button>
-                        <button onclick="agregarPizzaFraccionada('completa')" class="bg-pmdark hover:bg-orange-950/60 border border-pmborder hover:border-orange-500 p-4 rounded-xl flex items-center justify-between transition-all text-left group">
+                        <button onclick="agregarPizzaFraccionada('completa')" class="bg-pmdark hover:bg-orange-950/60 border border-pmborder hover:border-orange-500 p-3 sm:p-4 rounded-xl flex items-center justify-between transition-all text-left group active:scale-[0.98]">
                             <div class="flex flex-col">
                                 <span class="text-xs font-black uppercase text-white group-hover:text-pmorange">Pizza Completa (8 Rebanadas)</span>
-                                <span class="text-[10px] text-pmtext">Descuenta 8 rebanadas del stock</span>
+                                <span class="text-[9px] sm:text-[10px] text-pmtext">Descuenta 8 rebanadas del stock</span>
                             </div>
-                            <span class="text-lg font-serif font-black text-pmorange">$180.00</span>
+                            <span class="text-base sm:text-lg font-serif font-black text-pmorange font-mono">$180.00</span>
                         </button>
                     </div>
                 </div>
 
                 <!-- Catálogo Visual de Dulcería -->
-                <div class="flex items-center justify-between mb-4">
-                    <h2 class="text-sm font-serif font-black uppercase text-white tracking-widest">Catálogo de Snacks y Bebidas</h2>
-                    <span class="text-[10px] text-pmtext font-mono">Haz clic para agregar</span>
+                <div class="flex items-center justify-between mb-3">
+                    <h2 class="text-xs sm:text-sm font-serif font-black uppercase text-white tracking-wider sm:tracking-widest">Catálogo de Snacks y Bebidas</h2>
+                    <span class="text-[9px] sm:text-[10px] text-pmtext font-mono">Toca para agregar</span>
                 </div>
-                <div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-4" id="grid-dulceria">
+                <div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-2.5 sm:gap-4" id="grid-dulceria">
                     <!-- Inyectado por script -->
                 </div>
             </div>
 
-            <!-- PASO 3: COBRO Y TERMINAL DE PAGOS -->
-            <div id="view-3-cobro" class="hidden animate-[fadeIn_0.3s_ease-out] flex-col items-center justify-center h-full p-6 relative">
+            <!-- PASO 3: COBRO Y TERMINAL DE PAGOS (SCROLLABLE & ADAPTADO PARA MÓVIL) -->
+            <div id="view-3-cobro" class="hidden animate-[fadeIn_0.3s_ease-out] overflow-y-auto w-full min-h-full py-4 sm:py-8 px-3 sm:px-6 flex flex-col items-center justify-start sm:justify-center relative">
                 
-                <div class="bg-pmcard border border-pmborder rounded-3xl p-8 w-full max-w-xl text-center shadow-[0_20px_50px_rgba(0,0,0,0.5)] relative overflow-hidden transition-all duration-300">
+                <div class="bg-pmcard border border-pmborder rounded-2xl sm:rounded-3xl p-4 sm:p-8 w-full max-w-xl text-center shadow-[0_20px_50px_rgba(0,0,0,0.5)] relative overflow-hidden transition-all duration-300 my-auto">
                     
                     <!-- Selector Principal de Método de Pago -->
                     <div id="panel-cobro-selector" class="block animate-[fadeIn_0.3s_ease-out]">
-                        <i class="fa-solid fa-receipt text-5xl text-pmmagenta mb-4 opacity-80"></i>
-                        <h2 class="text-xs font-sans font-bold uppercase text-pmtext tracking-widest mb-1">Monto Total a Cobrar</h2>
-                        <p class="text-5xl font-serif font-black text-white mb-8">$<span id="cobro-total-final">0</span></p>
+                        <i class="fa-solid fa-receipt text-3xl sm:text-5xl text-pmmagenta mb-2 sm:mb-4 opacity-80"></i>
+                        <h2 class="text-[11px] sm:text-xs font-sans font-bold uppercase text-pmtext tracking-wider sm:tracking-widest mb-1">Monto Total a Cobrar</h2>
+                        <p class="text-3xl sm:text-5xl font-serif font-black text-white mb-5 sm:mb-8 font-mono">$<span id="cobro-total-final">0</span></p>
                         
-                        <div class="grid grid-cols-2 gap-4">
-                            <button onclick="prepararCobro('EFECTIVO')" class="bg-pmdark hover:bg-green-950/40 text-white font-black py-6 rounded-2xl uppercase tracking-widest transition-all border border-pmborder hover:border-green-500 flex flex-col items-center gap-3 group active:scale-95 shadow-lg">
-                                <div class="w-14 h-14 rounded-full bg-green-500/10 flex items-center justify-center group-hover:bg-green-500 transition-colors">
-                                    <i class="fa-solid fa-money-bill-wave text-2xl text-green-500 group-hover:text-white"></i>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                            <button onclick="prepararCobro('EFECTIVO')" class="bg-pmdark hover:bg-green-950/40 text-white font-black py-4 sm:py-6 px-3 rounded-xl sm:rounded-2xl uppercase tracking-wider sm:tracking-widest transition-all border border-pmborder hover:border-green-500 flex sm:flex-col items-center justify-center gap-3 group active:scale-95 shadow-lg">
+                                <div class="w-10 h-10 sm:w-14 sm:h-14 rounded-full bg-green-500/10 flex items-center justify-center group-hover:bg-green-500 transition-colors shrink-0">
+                                    <i class="fa-solid fa-money-bill-wave text-lg sm:text-2xl text-green-500 group-hover:text-white"></i>
                                 </div>
-                                <span class="text-xs">Pago en Efectivo</span>
+                                <div class="text-left sm:text-center">
+                                    <span class="text-xs sm:text-sm block font-bold">Pago en Efectivo</span>
+                                    <span class="text-[9px] text-pmtext font-normal font-sans sm:hidden">Cálculo de cambio rápido</span>
+                                </div>
                             </button>
-                            <button onclick="prepararCobro('TARJETA')" class="bg-pmdark hover:bg-blue-950/40 text-white font-black py-6 rounded-2xl uppercase tracking-widest transition-all border border-pmborder hover:border-pmblue flex flex-col items-center gap-3 group active:scale-95 shadow-lg">
-                                <div class="w-14 h-14 rounded-full bg-pmblue/10 flex items-center justify-center group-hover:bg-pmblue transition-colors">
-                                    <i class="fa-solid fa-credit-card text-2xl text-pmblue group-hover:text-white"></i>
+                            <button onclick="prepararCobro('TARJETA')" class="bg-pmdark hover:bg-blue-950/40 text-white font-black py-4 sm:py-6 px-3 rounded-xl sm:rounded-2xl uppercase tracking-wider sm:tracking-widest transition-all border border-pmborder hover:border-pmblue flex sm:flex-col items-center justify-center gap-3 group active:scale-95 shadow-lg">
+                                <div class="w-10 h-10 sm:w-14 sm:h-14 rounded-full bg-pmblue/10 flex items-center justify-center group-hover:bg-pmblue transition-colors shrink-0">
+                                    <i class="fa-solid fa-credit-card text-lg sm:text-2xl text-pmblue group-hover:text-white"></i>
                                 </div>
-                                <span class="text-xs">Tarjeta (Mercado Pago)</span>
+                                <div class="text-left sm:text-center">
+                                    <span class="text-xs sm:text-sm block font-bold">Tarjeta Mercado Pago</span>
+                                    <span class="text-[9px] text-pmtext font-normal font-sans sm:hidden">Terminal con folio voucher</span>
+                                </div>
                             </button>
                         </div>
                     </div>
 
                     <!-- Panel de Efectivo con Cálculo de Cambio -->
                     <div id="panel-cobro-efectivo" class="hidden flex-col animate-[fadeIn_0.2s_ease-out]">
-                        <div class="flex items-center justify-between mb-6 border-b border-pmborder pb-4">
-                            <button onclick="volverSelectorPago()" class="text-pmtext hover:text-white transition-colors text-xl p-2"><i class="fa-solid fa-arrow-left"></i></button>
-                            <h2 class="text-sm font-sans font-bold uppercase text-white tracking-widest flex items-center gap-2"><i class="fa-solid fa-money-bill-wave text-green-500"></i> Cobro en Efectivo</h2>
+                        <div class="flex items-center justify-between mb-4 sm:mb-6 border-b border-pmborder pb-3 sm:pb-4">
+                            <button onclick="volverSelectorPago()" class="text-pmtext hover:text-white transition-colors text-lg p-1.5 sm:p-2 rounded-lg bg-pmdark border border-pmborder" aria-label="Volver"><i class="fa-solid fa-arrow-left"></i></button>
+                            <h2 class="text-xs sm:text-sm font-sans font-bold uppercase text-white tracking-wider sm:tracking-widest flex items-center gap-1.5"><i class="fa-solid fa-money-bill-wave text-green-500"></i> Cobro en Efectivo</h2>
                             <div class="w-8"></div>
                         </div>
                         
-                        <div class="grid grid-cols-2 gap-4 mb-6 text-left">
-                            <div class="bg-pmdark p-4 rounded-xl border border-pmborder">
-                                <p class="text-[10px] font-bold text-pmtext uppercase tracking-widest mb-1">Total a Pagar</p>
-                                <p class="text-3xl font-black text-white">$<span id="efectivo-total-display">0</span></p>
+                        <div class="grid grid-cols-2 gap-2.5 sm:gap-4 mb-4 sm:mb-6 text-left">
+                            <div class="bg-pmdark p-3 sm:p-4 rounded-xl border border-pmborder">
+                                <p class="text-[9px] sm:text-[10px] font-bold text-pmtext uppercase tracking-wider mb-0.5">Total a Pagar</p>
+                                <p class="text-xl sm:text-3xl font-black text-white font-mono">$<span id="efectivo-total-display">0</span></p>
                             </div>
-                            <div class="bg-pmdark p-4 rounded-xl border border-pmorange/50">
-                                <p class="text-[10px] font-bold text-pmorange uppercase tracking-widest mb-1">Cambio a Entregar</p>
-                                <p class="text-3xl font-black text-pmorange">$<span id="efectivo-cambio-display">0.00</span></p>
+                            <div class="bg-pmdark p-3 sm:p-4 rounded-xl border border-pmorange/50">
+                                <p class="text-[9px] sm:text-[10px] font-bold text-pmorange uppercase tracking-wider mb-0.5">Cambio</p>
+                                <p class="text-xl sm:text-3xl font-black text-pmorange font-mono">$<span id="efectivo-cambio-display">0.00</span></p>
                             </div>
                         </div>
 
-                        <div class="mb-6">
-                            <label class="block text-left text-xs font-bold text-pmtext uppercase tracking-widest mb-2">Efectivo Recibido del Cliente:</label>
+                        <div class="mb-4 sm:mb-6">
+                            <label class="block text-left text-[11px] sm:text-xs font-bold text-pmtext uppercase tracking-wider mb-1.5">Efectivo Recibido del Cliente:</label>
                             <div class="relative">
-                                <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-white font-black text-2xl pointer-events-none">$</span>
-                                <input type="number" id="input-efectivo-recibido" oninput="calcularCambio()" placeholder="0.00" class="w-full bg-pmdark text-white pl-12 pr-4 py-3 text-2xl font-black rounded-xl border-2 border-pmborder focus:outline-none focus:border-green-500 transition-colors text-right font-mono">
+                                <span class="absolute inset-y-0 left-0 pl-3.5 sm:pl-4 flex items-center text-white font-black text-xl sm:text-2xl pointer-events-none">$</span>
+                                <input type="number" id="input-efectivo-recibido" oninput="calcularCambio()" placeholder="0.00" class="w-full bg-pmdark text-white pl-10 sm:pl-12 pr-3 sm:pr-4 py-2.5 sm:py-3 text-xl sm:text-2xl font-black rounded-xl border-2 border-pmborder focus:outline-none focus:border-green-500 transition-colors text-right font-mono">
                             </div>
                             
-                            <div class="flex gap-2 mt-3">
-                                <button type="button" onclick="setEfectivoRapido('exacto')" class="flex-1 bg-pmdark hover:bg-pmborder text-white text-xs font-bold py-2 rounded-lg border border-pmborder uppercase transition-colors">Exacto</button>
-                                <button type="button" onclick="setEfectivoRapido(100)" class="flex-1 bg-pmdark hover:bg-pmborder text-white text-xs font-bold py-2 rounded-lg border border-pmborder uppercase transition-colors">$100</button>
-                                <button type="button" onclick="setEfectivoRapido(200)" class="flex-1 bg-pmdark hover:bg-pmborder text-white text-xs font-bold py-2 rounded-lg border border-pmborder uppercase transition-colors">$200</button>
-                                <button type="button" onclick="setEfectivoRapido(500)" class="flex-1 bg-pmdark hover:bg-pmborder text-white text-xs font-bold py-2 rounded-lg border border-pmborder uppercase transition-colors">$500</button>
+                            <div class="grid grid-cols-4 gap-1.5 sm:gap-2 mt-2.5">
+                                <button type="button" onclick="setEfectivoRapido('exacto')" class="bg-pmdark hover:bg-pmborder text-white text-[11px] sm:text-xs font-bold py-2 rounded-lg border border-pmborder uppercase transition-colors">Exacto</button>
+                                <button type="button" onclick="setEfectivoRapido(100)" class="bg-pmdark hover:bg-pmborder text-white text-[11px] sm:text-xs font-bold py-2 rounded-lg border border-pmborder uppercase transition-colors">$100</button>
+                                <button type="button" onclick="setEfectivoRapido(200)" class="bg-pmdark hover:bg-pmborder text-white text-[11px] sm:text-xs font-bold py-2 rounded-lg border border-pmborder uppercase transition-colors">$200</button>
+                                <button type="button" onclick="setEfectivoRapido(500)" class="bg-pmdark hover:bg-pmborder text-white text-[11px] sm:text-xs font-bold py-2 rounded-lg border border-pmborder uppercase transition-colors">$500</button>
                             </div>
                         </div>
 
-                        <button id="btn-confirmar-efectivo" disabled onclick="finalizarVentaYMostrarTicket('Efectivo')" class="w-full bg-gradient-to-r from-green-700 to-green-600 hover:from-green-600 hover:to-green-500 text-white font-sans font-black py-4 rounded-xl uppercase tracking-widest transition-all shadow-lg flex justify-center items-center gap-3 disabled:opacity-40 disabled:cursor-not-allowed">
-                            Registrar Venta e Imprimir Ticket Térmico <i class="fa-solid fa-print"></i>
+                        <button id="btn-confirmar-efectivo" disabled onclick="finalizarVentaYMostrarTicket('Efectivo')" class="w-full bg-gradient-to-r from-green-700 to-green-600 hover:from-green-600 hover:to-green-500 text-white font-sans font-black py-3.5 sm:py-4 rounded-xl uppercase tracking-wider sm:tracking-widest text-xs sm:text-sm transition-all shadow-lg flex justify-center items-center gap-2 sm:gap-3 disabled:opacity-40 disabled:cursor-not-allowed">
+                            <span>Registrar Venta e Imprimir</span> <i class="fa-solid fa-print"></i>
                         </button>
                     </div>
 
                     <!-- Panel de Tarjeta Mercado Pago -->
                     <div id="panel-cobro-tarjeta" class="hidden flex-col animate-[fadeIn_0.2s_ease-out]">
-                        <div class="flex items-center justify-between mb-6 border-b border-pmborder pb-4">
-                            <button onclick="volverSelectorPago()" class="text-pmtext hover:text-white transition-colors text-xl p-2"><i class="fa-solid fa-arrow-left"></i></button>
-                            <h2 class="text-sm font-sans font-bold uppercase text-white tracking-widest flex items-center gap-2"><i class="fa-solid fa-credit-card text-pmblue"></i> Terminal Mercado Pago</h2>
+                        <div class="flex items-center justify-between mb-4 sm:mb-6 border-b border-pmborder pb-3 sm:pb-4">
+                            <button onclick="volverSelectorPago()" class="text-pmtext hover:text-white transition-colors text-lg p-1.5 sm:p-2 rounded-lg bg-pmdark border border-pmborder" aria-label="Volver"><i class="fa-solid fa-arrow-left"></i></button>
+                            <h2 class="text-xs sm:text-sm font-sans font-bold uppercase text-white tracking-wider sm:tracking-widest flex items-center gap-1.5"><i class="fa-solid fa-credit-card text-pmblue"></i> Terminal Mercado Pago</h2>
                             <div class="w-8"></div>
                         </div>
 
-                        <div class="bg-pmblue/15 border border-pmblue/30 rounded-xl p-5 mb-6 text-center">
-                            <p class="text-[10px] font-bold text-pmblue uppercase tracking-widest mb-1">Monto en Terminal:</p>
-                            <p class="text-4xl font-black text-white">$<span id="tarjeta-total-display">0</span></p>
+                        <div class="bg-pmblue/15 border border-pmblue/30 rounded-xl p-4 sm:p-5 mb-4 sm:mb-6 text-center">
+                            <p class="text-[9px] sm:text-[10px] font-bold text-pmblue uppercase tracking-widest mb-0.5">Monto en Terminal:</p>
+                            <p class="text-2xl sm:text-4xl font-black text-white font-mono">$<span id="tarjeta-total-display">0</span></p>
                         </div>
 
-                        <div class="mb-6 text-left">
-                            <label class="block text-xs font-bold text-pmtext uppercase tracking-widest mb-2"><i class="fa-solid fa-receipt"></i> Folio de Autorización / Voucher:</label>
-                            <input type="text" id="input-tarjeta-auth" placeholder="Ej. MP-849102" oninput="validarAutorizacionTarjeta()" class="w-full bg-pmdark text-white px-4 py-3 text-lg font-mono font-bold rounded-xl border-2 border-pmborder focus:outline-none focus:border-pmblue transition-colors uppercase">
-                            <p class="text-[10px] text-pmtext mt-2 font-medium">Ingresa el folio de la transacción para cuadre de caja de fin de turno.</p>
+                        <div class="mb-4 sm:mb-6 text-left">
+                            <label class="block text-[11px] sm:text-xs font-bold text-pmtext uppercase tracking-wider mb-1.5"><i class="fa-solid fa-receipt"></i> Folio de Autorización / Voucher:</label>
+                            <input type="text" id="input-tarjeta-auth" placeholder="Ej. MP-849102" oninput="validarAutorizacionTarjeta()" class="w-full bg-pmdark text-white px-3 sm:px-4 py-2.5 sm:py-3 text-base sm:text-lg font-mono font-bold rounded-xl border-2 border-pmborder focus:outline-none focus:border-pmblue transition-colors uppercase">
+                            <p class="text-[9px] sm:text-[10px] text-pmtext mt-1.5 font-medium">Ingresa el folio de la transacción para cuadre de caja de fin de turno.</p>
                         </div>
 
-                        <button id="btn-confirmar-tarjeta" disabled onclick="finalizarVentaYMostrarTicket('Tarjeta Mercado Pago')" class="w-full bg-gradient-to-r from-pmblue to-[#029cea] hover:from-[#029cea] hover:to-[#4fc3f7] text-white font-sans font-black py-4 rounded-xl uppercase tracking-widest transition-all shadow-lg flex justify-center items-center gap-3 disabled:opacity-40 disabled:cursor-not-allowed">
-                            Registrar Venta e Imprimir Ticket Térmico <i class="fa-solid fa-print"></i>
+                        <button id="btn-confirmar-tarjeta" disabled onclick="finalizarVentaYMostrarTicket('Tarjeta Mercado Pago')" class="w-full bg-gradient-to-r from-pmblue to-[#029cea] hover:from-[#029cea] hover:to-[#4fc3f7] text-white font-sans font-black py-3.5 sm:py-4 rounded-xl uppercase tracking-wider sm:tracking-widest text-xs sm:text-sm transition-all shadow-lg flex justify-center items-center gap-2 sm:gap-3 disabled:opacity-40 disabled:cursor-not-allowed">
+                            <span>Registrar Venta e Imprimir</span> <i class="fa-solid fa-print"></i>
                         </button>
                     </div>
 
@@ -306,96 +323,122 @@
 
         </section>
 
-        <!-- Resumen Lateral de Carrito (Derecha) -->
-        <section class="hidden lg:flex lg:w-1/3 bg-pmcard border-l border-pmborder flex-col h-full shadow-2xl z-10 relative">
+        <!-- Backdrop Oscuro para el Carrito Móvil en Pantallas < 1024px -->
+        <div id="cart-drawer-backdrop" onclick="toggleMobileCarrito(false)" class="fixed inset-0 bg-black/80 z-[70] backdrop-blur-sm hidden lg:hidden mobile-drawer-backdrop"></div>
+
+        <!-- Resumen Lateral de Carrito (Fijo en Desktop lg, Drawer Deslizable en Móvil/Tablet) -->
+        <section id="carrito-lateral-section" class="fixed inset-y-0 right-0 z-[75] w-full sm:max-w-md bg-pmcard border-l border-pmborder flex flex-col h-full shadow-2xl transition-transform duration-300 ease-in-out translate-x-full lg:translate-x-0 lg:static lg:w-1/3 lg:flex">
             
-            <div class="p-4 border-b border-pmborder shrink-0 bg-pmdark flex justify-between items-center">
-                <h2 class="text-xs font-sans font-black uppercase tracking-[0.2em] text-white flex items-center gap-2">
-                    <i class="fa-solid fa-cart-shopping text-pmmagenta"></i> Resumen de Venta
-                </h2>
-                <span id="badge-articulos" class="bg-pmmagenta text-white text-[10px] font-bold px-2 py-0.5 rounded-full hidden">0 items</span>
+            <div class="p-3 sm:p-4 border-b border-pmborder shrink-0 bg-pmdark flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                    <h2 class="text-xs font-sans font-black uppercase tracking-wider sm:tracking-[0.2em] text-white flex items-center gap-2">
+                        <i class="fa-solid fa-cart-shopping text-pmmagenta"></i> Resumen de Venta
+                    </h2>
+                    <span id="badge-articulos" class="bg-pmmagenta text-white text-[10px] font-bold px-2 py-0.5 rounded-full hidden">0 items</span>
+                </div>
+                <!-- Botón Cerrar Drawer Móvil -->
+                <button onclick="toggleMobileCarrito(false)" class="lg:hidden text-pmtext hover:text-white p-1.5 sm:p-2 rounded-lg bg-pmcard border border-pmborder" aria-label="Cerrar carrito">
+                    <i class="fa-solid fa-xmark text-sm sm:text-base"></i>
+                </button>
             </div>
             
-            <div class="flex-grow p-4 flex flex-col overflow-y-auto hide-scroll bg-pmcard" id="carrito-container">
-                <div id="carrito-vacio" class="flex flex-col items-center justify-center h-full opacity-30 text-center">
-                    <i class="fa-solid fa-cart-arrow-down text-4xl mb-4 text-pmtext"></i>
+            <div class="flex-grow p-3 sm:p-4 flex flex-col overflow-y-auto hide-scroll bg-pmcard" id="carrito-container">
+                <div id="carrito-vacio" class="flex flex-col items-center justify-center h-full opacity-30 text-center py-12">
+                    <i class="fa-solid fa-cart-arrow-down text-4xl mb-3 text-pmtext"></i>
                     <p class="font-sans text-xs uppercase tracking-widest font-bold">Carrito vacío</p>
                     <p class="text-[10px] text-pmtext mt-1">Agrega boletos o escanea un QR de pre-orden</p>
                 </div>
-                <div id="carrito-lista" class="hidden flex-col gap-2.5">
+                <div id="carrito-lista" class="hidden flex-col gap-2">
                     <!-- Inyectado por js -->
                 </div>
             </div>
 
             <!-- Footer del Carrito y Acciones de Paso -->
-            <div class="p-4 border-t border-pmborder bg-pmdark shrink-0">
-                <div class="flex justify-between items-end mb-4">
-                    <span class="font-sans font-bold uppercase text-pmtext tracking-widest text-xs">Total Venta</span>
-                    <span class="text-4xl font-serif font-black text-white">$<span id="carrito-total">0</span></span>
+            <div class="p-3 sm:p-4 border-t border-pmborder bg-pmdark shrink-0 pb-[max(1rem,env(safe-area-inset-bottom))]">
+                <div class="flex justify-between items-end mb-3 sm:mb-4">
+                    <span class="font-sans font-bold uppercase text-pmtext tracking-wider sm:tracking-widest text-xs">Total Venta</span>
+                    <span class="text-2xl sm:text-4xl font-serif font-black text-white font-mono">$<span id="carrito-total">0</span></span>
                 </div>
 
                 <div id="cart-actions-1" class="flex gap-2">
-                    <button onclick="cambiarPaso(3)" class="flex-1 bg-pmcard text-pmtext border border-pmborder hover:text-white px-2 py-3 rounded-lg font-sans font-bold text-[10px] uppercase tracking-widest transition-colors">
+                    <button onclick="cambiarPaso(3)" class="flex-1 bg-pmcard text-pmtext border border-pmborder hover:text-white px-2 py-2.5 sm:py-3 rounded-lg font-sans font-bold text-[10px] uppercase tracking-wider transition-colors text-center">
                         Omitir Dulcería
                     </button>
-                    <button onclick="cambiarPaso(2)" class="flex-[2] bg-pmmagenta text-white hover:bg-pink-600 px-4 py-3 rounded-lg font-sans font-black text-xs uppercase tracking-widest transition-colors shadow-lg flex justify-center items-center gap-2">
-                        Paso 2: Dulcería <i class="fa-solid fa-arrow-right"></i>
+                    <button onclick="cambiarPaso(2)" class="flex-[2] bg-pmmagenta text-white hover:bg-pink-600 px-3 py-2.5 sm:py-3 rounded-lg font-sans font-black text-xs uppercase tracking-wider transition-colors shadow-lg flex justify-center items-center gap-1.5 sm:gap-2">
+                        <span>Paso 2: Dulcería</span> <i class="fa-solid fa-arrow-right"></i>
                     </button>
                 </div>
 
                 <div id="cart-actions-2" class="hidden flex gap-2">
-                    <button onclick="cambiarPaso(1)" class="w-12 bg-pmcard text-pmtext border border-pmborder hover:text-white rounded-lg transition-colors flex justify-center items-center">
+                    <button onclick="cambiarPaso(1)" class="w-10 sm:w-12 bg-pmcard text-pmtext border border-pmborder hover:text-white rounded-lg transition-colors flex justify-center items-center">
                         <i class="fa-solid fa-arrow-left"></i>
                     </button>
-                    <button onclick="cambiarPaso(3)" class="flex-1 bg-pmorange text-white hover:bg-orange-500 px-4 py-3 rounded-lg font-sans font-black text-xs uppercase tracking-widest transition-colors shadow-lg flex justify-center items-center gap-2">
-                        Paso 3: Cobrar <i class="fa-solid fa-cash-register"></i>
+                    <button onclick="cambiarPaso(3)" class="flex-1 bg-pmorange text-white hover:bg-orange-500 px-3 py-2.5 sm:py-3 rounded-lg font-sans font-black text-xs uppercase tracking-wider transition-colors shadow-lg flex justify-center items-center gap-1.5 sm:gap-2">
+                        <span>Paso 3: Cobrar</span> <i class="fa-solid fa-cash-register"></i>
                     </button>
                 </div>
 
                 <div id="cart-actions-3" class="hidden flex gap-2">
-                    <button onclick="cambiarPaso(2)" class="w-full bg-pmcard text-pmtext border border-pmborder hover:text-white px-4 py-3 rounded-lg font-sans font-bold text-xs uppercase tracking-widest transition-colors flex justify-center items-center gap-2">
+                    <button onclick="cambiarPaso(2)" class="w-full bg-pmcard text-pmtext border border-pmborder hover:text-white px-3 py-2.5 sm:py-3 rounded-lg font-sans font-bold text-xs uppercase tracking-wider transition-colors flex justify-center items-center gap-2">
                         <i class="fa-solid fa-arrow-left"></i> Regresar a Editar Carrito
                     </button>
                 </div>
             </div>
         </section>
+
+        <!-- Barra Flotante de Carrito para Móviles/Tablets (< lg) -->
+        <div id="mobile-floating-cart-bar" onclick="toggleMobileCarrito(true)" class="lg:hidden fixed bottom-3 left-3 right-3 sm:bottom-4 sm:left-4 sm:right-4 z-40 bg-pmcard/95 backdrop-blur-md border border-pmmagenta/60 p-2.5 sm:p-3 rounded-xl sm:rounded-2xl shadow-2xl flex items-center justify-between cursor-pointer transition-all active:scale-[0.98] hidden">
+            <div class="flex items-center gap-2.5 sm:gap-3">
+                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-pmmagenta/20 border border-pmmagenta flex items-center justify-center text-pmmagenta text-base sm:text-lg shrink-0">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                </div>
+                <div>
+                    <span class="text-[9px] sm:text-[10px] text-pmtext uppercase font-bold tracking-wider block leading-tight" id="mobile-bar-items-text">0 artículos</span>
+                    <span class="text-sm sm:text-base font-serif font-black text-white font-mono">$<span id="mobile-bar-total">0</span> MXN</span>
+                </div>
+            </div>
+            <div class="flex items-center gap-1.5 bg-pmmagenta text-white px-3 py-2 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-black uppercase tracking-wider shadow">
+                <span>Ver Carrito</span>
+                <i class="fa-solid fa-arrow-right text-xs"></i>
+            </div>
+        </div>
     </main>
 
     <!-- MODAL ESCÁNER QR PRE-ORDEN (VALIDADOR EN CAJA FÍSICA A CONTRA ENTREGA) -->
-    <div id="modal-escaner-qr" class="fixed inset-0 z-[150] hidden flex items-center justify-center p-4 bg-pmdark/95 backdrop-blur-md">
-        <div class="bg-pmcard border-2 border-pmmagenta rounded-3xl max-w-lg w-full p-6 relative shadow-[0_0_50px_rgba(216,27,96,0.35)] text-center">
-            <button onclick="cerrarModalEscanerQR()" class="absolute top-4 right-4 text-pmtext hover:text-white text-xl">
+    <div id="modal-escaner-qr" class="fixed inset-0 z-[150] hidden flex items-center justify-center p-3 sm:p-4 bg-pmdark/95 backdrop-blur-md">
+        <div class="bg-pmcard border-2 border-pmmagenta rounded-2xl sm:rounded-3xl max-w-lg w-full p-4 sm:p-6 relative shadow-[0_0_50px_rgba(216,27,96,0.35)] text-center max-h-[90dvh] overflow-y-auto hide-scroll">
+            <button onclick="cerrarModalEscanerQR()" class="absolute top-3 right-3 sm:top-4 sm:right-4 text-pmtext hover:text-white text-lg sm:text-xl p-1">
                 <i class="fa-solid fa-xmark"></i>
             </button>
 
-            <span class="bg-pmmagenta text-white text-[10px] font-bold uppercase tracking-[0.3em] px-3.5 py-1 rounded-full inline-block mb-3">
+            <span class="bg-pmmagenta text-white text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.25em] px-3 py-0.5 rounded-full inline-block mb-2">
                 Hardware / Escáner de Pre-orden
             </span>
-            <h3 class="text-xl font-serif font-black uppercase text-white mb-2">Lectura de Código QR en Caja</h3>
-            <p class="text-xs text-pmtext mb-5">Escanea el ticket digital del cliente o selecciona una pre-orden activa</p>
+            <h3 class="text-base sm:text-xl font-serif font-black uppercase text-white mb-1">Lectura de Código QR en Caja</h3>
+            <p class="text-[10px] sm:text-xs text-pmtext mb-4">Escanea el ticket digital del cliente o selecciona una pre-orden activa</p>
 
             <!-- Animación de Cámara / Láser QR -->
-            <div class="relative w-56 h-56 mx-auto bg-black rounded-2xl border-2 border-dashed border-pmmagenta/70 flex items-center justify-center overflow-hidden mb-5">
-                <i class="fa-solid fa-qrcode text-7xl text-pmtext/20"></i>
+            <div class="relative w-44 h-44 sm:w-56 sm:h-56 mx-auto bg-black rounded-2xl border-2 border-dashed border-pmmagenta/70 flex items-center justify-center overflow-hidden mb-4">
+                <i class="fa-solid fa-qrcode text-5xl sm:text-7xl text-pmtext/20"></i>
                 <div class="laser-scanner-line"></div>
-                <div class="absolute bottom-3 text-[10px] text-pmmagenta font-mono uppercase font-bold tracking-wider bg-black/60 px-2 py-0.5 rounded">
+                <div class="absolute bottom-2 text-[9px] sm:text-[10px] text-pmmagenta font-mono uppercase font-bold tracking-wider bg-black/70 px-2 py-0.5 rounded">
                     Buscando código QR...
                 </div>
             </div>
 
             <!-- Entrada Manual o de Lector Óptico -->
-            <form onsubmit="procesarCodigoQRManual(event)" class="space-y-3 mb-5">
+            <form onsubmit="procesarCodigoQRManual(event)" class="space-y-2.5 mb-4">
                 <div class="relative">
-                    <input type="text" id="input-codigo-qr" placeholder="Escanear o escribir código (Ej: PRE-XIL-84920)..." class="w-full bg-pmdark text-white px-4 py-3 rounded-xl border border-pmborder focus:border-pmmagenta outline-none font-mono text-xs uppercase text-center font-bold">
+                    <input type="text" id="input-codigo-qr" placeholder="Escanear o escribir código (Ej: PRE-XIL-84920)..." class="w-full bg-pmdark text-white px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl border border-pmborder focus:border-pmmagenta outline-none font-mono text-xs uppercase text-center font-bold">
                 </div>
-                <button type="submit" class="w-full bg-pmmagenta hover:bg-pink-600 text-white font-bold text-xs uppercase tracking-widest py-3 rounded-xl transition-all shadow-lg">
+                <button type="submit" class="w-full bg-pmmagenta hover:bg-pink-600 text-white font-bold text-xs uppercase tracking-widest py-2.5 sm:py-3 rounded-xl transition-all shadow-lg">
                     Validar y Cargar en Caja
                 </button>
             </form>
 
             <!-- Pre-órdenes activas para prueba rápida (Demostración) -->
             <div class="border-t border-pmborder pt-3 text-left">
-                <span class="text-[10px] font-bold uppercase tracking-widest text-pmtext block mb-2">Pre-órdenes Activas Disponibles (Demostración):</span>
+                <span class="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-pmtext block mb-2">Pre-órdenes Activas Disponibles (Demostración):</span>
                 <div id="lista-preordenes-demo" class="space-y-1.5 max-h-36 overflow-y-auto hide-scroll">
                     <!-- Inyectado por script -->
                 </div>
@@ -404,8 +447,8 @@
     </div>
 
     <!-- MODAL DE IMPRESIÓN DE TICKET TÉRMICO (58mm / 80mm) -->
-    <div id="modal-ticket-termico" class="fixed inset-0 z-[160] hidden flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
-        <div class="max-w-md w-full flex flex-col items-center">
+    <div id="modal-ticket-termico" class="fixed inset-0 z-[160] hidden flex items-center justify-center p-3 sm:p-4 bg-black/90 backdrop-blur-md">
+        <div class="max-w-md w-full flex flex-col items-center max-h-[92dvh] overflow-y-auto hide-scroll py-2">
             
             <div id="modal-ticket-print-area" class="ticket-termico text-left mb-4 shadow-2xl">
                 <div class="text-center mb-3">
@@ -495,18 +538,23 @@
         // ==========================================================
         // 1. RENDER DE CARTELERA PARA BOLETAJE ÁGIL (ACCESO GENERAL)
         // ==========================================================
+        // 1. RENDER DE CARTELERA PARA BOLETAJE ÁGIL (ACCESO GENERAL)
+        // ==========================================================
         function aplicarFiltrosBoletos() {
-            const texto = document.getElementById('busqueda-peli')?.value.toLowerCase() || '';
+            const texto = document.getElementById('busqueda-peli')?.value.toLowerCase().trim() || '';
             const soloProximos = document.getElementById('toggle-proximos')?.checked;
             const ahora = new Date();
             const horaActualMinutos = (ahora.getHours() * 60) + ahora.getMinutes();
-            const margenTolerancia = 20;
+            const margenTolerancia = 30;
 
-            const peliculas = window.cineData?.peliculas || [];
-            const filtradas = peliculas.map(p => {
+            const peliculas = (window.cineData && window.cineData.peliculas && window.cineData.peliculas.length > 0)
+                ? window.cineData.peliculas
+                : (typeof catalogoLocal !== 'undefined' ? catalogoLocal : []);
+
+            let filtradas = peliculas.map(p => {
                 const copiaPeli = { ...p };
                 if (soloProximos) {
-                    copiaPeli.horarios = p.horarios.filter(h => {
+                    copiaPeli.horarios = (p.horarios || []).filter(h => {
                         const horaLimpia = h.split(' ')[0];
                         const [hrs, mins] = horaLimpia.split(':').map(Number);
                         if (isNaN(hrs) || isNaN(mins)) return true;
@@ -516,8 +564,14 @@
                 }
                 return copiaPeli;
             }).filter(p => {
-                return p.titulo.toLowerCase().includes(texto) && p.horarios.length > 0;
+                const matchTexto = p.titulo.toLowerCase().includes(texto);
+                return matchTexto && (!soloProximos || (p.horarios && p.horarios.length > 0));
             });
+
+            // Si el filtro "solo próximos" descartó todo por la hora (noche o madrugada) y no hay búsqueda de texto, mostrar todas
+            if (filtradas.length === 0 && soloProximos && !texto) {
+                filtradas = peliculas;
+            }
             
             renderCartelera(filtradas);
         }
@@ -527,36 +581,55 @@
             if (!grid) return;
 
             if (peliculas.length === 0) {
-                grid.innerHTML = '<div class="col-span-full py-12 text-center text-pmtext font-bold uppercase tracking-widest">No hay funciones en este horario</div>';
+                grid.innerHTML = '<div class="col-span-full py-12 text-center text-pmtext font-bold uppercase tracking-widest text-xs sm:text-sm"><i class="fa-solid fa-film text-3xl text-pmmagenta/40 mb-3 block"></i>No hay funciones disponibles con este filtro</div>';
                 return;
             }
 
-            const precioBase = window.cineData.precioBoleto || 50;
+            const precioBase = window.cineData?.precioBoleto || 50;
 
-            grid.innerHTML = peliculas.map(p => `
-                <div class="bg-pmcard border border-pmborder p-4 rounded-2xl flex flex-col gap-3 hover:border-pmmagenta/60 transition-all group shadow-lg">
-                    <div class="flex items-start gap-4">
-                        <img src="${p.poster}" class="w-16 h-24 object-cover rounded-xl shadow-md border border-pmborder bg-pmdark shrink-0">
-                        <div class="flex flex-col flex-grow">
-                            <div class="flex items-center gap-2 mb-1">
-                                <span class="text-[9px] font-sans font-bold bg-pmdark border border-pmborder text-pmmagenta px-2 py-0.5 rounded uppercase tracking-widest">${p.clasificacion || 'B'}</span>
-                                <span class="text-[10px] text-pmtext">${p.duracion}</span>
+            grid.innerHTML = peliculas.map(p => {
+                const primerHorario = (p.horarios && p.horarios.length > 0) ? p.horarios[0] : '16:00';
+                return `
+                <div id="card-peli-${p.id}" class="bg-pmcard border border-pmborder hover:border-pmmagenta/70 p-3 sm:p-4 rounded-xl sm:rounded-2xl flex flex-col gap-2.5 sm:gap-3 transition-all group shadow-lg select-none">
+                    <!-- Ficha Superior de Película: Clickeable para selección rápida -->
+                    <div onclick="agregarBoletoPorId(${p.id}, '${primerHorario}')" class="flex items-start gap-2.5 sm:gap-4 cursor-pointer active:scale-[0.98] transition-all hover:opacity-95" title="Toca para agregar boleto (${primerHorario})">
+                        <div class="relative shrink-0 overflow-hidden rounded-lg sm:rounded-xl shadow-md border border-pmborder bg-pmdark">
+                            <img src="${p.poster}" class="w-14 h-20 sm:w-16 sm:h-24 object-cover">
+                            <span class="absolute bottom-1 right-1 bg-pmmagenta text-white text-[8px] font-black px-1.5 py-0.5 rounded shadow flex items-center gap-0.5">
+                                <i class="fa-solid fa-plus text-[7px]"></i> $${precioBase}
+                            </span>
+                        </div>
+                        <div class="flex flex-col flex-grow min-w-0">
+                            <div class="flex items-center gap-1.5 mb-1">
+                                <span class="text-[8px] sm:text-[9px] font-sans font-bold bg-pmdark border border-pmborder text-pmmagenta px-1.5 py-0.5 rounded uppercase tracking-wider">${p.clasificacion || 'B'}</span>
+                                <span class="text-[9px] sm:text-[10px] text-pmtext font-mono">${p.duracion}</span>
                             </div>
-                            <h3 class="font-serif font-black text-white uppercase text-sm mb-1 leading-tight group-hover:text-pmmagenta transition-colors line-clamp-2">${p.titulo}</h3>
-                            <span class="text-[10px] text-pmtext font-semibold uppercase">${p.genero}</span>
+                            <h3 class="font-serif font-black text-white uppercase text-xs sm:text-sm mb-1 leading-tight group-hover:text-pmmagenta transition-colors line-clamp-2">${p.titulo}</h3>
+                            <span class="text-[9px] sm:text-[10px] text-pmtext font-semibold uppercase truncate">${p.genero}</span>
+                            <span class="text-[9px] text-pmmagenta font-mono font-bold mt-1.5 flex items-center gap-1">
+                                <i class="fa-solid fa-cart-plus text-[10px]"></i> Toca para agregar (${primerHorario})
+                            </span>
                         </div>
                     </div>
 
                     <!-- Horarios de cobro directo sin asignación de asientos (Acceso General) -->
-                    <div class="pt-3 border-t border-pmborder border-dashed flex flex-wrap gap-2 mt-auto">
-                        ${p.horarios.map(h => `
-                            <button onclick="agregarBoleto('${p.id}', '${p.titulo}', '${h}', ${precioBase})" class="flex-1 bg-pmdark hover:bg-pmmagenta text-white text-xs font-bold px-3 py-2.5 rounded-xl border border-pmborder hover:border-pmmagenta uppercase tracking-wider transition-all active:scale-95 whitespace-nowrap shadow flex items-center justify-center gap-1.5">
-                                <i class="fa-solid fa-ticket text-pmmagenta group-hover:text-white text-[10px]"></i> ${h}
-                            </button>
-                        `).join('')}
+                    <div class="pt-2 sm:pt-3 border-t border-pmborder/60 border-dashed mt-auto">
+                        <div class="text-[9px] uppercase font-bold text-pmtext mb-1.5 flex justify-between items-center">
+                            <span>Seleccionar Horario:</span>
+                            <span class="text-pmmagenta font-mono font-bold">$${precioBase} c/u</span>
+                        </div>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-1.5 sm:gap-2">
+                            ${(p.horarios || [primerHorario]).map(h => `
+                                <button type="button" onclick="event.stopPropagation(); agregarBoletoPorId(${p.id}, '${h}')" class="bg-pmdark hover:bg-pmmagenta active:bg-pink-600 text-white text-[11px] sm:text-xs font-bold py-2 px-1.5 sm:px-2 rounded-lg sm:rounded-xl border border-pmborder hover:border-pmmagenta uppercase tracking-wider transition-all active:scale-95 shadow flex items-center justify-center gap-1.5 touch-manipulation group/btn">
+                                    <i class="fa-solid fa-ticket text-pmmagenta group-hover/btn:text-white text-[9px] sm:text-[10px]"></i>
+                                    <span>${h}</span>
+                                </button>
+                            `).join('')}
+                        </div>
                     </div>
                 </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
         // ==========================================================
@@ -572,14 +645,14 @@
 
             grid.innerHTML = snacks.map(p => `
                 <div class="bg-pmcard border border-pmborder rounded-xl flex flex-col overflow-hidden hover:border-pmorange transition-all cursor-pointer group active:scale-95 shadow-lg" onclick="agregarDulce('${p.sku}')">
-                    <div class="h-24 w-full bg-pmdark overflow-hidden relative">
-                        <img src="${p.img}" class="w-full h-full object-cover opacity-75 group-hover:opacity-100 transition-opacity">
+                    <div class="h-20 sm:h-24 w-full bg-pmdark overflow-hidden relative">
+                        <img src="${p.img}" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity">
                         <div class="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-pmcard to-transparent"></div>
-                        <span class="absolute top-1.5 left-1.5 bg-black/70 font-mono text-[9px] text-pmtext px-1.5 py-0.5 rounded border border-white/10">${p.sku}</span>
+                        <span class="absolute top-1.5 left-1.5 bg-black/75 font-mono text-[8px] sm:text-[9px] text-pmtext px-1.5 py-0.5 rounded border border-white/10">${p.sku}</span>
                     </div>
-                    <div class="p-3 text-center flex flex-col flex-grow">
-                        <h3 class="font-sans font-bold text-white uppercase text-xs leading-tight mb-1">${p.nombre}</h3>
-                        <p class="text-sm font-black text-pmorange mt-auto">$${p.precio}</p>
+                    <div class="p-2 sm:p-3 text-center flex flex-col flex-grow">
+                        <h3 class="font-sans font-bold text-white uppercase text-[11px] sm:text-xs leading-tight mb-1 line-clamp-2">${p.nombre}</h3>
+                        <p class="text-xs sm:text-sm font-black text-pmorange mt-auto font-mono">$${p.precio}</p>
                     </div>
                 </div>
             `).join('');
@@ -602,8 +675,10 @@
         function agregarPizzaFraccionada(tipo) {
             if (tipo === 'rebanada') {
                 añadirAlCarrito('pizza_rebanada', 'dulceria', 'Pizza (Rebanada Individual)', 35, 1, { descuentaRebanadas: 1 });
+                mostrarToastPOS('🍕 Rebanada de Pizza agregada ($35)');
             } else {
                 añadirAlCarrito('pizza_completa', 'dulceria', 'Pizza Completa (8 Rebanadas)', 180, 1, { descuentaRebanadas: 8 });
+                mostrarToastPOS('🍕 Pizza Completa (8 reb.) agregada ($180)');
             }
         }
 
@@ -623,6 +698,7 @@
                     agregarPizzaFraccionada('completa');
                 } else {
                     añadirAlCarrito(`sku_${producto.sku}`, 'dulceria', producto.nombre, producto.precio);
+                    mostrarToastPOS(`🍿 Agregado: ${producto.nombre}`);
                 }
                 input.value = '';
             } else {
@@ -633,10 +709,38 @@
         // ==========================================================
         // 3. LÓGICA DEL CARRITO POS
         // ==========================================================
+        function agregarBoletoPorId(idPeli, horario) {
+            const pelis = (window.cineData && window.cineData.peliculas && window.cineData.peliculas.length > 0)
+                ? window.cineData.peliculas
+                : (typeof catalogoLocal !== 'undefined' ? catalogoLocal : []);
+            
+            const p = pelis.find(item => item.id == idPeli) || pelis[0];
+            if (!p) {
+                console.error("Película no encontrada con ID:", idPeli);
+                return;
+            }
+
+            const h = horario || (p.horarios && p.horarios[0]) || '16:00';
+            const precioBase = window.cineData?.precioBoleto || 50;
+            const id_unico = `bol_${p.id}_${h}`;
+            const nombreMostrar = `${p.titulo} - Acceso General (${h})`;
+
+            añadirAlCarrito(id_unico, 'boleto', nombreMostrar, precioBase);
+
+            // Efecto visual táctil en la tarjeta seleccionada
+            const card = document.getElementById(`card-peli-${p.id}`);
+            if (card) {
+                card.classList.add('ring-2', 'ring-pmmagenta', 'border-pmmagenta', 'bg-pmmagenta/10');
+                setTimeout(() => {
+                    card.classList.remove('ring-2', 'ring-pmmagenta', 'border-pmmagenta', 'bg-pmmagenta/10');
+                }, 500);
+            }
+
+            mostrarToastPOS(`🎟️ Boleto agregado: ${p.titulo} (${h})`);
+        }
+
         function agregarBoleto(id_peli, titulo, horario, precio) {
-            const id_unico = `bol_${id_peli}_${horario}`;
-            const nombreMostrar = `${titulo} - Acceso General (${horario})`;
-            añadirAlCarrito(id_unico, 'boleto', nombreMostrar, precio);
+            agregarBoletoPorId(id_peli, horario);
         }
 
         function agregarDulce(sku) {
@@ -645,6 +749,30 @@
             if (!prod) return;
             const id_unico = `dul_${prod.sku}`;
             añadirAlCarrito(id_unico, 'dulceria', prod.nombre, prod.precio);
+            mostrarToastPOS(`🍿 Agregado: ${prod.nombre}`);
+        }
+
+        function mostrarToastPOS(mensaje) {
+            let toast = document.getElementById('pos-toast');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'pos-toast';
+                toast.className = 'fixed top-14 sm:top-16 left-1/2 -translate-x-1/2 z-[200] bg-pmcard/95 text-white border-2 border-pmmagenta px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-2xl shadow-[0_10px_35px_rgba(216,27,96,0.6)] flex items-center gap-2 text-xs font-bold uppercase tracking-wider transition-all duration-300 pointer-events-auto backdrop-blur-md max-w-[92vw]';
+                document.body.appendChild(toast);
+            }
+            toast.innerHTML = `
+                <i class="fa-solid fa-circle-check text-green-400 text-sm shrink-0"></i>
+                <span class="truncate max-w-[190px] sm:max-w-xs font-bold text-white text-[11px] sm:text-xs">${mensaje}</span>
+                <button onclick="toggleMobileCarrito(true)" class="ml-1 bg-pmmagenta hover:bg-pink-600 text-white px-2 py-1 rounded-lg text-[10px] uppercase font-black tracking-wider shrink-0 lg:hidden shadow">Ver Carrito</button>
+            `;
+            toast.style.opacity = '1';
+            toast.style.transform = 'translate(-50%, 0)';
+            
+            clearTimeout(window.posToastTimeout);
+            window.posToastTimeout = setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translate(-50%, -20px)';
+            }, 2400);
         }
 
         function añadirAlCarrito(id, tipo, nombre, precio, cantidad = 1, metadata = {}) {
@@ -691,18 +819,19 @@
                     const colorAcento = item.tipo === 'boleto' ? 'text-pmmagenta' : 'text-pmorange';
                     
                     return `
-                    <div class="bg-pmdark border border-pmborder p-3 rounded-xl flex justify-between items-center shadow-sm">
-                        <div class="flex flex-col flex-grow pr-2 truncate">
-                            <span class="text-[9px] uppercase ${colorAcento} font-bold tracking-wider">${item.tipo === 'boleto' ? 'Taquilla • Acceso General' : 'Dulcería'}</span>
+                    <div class="bg-pmdark border border-pmborder p-2.5 sm:p-3 rounded-xl flex justify-between items-center shadow-sm gap-2">
+                        <div class="flex flex-col flex-grow min-w-0 pr-1">
+                            <span class="text-[8px] sm:text-[9px] uppercase ${colorAcento} font-bold tracking-wider">${item.tipo === 'boleto' ? 'Taquilla' : 'Dulcería'}</span>
                             <span class="font-bold text-white text-xs leading-tight truncate" title="${item.nombre}">${item.nombre}</span>
+                            <span class="text-[10px] text-pmtext font-mono mt-0.5">$${item.precio} c/u</span>
                         </div>
-                        <div class="flex items-center gap-3 shrink-0">
+                        <div class="flex items-center gap-2 shrink-0">
                             <div class="flex items-center bg-pmcard rounded-lg border border-pmborder">
-                                <button onclick="ajustarCantidad(${index}, -1)" class="w-7 h-7 text-pmtext hover:text-white transition-colors text-xs font-bold">-</button>
+                                <button onclick="ajustarCantidad(${index}, -1)" class="w-6 h-6 sm:w-7 sm:h-7 text-pmtext hover:text-white transition-colors text-xs font-bold flex items-center justify-center" aria-label="Disminuir">-</button>
                                 <span class="w-5 text-center text-xs font-bold text-white font-mono">${item.cantidad}</span>
-                                <button onclick="ajustarCantidad(${index}, 1)" class="w-7 h-7 text-pmtext hover:text-white transition-colors text-xs font-bold">+</button>
+                                <button onclick="ajustarCantidad(${index}, 1)" class="w-6 h-6 sm:w-7 sm:h-7 text-pmtext hover:text-white transition-colors text-xs font-bold flex items-center justify-center" aria-label="Aumentar">+</button>
                             </div>
-                            <span class="font-black text-white text-sm w-12 text-right font-mono">$${subtotal}</span>
+                            <span class="font-black text-white text-xs sm:text-sm w-11 sm:w-12 text-right font-mono">$${subtotal}</span>
                         </div>
                     </div>
                     `;
@@ -715,6 +844,41 @@
             document.getElementById('cobro-total-final').innerText = totalGeneral;
             document.getElementById('efectivo-total-display').innerText = totalGeneral;
             document.getElementById('tarjeta-total-display').innerText = totalGeneral;
+
+            // Sincronizar indicadores móviles (header y barra flotante)
+            const headerCartTotal = document.getElementById('header-cart-total');
+            const headerCartBadge = document.getElementById('header-cart-badge');
+            const mobileBarTotal = document.getElementById('mobile-bar-total');
+            const mobileBarItems = document.getElementById('mobile-bar-items-text');
+            const mobileFloatingBar = document.getElementById('mobile-floating-cart-bar');
+
+            if (headerCartTotal) headerCartTotal.innerText = `$${totalGeneral}`;
+            if (headerCartBadge) {
+                headerCartBadge.innerText = numItems;
+                headerCartBadge.classList.toggle('hidden', numItems === 0);
+            }
+            if (mobileBarTotal) mobileBarTotal.innerText = totalGeneral;
+            if (mobileBarItems) mobileBarItems.innerText = `${numItems} artículo${numItems === 1 ? '' : 's'}`;
+            if (mobileFloatingBar) {
+                mobileFloatingBar.classList.toggle('hidden', numItems === 0 || pasoActual === 3);
+            }
+        }
+
+        // ==========================================================
+        // CONTROL DE DRAWER MÓVIL DE CARRITO
+        // ==========================================================
+        function toggleMobileCarrito(abrir) {
+            const drawer = document.getElementById('carrito-lateral-section');
+            const backdrop = document.getElementById('cart-drawer-backdrop');
+            if (!drawer || !backdrop) return;
+
+            if (abrir) {
+                drawer.classList.remove('translate-x-full');
+                backdrop.classList.remove('hidden');
+            } else {
+                drawer.classList.add('translate-x-full');
+                backdrop.classList.add('hidden');
+            }
         }
 
         // ==========================================================
@@ -726,8 +890,22 @@
                 return;
             }
 
+            // Al cambiar de paso en móvil, cerrar el drawer de carrito para ver la pantalla
+            if (window.innerWidth < 1024) {
+                toggleMobileCarrito(false);
+            }
+
+            // Desplazar contenedor principal arriba en móviles
+            const mainContainer = document.getElementById('main-view-container');
+            if (mainContainer) mainContainer.scrollTop = 0;
+
             pasoActual = paso;
             if (paso === 3) volverSelectorPago();
+
+            const mobileFloatingBar = document.getElementById('mobile-floating-cart-bar');
+            if (mobileFloatingBar) {
+                mobileFloatingBar.classList.toggle('hidden', carrito.length === 0 || paso === 3);
+            }
 
             [1, 2, 3].forEach(i => {
                 const tab = document.getElementById(`nav-step-${i}`);

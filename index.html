@@ -52,7 +52,7 @@
     <script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.9.10/dist/dotlottie-wc.js" type="module"></script>
 </head>
 
-<body class="theme-traditional bg-cneDark text-cneLight antialiased selection:bg-cneRed selection:text-white max-w-[1600px] mx-auto min-h-screen shadow-2xl pb-20 md:pb-0 flex flex-col relative overflow-x-hidden">
+<body class="theme-traditional bg-cneDark text-cneLight antialiased selection:bg-cneRed selection:text-white max-w-[1600px] mx-auto min-h-screen shadow-2xl pb-24 md:pb-0 flex flex-col relative overflow-x-hidden">
 
     <!-- Telarañas Decorativas para Noche de Terror / Halloween -->
     <svg class="halloween-corner-web halloween-web-tl" id="web-tl" viewBox="0 0 100 100" fill="none" stroke="#FF5500" stroke-width="1.5">
@@ -122,15 +122,15 @@
             <span class="banderin-picado"></span><span class="banderin-picado"></span><span class="banderin-picado"></span>
         </div>
 
-        <div class="max-w-7xl mx-auto px-4 h-20 md:h-24 flex items-center justify-between">
-            <a href="index.html" class="flex items-center gap-4 cursor-pointer group">
+        <div class="max-w-7xl mx-auto px-4 h-16 sm:h-20 md:h-24 flex items-center justify-between">
+            <a href="index.html" class="flex items-center gap-3 sm:gap-4 cursor-pointer group">
                 <div class="flex items-center gap-3 relative">
                     <div class="absolute inset-0 bg-cneRed blur-xl opacity-20 group-hover:opacity-40 transition-opacity"></div>
-                    <i class="fa-solid fa-film text-white text-3xl relative z-10" id="header-logo-icon"></i>
+                    <i class="fa-solid fa-film text-white text-2xl sm:text-3xl relative z-10" id="header-logo-icon"></i>
                 </div>
                 <div class="flex flex-col">
-                    <h1 class="text-2xl md:text-4xl font-serif font-black tracking-widest uppercase leading-none text-white drop-shadow-[0_0_15px_rgba(225,29,47,0.3)]">Xilotzin</h1>
-                    <span class="text-[9px] md:text-xs font-sans font-bold tracking-[0.3em] text-gradient uppercase mt-1" id="header-subtitle">Cine Tradicional</span>
+                    <h1 class="text-xl sm:text-2xl md:text-4xl font-serif font-black tracking-widest uppercase leading-none text-white drop-shadow-[0_0_15px_rgba(225,29,47,0.3)]">Xilotzin</h1>
+                    <span class="text-[8px] sm:text-[9px] md:text-xs font-sans font-bold tracking-[0.3em] text-gradient uppercase mt-1" id="header-subtitle">Cine Tradicional</span>
                 </div>
             </a>
 
@@ -154,19 +154,19 @@
     <div id="theme-ambient-decorations" class="pointer-events-none fixed inset-0 z-30 overflow-hidden"></div>
 
     <!-- Hero Section con Adaptación Dinámica según la Temática -->
-    <div class="relative w-full h-[42vh] md:h-[52vh] flex items-center justify-center overflow-hidden bg-cneDark border-b border-cneBorder transition-colors duration-500">
+    <div class="relative w-full h-[38vh] sm:h-[44vh] md:h-[52vh] flex items-center justify-center overflow-hidden bg-cneDark border-b border-cneBorder transition-colors duration-500">
         <div class="absolute inset-0 bg-[url('./CINE.png')] bg-cover bg-center bg-no-repeat opacity-45 bg-fixed"></div>
         <div class="absolute inset-0 bg-gradient-to-t from-cneDark via-cneDark/60 to-transparent"></div>
         <div class="absolute inset-0 bg-gradient-to-r from-cneRed/25 via-transparent to-white/10" id="hero-gradient-overlay"></div>
 
-        <div class="relative z-10 text-center px-6 max-w-4xl mx-auto flex flex-col items-center">
-            <span id="hero-badge" class="bg-cneRed/30 border border-cneRed/50 text-white font-sans font-bold text-[10px] md:text-xs uppercase tracking-[0.3em] px-4 py-1.5 rounded-full mb-4 shadow-lg flex items-center gap-2 transition-all">
+        <div class="relative z-10 text-center px-4 sm:px-6 max-w-4xl mx-auto flex flex-col items-center">
+            <span id="hero-badge" class="bg-cneRed/30 border border-cneRed/50 text-white font-sans font-bold text-[9px] sm:text-[10px] md:text-xs uppercase tracking-[0.25em] sm:tracking-[0.3em] px-3 sm:px-4 py-1 sm:py-1.5 rounded-full mb-3 sm:mb-4 shadow-lg flex items-center gap-2 transition-all">
                 <i class="fa-solid fa-sparkles text-cneGold"></i> Pantalla Gigante • Sonido Digital • Jilotepec
             </span>
-            <h2 id="hero-title" class="text-4xl md:text-6xl lg:text-7xl font-serif font-black uppercase tracking-tight text-white mb-3 leading-none drop-shadow-[0_4px_10px_rgba(0,0,0,0.8)] transition-all">
+            <h2 id="hero-title" class="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-serif font-black uppercase tracking-tight text-white mb-2 sm:mb-3 leading-tight md:leading-none drop-shadow-[0_4px_10px_rgba(0,0,0,0.8)] transition-all">
                 La Magia del <br><span class="text-gradient bg-gradient-to-r from-white to-cneRed bg-clip-text text-transparent">Cine Tradicional</span>
             </h2>
-            <p id="hero-desc" class="text-white/90 text-xs md:text-sm font-sans tracking-widest uppercase max-w-xl mx-auto mt-2 font-bold leading-relaxed drop-shadow-[0_2px_5px_rgba(0,0,0,0.8)] transition-all">
+            <p id="hero-desc" class="text-white/90 text-[11px] sm:text-xs md:text-sm font-sans tracking-wider sm:tracking-widest uppercase max-w-xl mx-auto mt-1 sm:mt-2 font-bold leading-relaxed drop-shadow-[0_2px_5px_rgba(0,0,0,0.8)] transition-all">
                 Consulta cartelera oficial en tiempo real, genera tu Pre-orden con código QR y canjéala directamente en caja sin hacer fila.
             </p>
         </div>
@@ -206,22 +206,22 @@
     </main>
 
     <!-- Modal de Película (Horarios, Sinopsis y Botón Pre-orden) -->
-    <div id="movie-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 md:p-6 bg-cneDark/95 backdrop-blur-md">
-        <div class="bg-cneCard border border-cneBorder rounded-2xl max-w-5xl w-full max-h-[90vh] overflow-y-auto relative shadow-2xl flex flex-col md:flex-row hide-scroll">
-            <button onclick="closeModal()" class="absolute top-4 right-4 w-10 h-10 bg-cneDark rounded-full flex items-center justify-center text-white hover:bg-cneRed hover:scale-110 transition-all z-20 shadow-lg border border-cneBorder">
-                <i class="fa-solid fa-xmark text-lg"></i>
+    <div id="movie-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-3 sm:p-4 md:p-6 bg-cneDark/95 backdrop-blur-md">
+        <div class="bg-cneCard border border-cneBorder rounded-3xl max-w-5xl w-full max-h-[92vh] overflow-y-auto relative shadow-2xl flex flex-col md:flex-row hide-scroll">
+            <button onclick="closeModal()" class="absolute top-3 right-3 sm:top-4 sm:right-4 w-9 h-9 sm:w-10 sm:h-10 bg-cneDark rounded-full flex items-center justify-center text-white hover:bg-cneRed hover:scale-110 transition-all z-20 shadow-lg border border-cneBorder">
+                <i class="fa-solid fa-xmark text-base sm:text-lg"></i>
             </button>
 
-            <div class="w-full md:w-[42%] relative h-72 md:h-auto shrink-0 bg-black">
+            <div class="w-full md:w-[42%] relative h-60 sm:h-72 md:h-auto shrink-0 bg-black">
                 <img id="modal-image" src="" alt="" class="w-full h-full object-cover">
                 <div class="absolute inset-0 bg-gradient-to-t from-cneCard via-transparent to-transparent md:bg-gradient-to-r"></div>
             </div>
 
-            <div class="w-full md:w-[58%] p-6 md:p-10 flex flex-col relative z-10">
+            <div class="w-full md:w-[58%] p-4 sm:p-6 md:p-10 flex flex-col relative z-10">
                 <div class="mb-4">
                     <span id="modal-genre" class="inline-block text-[10px] font-sans font-bold tracking-[0.2em] text-white bg-cneBorder px-3 py-1.5 rounded-full uppercase mb-3"></span>
-                    <h2 id="modal-title" class="text-3xl md:text-5xl font-serif font-black text-white uppercase leading-none tracking-tight mb-2"></h2>
-                    <p id="modal-tagline" class="text-sm font-sans italic text-cneRed opacity-90 tracking-wide"></p>
+                    <h2 id="modal-title" class="text-2xl sm:text-3xl md:text-5xl font-serif font-black text-white uppercase leading-tight md:leading-none tracking-tight mb-2"></h2>
+                    <p id="modal-tagline" class="text-xs sm:text-sm font-sans italic text-cneRed opacity-90 tracking-wide"></p>
                 </div>
 
                 <div class="flex flex-wrap items-center gap-3 mb-6 text-xs font-sans text-cneText uppercase tracking-widest font-bold">
@@ -374,7 +374,7 @@
             <p id="ticket-horario" class="text-xs font-sans font-bold text-cneRed uppercase tracking-widest mb-4">Horario: --:--</p>
 
             <!-- Código QR Generado -->
-            <div class="bg-white p-4 rounded-2xl w-60 h-60 mx-auto mb-4 shadow-inner flex items-center justify-center relative">
+            <div class="bg-white p-3 sm:p-4 rounded-2xl w-48 h-48 sm:w-60 sm:h-60 mx-auto mb-4 shadow-inner flex items-center justify-center relative">
                 <img id="ticket-qr-img" src="" alt="QR Pre-orden" class="w-full h-full object-contain">
             </div>
 
@@ -525,7 +525,7 @@
     </footer>
 
     <!-- Navegación Móvil Inferior -->
-    <nav class="md:hidden fixed bottom-0 left-0 w-full bg-cneDark/95 backdrop-blur-lg border-t border-cneBorder flex justify-around z-50 h-16 shadow-[0_-10px_30px_rgba(0,0,0,0.5)] px-2">
+    <nav class="md:hidden fixed bottom-0 left-0 w-full bg-cneDark/95 backdrop-blur-lg border-t border-cneBorder flex justify-around z-50 h-16 shadow-[0_-10px_30px_rgba(0,0,0,0.5)] px-2 mobile-bottom-nav">
         <a href="index.html" class="flex-1 flex flex-col items-center justify-center gap-1 text-cneRed">
             <i class="fa-solid fa-clapperboard text-lg"></i>
             <span class="text-[9px] font-sans font-bold uppercase tracking-widest mt-0.5">Cartelera</span>

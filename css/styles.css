@@ -15,11 +15,20 @@
     --theme-glow: rgba(225, 29, 47, 0.4);
 }
 
+html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+}
+
 body {
     font-family: 'Montserrat', sans-serif;
     background-color: var(--theme-bg) !important;
     color: var(--theme-text) !important;
     transition: background-color 0.4s ease, color 0.4s ease;
+    overflow-x: hidden;
+    width: 100%;
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
 }
 
 /* ==========================================================
@@ -655,4 +664,79 @@ input[type="number"]::-webkit-inner-spin-button {
         box-shadow: none !important;
     }
     .no-print { display: none !important; }
+}
+
+/* ==========================================================
+   7. ADAPTABILIDAD RESPONSIVE & OPTIMIZACIÓN MÓVIL
+   ========================================================== */
+
+/* Barra de Navegación Móvil con Soporte Safe Area */
+.mobile-bottom-nav {
+    padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+}
+
+/* Drawers Móviles (Sidebar Dashboard y Carrito POS) */
+.mobile-drawer-backdrop {
+    transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.mobile-drawer-panel {
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: transform;
+}
+
+/* Tablas con desplazamiento suave táctil */
+.table-touch-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+
+.table-touch-container::-webkit-scrollbar {
+    height: 6px;
+}
+
+.table-touch-container::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.25);
+    border-radius: 9999px;
+}
+
+/* Adaptaciones para Pantallas Pequeñas (< 480px) */
+@media (max-width: 480px) {
+    .ticket-termico {
+        width: 100% !important;
+        max-width: 290px !important;
+        padding: 16px 12px !important;
+    }
+
+    /* Reducción sutil de telarañas para no estorbar en móviles */
+    .halloween-corner-web {
+        width: 70px !important;
+        height: 70px !important;
+        opacity: 0.3 !important;
+    }
+}
+
+/* Optimizaciones exclusivas para POS Taquilla en Móviles */
+@media (max-width: 640px) {
+    #main-view-container {
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    /* Prevenir zoom involuntario en inputs de iOS en pantallas móviles */
+    #input-barcode-scanner,
+    #input-efectivo-recibido,
+    #input-tarjeta-auth,
+    #input-codigo-qr,
+    #busqueda-peli {
+        font-size: 16px !important;
+    }
+}
+
+/* Estilos para badges y textos en modo touch */
+@media (hover: none) and (pointer: coarse) {
+    button, a, select, input {
+        touch-action: manipulation;
+    }
 }

@@ -34,27 +34,27 @@
     <link rel="stylesheet" href="css/styles.css">
 </head>
 
-<body class="theme-traditional bg-cneDark text-cneLight antialiased max-w-[1600px] mx-auto min-h-screen shadow-2xl flex flex-col relative">
+<body class="theme-traditional bg-cneDark text-cneLight antialiased max-w-[1600px] mx-auto min-h-screen shadow-2xl flex flex-col relative pb-24 md:pb-0">
 
     <header class="bg-cneCard border-b border-cneBorder sticky top-0 z-50 shadow-md">
-        <div class="max-w-6xl mx-auto px-4 h-20 flex items-center justify-between">
-            <div class="flex items-center gap-4">
-                <a href="index.html" class="bg-cneDark text-white w-11 h-11 rounded-xl flex items-center justify-center border border-cneBorder hover:border-cneRed transition-colors shadow-md">
-                    <i class="fa-solid fa-arrow-left text-base"></i>
+        <div class="max-w-6xl mx-auto px-3 sm:px-4 h-16 sm:h-20 flex items-center justify-between">
+            <div class="flex items-center gap-3 sm:gap-4">
+                <a href="index.html" class="bg-cneDark text-white w-9 h-9 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center border border-cneBorder hover:border-cneRed transition-colors shadow-md">
+                    <i class="fa-solid fa-arrow-left text-sm sm:text-base"></i>
                 </a>
                 <div class="flex flex-col">
-                    <h1 class="text-xl md:text-2xl font-serif font-black tracking-wider text-white uppercase">Mis Tickets Digitales</h1>
-                    <span class="text-[9px] font-sans tracking-[0.3em] text-cneRed uppercase font-bold">Cine Teatro Xilotzin</span>
+                    <h1 class="text-base sm:text-xl md:text-2xl font-serif font-black tracking-wider text-white uppercase leading-tight">Mis Tickets</h1>
+                    <span class="text-[8px] sm:text-[9px] font-sans tracking-[0.3em] text-cneRed uppercase font-bold">Cine Teatro Xilotzin</span>
                 </div>
             </div>
             
-            <a href="index.html" class="bg-cneRed/20 border border-cneRed text-white text-xs font-bold uppercase tracking-wider px-4 py-2 rounded-xl hover:bg-cneRed transition-all flex items-center gap-2">
-                <i class="fa-solid fa-plus"></i> Nueva Pre-orden
+            <a href="preorden.html" class="bg-cneRed/20 border border-cneRed text-white text-[11px] sm:text-xs font-bold uppercase tracking-wider px-3 sm:px-4 py-2 rounded-xl hover:bg-cneRed transition-all flex items-center gap-2">
+                <i class="fa-solid fa-plus"></i> <span class="hidden sm:inline">Nueva Pre-orden</span><span class="sm:hidden">Pre-orden</span>
             </a>
         </div>
     </header>
 
-    <main class="flex-grow w-full p-6 md:p-12 relative">
+    <main class="flex-grow w-full p-4 sm:p-6 md:p-12 relative">
         <div class="max-w-4xl mx-auto space-y-6" id="contenedor-boletos">
             <!-- Inyectado por js -->
         </div>
@@ -149,5 +149,25 @@
             document.getElementById('modal-qr-vista').classList.add('hidden');
         }
     </script>
+
+    <!-- Navegación Móvil Inferior -->
+    <nav class="md:hidden fixed bottom-0 left-0 w-full bg-cneDark/95 backdrop-blur-lg border-t border-cneBorder flex justify-around z-50 h-16 shadow-[0_-10px_30px_rgba(0,0,0,0.5)] px-2 mobile-bottom-nav">
+        <a href="index.html" class="flex-1 flex flex-col items-center justify-center gap-1 text-cneMuted hover:text-white transition-colors">
+            <i class="fa-solid fa-clapperboard text-lg"></i>
+            <span class="text-[9px] font-sans font-bold uppercase tracking-widest mt-0.5">Cartelera</span>
+        </a>
+        <a href="dulceria.html" class="flex-1 flex flex-col items-center justify-center gap-1 text-cneMuted hover:text-white transition-colors">
+            <i class="fa-solid fa-store text-lg"></i>
+            <span class="text-[9px] font-sans font-bold uppercase tracking-widest mt-0.5">Dulcería</span>
+        </a>
+        <a href="preorden.html" class="flex-1 flex flex-col items-center justify-center gap-1 text-cneMuted hover:text-white transition-colors">
+            <i class="fa-solid fa-qrcode text-lg"></i>
+            <span class="text-[9px] font-sans font-bold uppercase tracking-widest mt-0.5">Pre-orden</span>
+        </a>
+        <a href="perfil.html" class="flex-1 flex flex-col items-center justify-center gap-1 text-cneGold">
+            <i class="fa-solid fa-ticket text-lg"></i>
+            <span class="text-[9px] font-sans font-bold uppercase tracking-widest mt-0.5">Mis Boletos</span>
+        </a>
+    </nav>
 </body>
 </html>
