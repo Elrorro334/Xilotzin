@@ -80,6 +80,11 @@
                 <span id="header-cart-badge" class="w-4 h-4 rounded-full bg-white text-pmmagenta text-[9px] font-black flex items-center justify-center -top-1.5 -right-1.5 absolute border border-pmmagenta shadow hidden">0</span>
             </button>
 
+            <!-- Botón Mapa de Butacas Sala 1 (Exclusivo Taquilla) -->
+            <button onclick="abrirModalButacasRapido()" class="bg-pmdark hover:bg-neutral-800 text-white border border-pmborder hover:border-pmmagenta px-2 py-1.5 sm:px-3 sm:py-2 rounded-lg font-sans font-bold text-[10px] sm:text-xs uppercase tracking-widest transition-all flex items-center gap-1.5 shadow" title="Mapa de Butacas Sala 1">
+                <i class="fa-solid fa-chair text-pmmagenta text-xs sm:text-sm"></i> <span class="hidden md:inline">Mapa Sala 1</span>
+            </button>
+
             <!-- Botón de Escáner QR de Pre-órdenes -->
             <button onclick="abrirModalEscanerQR()" class="bg-pmmagenta/20 text-white border border-pmmagenta hover:bg-pmmagenta px-2 py-1.5 sm:px-3.5 sm:py-2 rounded-lg font-sans font-bold text-[10px] sm:text-xs uppercase tracking-widest transition-all flex items-center gap-1.5 shadow-[0_0_15px_rgba(216,27,96,0.2)]" title="Escanear QR Pre-orden">
                 <i class="fa-solid fa-qrcode text-sm"></i> <span class="hidden md:inline">Escanear QR</span>
@@ -805,6 +810,17 @@
         let posPeliActual = null;
         let posHorarioActual = null;
         let posAsientosSeleccionados = [];
+
+        function abrirModalButacasRapido() {
+            const pelis = (window.cineData && window.cineData.peliculas && window.cineData.peliculas.length > 0)
+                ? window.cineData.peliculas
+                : (typeof catalogoLocal !== 'undefined' ? catalogoLocal : []);
+            const p = posPeliActual || pelis[0];
+            if (p) {
+                const h = posHorarioActual || (p.horarios && p.horarios[0]) || '16:00';
+                abrirModalButacasPOS(p.id, h);
+            }
+        }
 
         function abrirModalButacasPOS(idPeli, horario) {
             const pelis = (window.cineData && window.cineData.peliculas && window.cineData.peliculas.length > 0)

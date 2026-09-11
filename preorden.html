@@ -60,9 +60,6 @@
                     <a href="index.html" class="flex items-center gap-2 hover:text-white transition-colors">
                         <i class="fa-solid fa-clapperboard text-cneRed"></i> Cartelera
                     </a>
-                    <a href="asientos.html" class="flex items-center gap-2 hover:text-white transition-colors">
-                        <i class="fa-solid fa-chair text-cneRed"></i> Butacas Online
-                    </a>
                     <a href="dulceria.html" class="flex items-center gap-2 hover:text-white transition-colors">
                         <i class="fa-solid fa-store text-cneRed"></i> Dulcería & Combos
                     </a>
@@ -137,66 +134,50 @@
                     </div>
                 </div>
 
-                <!-- Paso 3: Selección Visual de Butacas en Sala (Pantalla Gigante) -->
+                <!-- Paso 3: Selección de Boletos (Acceso General) -->
                 <div class="bg-cneCard border border-cneBorder rounded-2xl p-5 sm:p-6 shadow-xl space-y-4">
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-cneBorder pb-3">
                         <div class="flex items-center gap-3">
                             <span class="w-7 h-7 rounded-full bg-cneRed text-white font-bold text-xs flex items-center justify-center">3</span>
                             <div>
-                                <h3 class="text-base sm:text-lg font-serif font-black uppercase text-white">Selección de Butacas en Sala</h3>
-                                <p class="text-[11px] sm:text-xs text-cneMuted font-sans">Sala 1 • $50 MXN por boleto con butaca numerada</p>
+                                <h3 class="text-base sm:text-lg font-serif font-black uppercase text-white">Cantidad de Boletos</h3>
+                                <p class="text-[11px] sm:text-xs text-cneMuted font-sans">Acceso General • $50 MXN por boleto</p>
                             </div>
                         </div>
 
                         <div class="flex items-center gap-2 bg-cneDark px-3 py-1.5 rounded-xl border border-cneBorder text-xs self-start sm:self-auto">
-                            <span class="text-cneMuted font-bold text-[10px]">Butacas:</span>
-                            <span id="txt-butacas-seleccionadas" class="font-black text-cneGold font-mono text-xs">C4, C5</span>
+                            <span class="text-cneMuted font-bold text-[10px]">Precio Unitario:</span>
+                            <span class="font-black text-cneGold font-mono text-xs">$50.00 MXN</span>
                         </div>
                     </div>
 
-                    <!-- Representación de la Pantalla Gigante -->
-                    <div class="text-center py-1">
-                        <div class="h-1.5 w-3/4 mx-auto bg-gradient-to-r from-transparent via-cneRed to-transparent rounded-full shadow-[0_0_15px_rgba(225,29,47,0.8)] mb-1"></div>
-                        <span class="text-[9px] font-sans font-bold uppercase tracking-[0.3em] text-cneMuted">
-                            <i class="fa-solid fa-film text-cneRed mr-1"></i> Pantalla Gigante
-                        </span>
-                    </div>
+                    <div class="p-4 sm:p-5 rounded-2xl bg-cneDark/80 border border-cneBorder flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div class="space-y-1.5 max-w-md">
+                            <div class="flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                                <h4 class="text-xs sm:text-sm font-bold uppercase text-white font-sans">Admisión General • Sala 1</h4>
+                            </div>
+                            <p class="text-[11px] sm:text-xs text-cneMuted leading-relaxed">
+                                <i class="fa-solid fa-circle-info text-cneGold mr-1"></i>
+                                Las butacas numeradas de Sala 1 se asignan exclusivamente en <strong>Taquilla</strong> al escanear y canjear tu código QR en ventanilla física.
+                            </p>
+                        </div>
 
-                    <!-- Leyenda de Sala -->
-                    <div class="flex flex-wrap justify-center gap-4 text-[10px] font-sans font-bold uppercase text-cneMuted">
-                        <div class="flex items-center gap-1.5">
-                            <span class="w-3.5 h-3.5 rounded bg-cneDark border border-cneBorder inline-block"></span>
-                            <span>Disponible</span>
-                        </div>
-                        <div class="flex items-center gap-1.5">
-                            <span class="w-3.5 h-3.5 rounded bg-cneRed text-white flex items-center justify-center text-[8px]"><i class="fa-solid fa-check"></i></span>
-                            <span class="text-white">Seleccionada</span>
-                        </div>
-                        <div class="flex items-center gap-1.5">
-                            <span class="w-3.5 h-3.5 rounded bg-white/10 text-white/20 flex items-center justify-center text-[8px]"><i class="fa-solid fa-xmark"></i></span>
-                            <span>Ocupada</span>
-                        </div>
-                    </div>
-
-                    <!-- Grilla de Butacas Dinámica (A-F x 1-8) -->
-                    <div class="w-full overflow-x-auto pb-1 select-none">
-                        <div class="min-w-[270px] space-y-2 py-2" id="grid-butacas-preorden">
-                            <!-- Inyectado por renderButacasPreorden() -->
-                        </div>
-                    </div>
-
-                    <!-- Contador Rápido Sincronizado -->
-                    <div class="pt-3 border-t border-cneBorder flex items-center justify-between">
-                        <span class="text-xs text-cneMuted font-medium">Boletos seleccionados:</span>
-                        <div class="flex items-center gap-3 bg-cneDark p-1.5 rounded-xl border border-cneBorder">
-                            <button type="button" onclick="modificarBoletos(-1)" class="w-8 h-8 rounded-lg bg-cneCard hover:bg-cneRed text-white flex items-center justify-center font-bold text-sm transition-colors">
+                        <!-- Selector Numérico -->
+                        <div class="flex items-center gap-3 bg-cneCard p-2 rounded-xl border border-cneBorder shrink-0 self-end sm:self-center shadow">
+                            <button type="button" onclick="modificarBoletos(-1)" class="w-9 h-9 rounded-lg bg-cneDark hover:bg-cneRed text-white flex items-center justify-center font-bold text-sm transition-colors active:scale-95 shadow">
                                 <i class="fa-solid fa-minus"></i>
                             </button>
-                            <span id="txt-cant-boletos" class="w-8 text-center text-base font-black text-white font-mono">2</span>
-                            <button type="button" onclick="modificarBoletos(1)" class="w-8 h-8 rounded-lg bg-cneCard hover:bg-cneRed text-white flex items-center justify-center font-bold text-sm transition-colors">
+                            <span id="txt-cant-boletos" class="w-8 text-center text-lg font-black text-white font-mono">2</span>
+                            <button type="button" onclick="modificarBoletos(1)" class="w-9 h-9 rounded-lg bg-cneDark hover:bg-cneRed text-white flex items-center justify-center font-bold text-sm transition-colors active:scale-95 shadow">
                                 <i class="fa-solid fa-plus"></i>
                             </button>
                         </div>
+                    </div>
+
+                    <div class="bg-amber-950/20 border border-amber-800/40 rounded-xl p-3 flex items-start gap-2.5 text-[11px] text-amber-200/90">
+                        <i class="fa-solid fa-cash-register text-cneGold mt-0.5 shrink-0 text-xs"></i>
+                        <span><strong>Asignación en Taquilla:</strong> El cajero seleccionará tus asientos contiguos en el monitor oficial de Sala 1 al momento del pago y canje.</span>
                     </div>
                 </div>
 
@@ -383,7 +364,6 @@
             pelicula: null,
             horario: null,
             boletos: 2,
-            asientosSeleccionados: ['C4', 'C5'],
             precioBoleto: 50,
             combosSeleccionados: {} // { comboId: { nombre, precio, cantidad } }
         };
@@ -464,7 +444,6 @@
             document.getElementById('resumen-titulo-peli').innerText = peli.titulo;
             document.getElementById('resumen-clasif-peli').innerText = peli.clasificacion;
 
-            renderButacasPreorden();
             actualizarTotalesUI();
         }
 
@@ -487,7 +466,6 @@
             }).join('');
 
             document.getElementById('resumen-horario-peli').innerText = estadoPreorden.horario;
-            renderButacasPreorden();
         }
 
         function seleccionarHorario(h) {
@@ -502,113 +480,17 @@
                     btn.className = 'horario-btn-item px-4 py-2.5 rounded-xl border text-xs font-bold font-sans uppercase tracking-wider transition-all bg-cneDark text-cneText border-cneBorder hover:border-white/40';
                 }
             });
-
-            renderButacasPreorden();
         }
 
         // ==========================================================
-        // 3. MAPA DE BUTACAS Y CONTROL DE BOLETOS
+        // 3. CONTROL DE BOLETOS (ACCESO GENERAL)
         // ==========================================================
-        function renderButacasPreorden() {
-            const cont = document.getElementById('grid-butacas-preorden');
-            if (!cont || !estadoPreorden.pelicula) return;
-
-            const peliId = estadoPreorden.pelicula.id;
-            const horario = estadoPreorden.horario || '16:00';
-            const ocupados = XilotzinDB.getAsientosOcupados(peliId, horario);
-
-            const filas = ['A', 'B', 'C', 'D', 'E', 'F'];
-            const cols = [1, 2, 3, 4, 5, 6, 7, 8];
-
-            cont.innerHTML = filas.map(fila => `
-                <div class="flex items-center justify-between gap-1 sm:gap-2">
-                    <span class="w-4 text-[10px] font-bold text-cneMuted font-mono text-center">${fila}</span>
-                    <div class="flex items-center justify-center gap-1 sm:gap-1.5 flex-grow">
-                        ${cols.map(col => {
-                            const id = `${fila}${col}`;
-                            const estaOcupado = ocupados.includes(id);
-                            const estaSeleccionado = estadoPreorden.asientosSeleccionados.includes(id);
-
-                            if (col === 5) {
-                                return `
-                                    <div class="w-2 sm:w-3"></div>
-                                    <button type="button" onclick="toggleButacaPreorden('${id}')" ${estaOcupado ? 'disabled' : ''} class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg text-[10px] font-bold font-mono transition-all flex items-center justify-center ${estaOcupado ? 'bg-white/10 text-white/20 cursor-not-allowed' : (estaSeleccionado ? 'bg-cneRed text-white shadow-lg shadow-cneRed/50 scale-105' : 'bg-cneDark border border-cneBorder hover:border-cneRed text-cneMuted hover:text-white')}">
-                                        ${estaOcupado ? '<i class="fa-solid fa-xmark text-[8px]"></i>' : col}
-                                    </button>
-                                `;
-                            }
-
-                            return `
-                                <button type="button" onclick="toggleButacaPreorden('${id}')" ${estaOcupado ? 'disabled' : ''} class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg text-[10px] font-bold font-mono transition-all flex items-center justify-center ${estaOcupado ? 'bg-white/10 text-white/20 cursor-not-allowed' : (estaSeleccionado ? 'bg-cneRed text-white shadow-lg shadow-cneRed/50 scale-105' : 'bg-cneDark border border-cneBorder hover:border-cneRed text-cneMuted hover:text-white')}">
-                                    ${estaOcupado ? '<i class="fa-solid fa-xmark text-[8px]"></i>' : col}
-                                </button>
-                            `;
-                        }).join('')}
-                    </div>
-                    <span class="w-4 text-[10px] font-bold text-cneMuted font-mono text-center">${fila}</span>
-                </div>
-            `).join('');
-
-            const txtButacas = document.getElementById('txt-butacas-seleccionadas');
-            if (txtButacas) {
-                txtButacas.innerText = estadoPreorden.asientosSeleccionados.length > 0
-                    ? estadoPreorden.asientosSeleccionados.join(', ')
-                    : 'Sin asignar';
-            }
-        }
-
-        function toggleButacaPreorden(id) {
-            const peliId = estadoPreorden.pelicula?.id || 1;
-            const horario = estadoPreorden.horario || '16:00';
-            const ocupados = XilotzinDB.getAsientosOcupados(peliId, horario);
-            if (ocupados.includes(id)) return;
-
-            const index = estadoPreorden.asientosSeleccionados.indexOf(id);
-            if (index > -1) {
-                estadoPreorden.asientosSeleccionados.splice(index, 1);
-            } else {
-                if (estadoPreorden.asientosSeleccionados.length >= 8) {
-                    alert('Límite de 8 butacas por pre-orden.');
-                    return;
-                }
-                estadoPreorden.asientosSeleccionados.push(id);
-                estadoPreorden.asientosSeleccionados.sort();
-            }
-
-            estadoPreorden.boletos = Math.max(1, estadoPreorden.asientosSeleccionados.length);
-            document.getElementById('txt-cant-boletos').innerText = estadoPreorden.boletos;
-            document.getElementById('resumen-cant-boletos').innerText = estadoPreorden.boletos;
-            renderButacasPreorden();
-            actualizarTotalesUI();
-        }
-
         function modificarBoletos(delta) {
-            const nuevo = Math.max(1, Math.min(8, estadoPreorden.boletos + delta));
-            if (nuevo === estadoPreorden.boletos) return;
-
+            const nuevo = Math.max(1, Math.min(10, estadoPreorden.boletos + delta));
             estadoPreorden.boletos = nuevo;
 
-            // Ajustar automáticamente las butacas seleccionadas
-            if (delta > 0) {
-                const posibles = ['A1','A2','B3','B4','C3','C4','C5','D4','D5','E3','E4','F5'];
-                const peliId = estadoPreorden.pelicula?.id || 1;
-                const horario = estadoPreorden.horario || '16:00';
-                const ocupados = XilotzinDB.getAsientosOcupados(peliId, horario);
-
-                for (let a of posibles) {
-                    if (!ocupados.includes(a) && !estadoPreorden.asientosSeleccionados.includes(a)) {
-                        estadoPreorden.asientosSeleccionados.push(a);
-                        estadoPreorden.asientosSeleccionados.sort();
-                        break;
-                    }
-                }
-            } else if (estadoPreorden.asientosSeleccionados.length > nuevo) {
-                estadoPreorden.asientosSeleccionados.pop();
-            }
-
             document.getElementById('txt-cant-boletos').innerText = estadoPreorden.boletos;
             document.getElementById('resumen-cant-boletos').innerText = estadoPreorden.boletos;
-            renderButacasPreorden();
             actualizarTotalesUI();
         }
 
@@ -709,9 +591,6 @@
             vencimiento.setDate(hoy.getDate() + 12); // Validez oficial de 12 días
 
             const nuevoFolio = `PRE-XIL-${Math.floor(10000 + Math.random() * 90000)}`;
-            const asientosAsignados = estadoPreorden.asientosSeleccionados.length > 0
-                ? estadoPreorden.asientosSeleccionados
-                : ['C4', 'C5'];
 
             const nuevaPreorden = {
                 codigo: nuevoFolio,
@@ -720,7 +599,7 @@
                 pelicula: estadoPreorden.pelicula.titulo,
                 horario: estadoPreorden.horario || '16:30',
                 boletosGeneral: estadoPreorden.boletos,
-                asientos: asientosAsignados,
+                asientos: [], // Asignación directa y exclusiva en Taquilla
                 precioBoleto: estadoPreorden.precioBoleto,
                 combos: combosArr,
                 total: total,
@@ -730,9 +609,6 @@
                 estado: 'PENDIENTE',
                 vigenciaDias: 12
             };
-
-            // Ocupar asientos en sala
-            XilotzinDB.ocuparAsientos(estadoPreorden.pelicula.id, estadoPreorden.horario || '16:30', asientosAsignados);
 
             // Guardar en la base de datos persistente
             const preordenes = XilotzinDB.get('preordenes') || [];
@@ -747,7 +623,7 @@
         function mostrarModalTicketGenerado(p) {
             document.getElementById('ticket-modal-folio').innerText = p.codigo;
             document.getElementById('ticket-modal-pelicula').innerText = p.pelicula;
-            const butacasTxt = (p.asientos && p.asientos.length > 0) ? ` • Butacas: ${p.asientos.join(', ')}` : '';
+            const butacasTxt = (p.asientos && p.asientos.length > 0) ? ` • Butacas: ${p.asientos.join(', ')}` : ' • Asignación en Taquilla';
             document.getElementById('ticket-modal-sub').innerText = `Función: ${p.horario} • ${p.boletosGeneral} Boletos${butacasTxt}`;
             document.getElementById('ticket-modal-vencimiento').innerText = p.fechaVencimientoFormateada || p.fechaVencimiento;
             document.getElementById('ticket-modal-total').innerText = `$${p.total} MXN`;
@@ -889,10 +765,6 @@
         <a href="index.html" class="flex-1 flex flex-col items-center justify-center text-cneMuted hover:text-white transition-colors">
             <i class="fa-solid fa-clapperboard text-sm"></i>
             <span class="text-[8px] font-sans font-bold uppercase tracking-wider mt-0.5">Cartelera</span>
-        </a>
-        <a href="asientos.html" class="flex-1 flex flex-col items-center justify-center text-cneMuted hover:text-white transition-colors">
-            <i class="fa-solid fa-chair text-sm"></i>
-            <span class="text-[8px] font-sans font-bold uppercase tracking-wider mt-0.5">Butacas</span>
         </a>
         <a href="dulceria.html" class="flex-1 flex flex-col items-center justify-center text-cneMuted hover:text-white transition-colors">
             <i class="fa-solid fa-store text-sm"></i>

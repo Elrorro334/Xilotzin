@@ -466,13 +466,10 @@ function abrirPreorden(idPeli, horario) {
 }
 
 function abrirSeleccionAsientos(idPeli, horario) {
+    // La selección de butacas de Sala 1 es exclusiva de Taquilla física.
+    // Los clientes en línea son dirigidos a la Pre-orden QR.
     closeModal();
-    const peli = (typeof cineData !== 'undefined' && cineData.peliculas) 
-        ? (cineData.peliculas.find(p => p.id == idPeli) || peliculaModalActual)
-        : null;
-    const idParam = peli ? peli.id : (idPeli || 1);
-    const horParam = horario || (peli && peli.horarios ? peli.horarios[0] : '16:00');
-    window.location.href = `asientos.html?peli=${idParam}&horario=${encodeURIComponent(horParam)}`;
+    irAPreordenDirecto(idPeli, horario);
 }
 
 function cerrarModalPreorden() {
