@@ -3,22 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Taquilla | Cine Tradicional Xilotzin</title>
+    <title>Sin Pagos en Línea | Cine Teatro Xilotzin</title>
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#780000">
+    <meta name="theme-color" content="#E11D2F">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = { 
             theme: { 
                 extend: { 
                     colors: { 
-                        cinedark: '#1c140d', 
-                        cinered: '#780000', 
-                        cinegold: '#dca54c' 
+                        cneRed: '#E11D2F',
+                        cneDark: '#0A0A0A',
+                        cneCard: '#121212',
+                        cneBorder: '#262626',
+                        cneGold: '#DCA54C'
                     }, 
                     fontFamily: { 
                         sans: ['Montserrat', 'sans-serif'],
-                        serif: ['"Playfair Display"', 'serif'] 
+                        serif: ['"Playfair Display"', 'serif'],
+                        mono: ['"Space Mono"', 'monospace']
                     } 
                 } 
             } 
@@ -28,208 +31,170 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/styles.css">
 </head>
-<body class="bg-cinedark text-[#e8dbce] antialiased selection:bg-cinered selection:text-cinegold border-x-0 sm:border-x-[8px] md:border-x-[12px] border-cinered max-w-[1600px] mx-auto min-h-screen shadow-[0_0_50px_rgba(0,0,0,0.8)] flex flex-col overflow-x-hidden">
+<body class="bg-cneDark text-white antialiased min-h-screen flex flex-col justify-between selection:bg-cneRed selection:text-white">
 
-    <header class="bg-cinered border-b-4 sm:border-b-8 border-double border-cinegold sticky top-0 z-50 shadow-[0_10px_20px_rgba(0,0,0,0.6)]">
-        <div class="max-w-6xl mx-auto px-3 sm:px-4 h-16 sm:h-20 md:h-24 flex items-center justify-between">
-            <a href="index.html" class="flex items-center gap-2 sm:gap-3 text-cinegold hover:text-[#e8dbce] transition-colors font-serif font-bold uppercase tracking-widest text-xs sm:text-sm md:text-base">
-                <i class="fa-solid fa-arrow-left border border-cinegold sm:border-2 rounded-full w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center bg-cinedark shadow-[2px_2px_0px_rgba(0,0,0,0.4)] text-xs sm:text-sm"></i>
-                <span>Volver a Cartelera</span>
+    <!-- Header Institucional -->
+    <header class="bg-cneCard border-b border-cneBorder sticky top-0 z-40">
+        <div class="max-w-6xl mx-auto px-4 h-16 sm:h-20 flex items-center justify-between">
+            <a href="index.html" class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-cneRed flex items-center justify-center text-white shadow-lg shadow-cneRed/30">
+                    <i class="fa-solid fa-film text-xl"></i>
+                </div>
+                <div class="flex flex-col">
+                    <h1 class="text-xl sm:text-2xl font-serif font-black tracking-widest uppercase leading-none text-white">Xilotzin</h1>
+                    <span class="text-[9px] font-sans font-bold tracking-[0.3em] text-cneRed uppercase mt-1">Cine Teatro Tradicional</span>
+                </div>
             </a>
-            <div class="flex flex-col text-right">
-                <h1 class="text-base sm:text-xl md:text-3xl font-serif font-black tracking-wider text-cinegold drop-shadow-[2px_2px_0px_rgba(0,0,0,0.6)] uppercase">Taquilla</h1>
-                <span class="text-[7px] sm:text-[9px] md:text-[10px] font-sans tracking-[0.2em] sm:tracking-[0.4em] text-[#e8dbce] uppercase">Emisión de Boletos</span>
+
+            <div class="flex items-center gap-2">
+                <span class="bg-amber-950/60 border border-amber-800/60 text-amber-400 font-mono text-[10px] font-bold px-2.5 py-1 rounded-lg uppercase tracking-wider flex items-center gap-1.5">
+                    <i class="fa-solid fa-ban text-xs"></i> Sin Pagos en Línea
+                </span>
             </div>
         </div>
     </header>
 
-    <main class="flex-grow w-full bg-[#2a1e14] p-3 sm:p-6 md:p-12 relative border-b-4 border-cinegold">
-        <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1519114056088-b877fe073a5e?q=80&w=2069&auto=format&fit=crop')] bg-cover bg-center bg-no-repeat opacity-10 sepia contrast-150 z-0"></div>
-        
-        <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-10 items-start relative z-10" id="resumen-boleto">
+    <!-- Contenido Principal: Pantalla Explicativa de Pago Exclusivo en Taquilla -->
+    <main class="flex-grow flex items-center justify-center p-4 sm:p-6 md:p-10">
+        <div class="max-w-xl w-full bg-cneCard border-2 border-amber-900/50 rounded-3xl p-6 sm:p-10 shadow-[0_20px_60px_rgba(0,0,0,0.8)] text-center space-y-6 relative overflow-hidden">
             
-            <div class="lg:col-span-5 bg-[#e8dbce] text-cinedark p-4 sm:p-6 md:p-8 border-4 sm:border-8 border-double border-[#574433] shadow-[6px_6px_0px_rgba(0,0,0,0.8)] sm:shadow-[12px_12px_0px_rgba(0,0,0,0.8)] relative sm:transform sm:rotate-1">
-                <div class="absolute -top-3 sm:-top-4 left-1/2 -translate-x-1/2 bg-cinered px-4 sm:px-6 py-0.5 sm:py-1 border border-[#574433] text-cinegold font-sans font-black text-[9px] sm:text-xs uppercase tracking-[0.2em] sm:tracking-[0.3em] shadow-[2px_2px_0px_rgba(0,0,0,0.5)] whitespace-nowrap">Boleto a Emitir</div>
-                
-                <p class="text-[#574433] font-bold tracking-[0.2em] uppercase text-[9px] sm:text-[10px] md:text-xs mb-2 sm:mb-4 text-center mt-3 sm:mt-4">Admisión General</p>
-                <h3 id="resumen-titulo" class="font-serif font-black text-2xl sm:text-3xl md:text-4xl mb-2 uppercase leading-none text-center">Cargando...</h3>
-                <p id="resumen-horario" class="text-sm sm:text-lg md:text-xl font-sans font-black text-cinered mb-5 sm:mb-8 border-b-2 border-dashed border-[#574433] pb-3 sm:pb-4 text-center"></p>
-                
-                <div class="space-y-4 sm:space-y-6 mb-6 sm:mb-10 font-sans px-1 sm:px-2">
-                    <div class="flex justify-between items-end border-b border-[#574433]/30 pb-2">
-                        <span id="resumen-boletos" class="uppercase tracking-widest text-[10px] sm:text-xs font-bold text-[#574433]">Boletos (0)</span>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <span class="uppercase tracking-widest text-[10px] sm:text-xs font-bold text-[#574433]">Localidades</span>
-                        <span id="resumen-asientos" class="font-black text-base sm:text-xl md:text-2xl text-cinedark break-words max-w-[65%] text-right"></span>
-                    </div>
+            <!-- Resplandor decorativo -->
+            <div class="absolute -top-24 -left-24 w-48 h-48 bg-cneGold/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -bottom-24 -right-24 w-48 h-48 bg-cneRed/10 rounded-full blur-3xl pointer-events-none"></div>
+
+            <!-- Ícono principal -->
+            <div class="w-20 h-20 sm:w-24 sm:h-24 mx-auto rounded-3xl bg-amber-950/40 border-2 border-cneGold/60 flex items-center justify-center text-cneGold text-3xl sm:text-4xl shadow-xl shadow-cneGold/20">
+                <i class="fa-solid fa-cash-register"></i>
+            </div>
+
+            <!-- Título y explicación -->
+            <div class="space-y-2">
+                <span class="text-[10px] sm:text-xs font-mono font-bold tracking-[0.3em] text-cneGold uppercase">Venta Presencial Únicamente</span>
+                <h2 class="text-2xl sm:text-3xl font-serif font-black uppercase text-white tracking-wide">
+                    Pago Exclusivo en Taquilla
+                </h2>
+                <p class="text-xs sm:text-sm text-cneMuted font-sans leading-relaxed pt-2 max-w-md mx-auto">
+                    En <strong class="text-white">Cine Teatro Xilotzin</strong> no se realizan cobros ni pagos con tarjeta por internet. Toda transacción se realiza directamente en la ventanilla de Taquilla.
+                </p>
+            </div>
+
+            <!-- Detalle de la función si venía con parámetros -->
+            <div id="panel-detalle-peli" class="hidden bg-cneDark/80 border border-cneBorder rounded-2xl p-4 text-left font-sans space-y-2">
+                <div class="flex items-center justify-between text-xs border-b border-cneBorder/60 pb-2">
+                    <span class="text-cneMuted uppercase font-bold text-[10px]">Película Seleccionada:</span>
+                    <strong id="info-peli-nombre" class="text-white font-bold">--</strong>
                 </div>
-                
-                <div class="flex justify-between items-end border-t-2 sm:border-t-4 border-double border-[#574433] pt-4 sm:pt-6 px-1 sm:px-2">
-                    <span class="font-sans font-black text-[10px] sm:text-xs md:text-sm uppercase tracking-widest text-[#574433]">Importe Total</span>
-                    <span class="text-2xl sm:text-4xl md:text-5xl font-serif font-black text-cinered">$<span id="resumen-total">0</span></span>
+                <div class="flex items-center justify-between text-xs pt-1">
+                    <span class="text-cneMuted uppercase font-bold text-[10px]">Horario:</span>
+                    <span id="info-peli-horario" class="text-cneGold font-mono font-bold">--</span>
                 </div>
             </div>
 
-            <div class="lg:col-span-7 bg-[#261c14] border-2 sm:border-4 border-cinegold p-4 sm:p-6 md:p-10 shadow-[4px_4px_0px_rgba(0,0,0,0.6)] sm:shadow-[8px_8px_0px_rgba(0,0,0,0.6)]">
-                <div class="flex items-center gap-3 sm:gap-4 mb-6 sm:mb-8 border-b border-dashed border-[#574433] pb-4 sm:pb-6">
-                    <div class="bg-cinedark border-2 border-cinegold w-11 h-11 sm:w-14 sm:h-14 rounded-full flex items-center justify-center text-cinegold shadow-[inset_0_0_10px_rgba(0,0,0,0.8)] shrink-0"><i class="fa-solid fa-lock text-base sm:text-xl"></i></div>
+            <!-- Indicaciones para el cliente -->
+            <div class="bg-cneDark/60 border border-cneBorder rounded-2xl p-4 text-left space-y-3 font-sans text-xs">
+                <div class="flex items-start gap-3">
+                    <div class="w-7 h-7 rounded-lg bg-cneRed/20 text-cneRed flex items-center justify-center shrink-0 mt-0.5">
+                        <i class="fa-solid fa-qrcode text-xs"></i>
+                    </div>
                     <div>
-                        <h2 class="text-lg sm:text-2xl font-serif font-black uppercase tracking-wider sm:tracking-widest text-cinegold">Pago en Taquilla</h2>
-                        <p class="text-[#a69b8d] text-[10px] sm:text-xs font-sans font-bold uppercase tracking-wider sm:tracking-widest mt-0.5">Transacción cifrada y segura</p>
+                        <strong class="text-white block font-bold">Genera tu Pre-orden QR (Sin costo online)</strong>
+                        <span class="text-cneMuted text-[11px] leading-tight">Selecciona tu película y boletos. Se generará un código QR que presentas en caja al llegar al cine.</span>
                     </div>
                 </div>
 
-                <form onsubmit="procesarPago(event)" class="space-y-4 sm:space-y-6 font-sans">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-                        <div>
-                            <label class="block text-[10px] md:text-xs font-bold text-cinegold uppercase tracking-widest mb-1.5 sm:mb-2">Titular de la Tarjeta</label>
-                            <input type="text" placeholder="Ej. Juan Pérez" required oninput="this.value = this.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '').substring(0, 40)" class="w-full bg-[#1c140d] border border-[#574433] py-2.5 sm:py-4 px-3 sm:px-5 text-sm sm:text-base text-[#e8dbce] font-bold focus:border-cinegold focus:outline-none focus:ring-1 focus:ring-cinegold shadow-[inset_2px_2px_5px_rgba(0,0,0,0.5)]">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] md:text-xs font-bold text-cinegold uppercase tracking-widest mb-1.5 sm:mb-2">Correo para Comprobante</label>
-                            <input type="email" placeholder="correo@ejemplo.com" required maxlength="50" class="w-full bg-[#1c140d] border border-[#574433] py-2.5 sm:py-4 px-3 sm:px-5 text-sm sm:text-base text-[#e8dbce] font-bold focus:border-cinegold focus:outline-none focus:ring-1 focus:ring-cinegold shadow-[inset_2px_2px_5px_rgba(0,0,0,0.5)]">
-                        </div>
+                <div class="border-t border-cneBorder/60 pt-3 flex items-start gap-3">
+                    <div class="w-7 h-7 rounded-lg bg-green-950/40 text-green-400 flex items-center justify-center shrink-0 mt-0.5">
+                        <i class="fa-solid fa-hand-holding-dollar text-xs"></i>
                     </div>
-
-                    <div class="pt-3 sm:pt-4 border-t border-dashed border-[#574433]">
-                        <label class="block text-[10px] md:text-xs font-bold text-cinegold uppercase tracking-widest mb-1.5 sm:mb-2">Número de Tarjeta</label>
-                        <div class="relative">
-                            <input type="text" placeholder="0000 0000 0000 0000" required oninput="this.value = this.value.replace(/[^0-9]/g, '').substring(0, 16)" class="w-full bg-[#1c140d] border border-[#574433] py-2.5 sm:py-4 px-3 sm:px-5 pl-11 sm:pl-14 text-cinegold font-mono text-sm sm:text-lg md:text-xl tracking-widest focus:border-cinegold focus:outline-none focus:ring-1 focus:ring-cinegold shadow-[inset_2px_2px_5px_rgba(0,0,0,0.5)]">
-                            <i class="fa-regular fa-credit-card absolute left-3.5 sm:left-5 top-1/2 -translate-y-1/2 text-[#a69b8d] text-base sm:text-xl"></i>
-                        </div>
+                    <div>
+                        <strong class="text-white block font-bold">Pago en Ventanilla al Ingresar</strong>
+                        <span class="text-cneMuted text-[11px] leading-tight">Paga tus boletos en efectivo o terminal bancaria física directamente en Taquilla y recibe tus boletos impresos con tus butacas asignadas.</span>
                     </div>
-
-                    <div class="grid grid-cols-2 gap-3 sm:gap-6">
-                        <div>
-                            <label class="block text-[10px] md:text-xs font-bold text-cinegold uppercase tracking-widest mb-1.5 sm:mb-2">Vencimiento</label>
-                            <input type="text" placeholder="MM/AA" required oninput="this.value = this.value.replace(/[^0-9\/]/g, '').substring(0, 5)" class="w-full bg-[#1c140d] border border-[#574433] py-2.5 sm:py-4 px-2 sm:px-5 text-center text-cinegold font-mono text-sm sm:text-lg tracking-widest focus:border-cinegold focus:outline-none focus:ring-1 focus:ring-cinegold shadow-[inset_2px_2px_5px_rgba(0,0,0,0.5)]">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] md:text-xs font-bold text-cinegold uppercase tracking-widest mb-1.5 sm:mb-2">Código CVV</label>
-                            <input type="password" placeholder="***" required oninput="this.value = this.value.replace(/[^0-9]/g, '').substring(0, 4)" class="w-full bg-[#1c140d] border border-[#574433] py-2.5 sm:py-4 px-2 sm:px-5 text-center text-cinegold font-mono text-sm sm:text-lg tracking-widest focus:border-cinegold focus:outline-none focus:ring-1 focus:ring-cinegold shadow-[inset_2px_2px_5px_rgba(0,0,0,0.5)]">
-                        </div>
-                    </div>
-
-                    <button type="submit" id="btnSubmit" class="w-full bg-cinered hover:bg-[#5a0000] text-cinegold border-2 border-dashed border-cinegold font-serif font-black py-3.5 sm:py-5 mt-6 sm:mt-8 transition-colors shadow-[4px_4px_0px_rgba(0,0,0,0.6)] uppercase tracking-widest text-sm sm:text-lg md:text-xl flex justify-center items-center gap-2 sm:gap-4">
-                        Emitir Boleto • $<span id="btn-total">0</span> MXN
-                    </button>
-                </form>
+                </div>
             </div>
+
+            <!-- Botones de Acción -->
+            <div class="flex flex-col sm:flex-row gap-3 pt-2">
+                <a id="btn-ir-preorden" href="preorden.html" class="flex-1 bg-gradient-to-r from-cneRed to-red-700 hover:from-red-600 hover:to-red-800 text-white font-sans font-black text-xs uppercase tracking-widest py-3.5 px-5 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-qrcode"></i>
+                    <span>Generar Pre-orden QR</span>
+                </a>
+                <a href="index.html" class="flex-1 bg-cneDark hover:bg-neutral-800 border border-cneBorder hover:border-white/40 text-white font-sans font-bold text-xs uppercase tracking-widest py-3.5 px-5 rounded-xl transition-all flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-clapperboard text-cneRed"></i>
+                    <span>Ver Cartelera</span>
+                </a>
+            </div>
+
+            <!-- Notificación de cuenta regresiva -->
+            <div class="pt-2 text-center">
+                <p class="text-[11px] text-cneMuted font-mono">
+                    Redirigiendo a Pre-orden en <strong id="segundos-restantes" class="text-cneGold">4</strong>s...
+                    <button onclick="cancelarRedireccion()" class="underline hover:text-white ml-2 text-[10px] uppercase font-sans">Cancelar</button>
+                </p>
+            </div>
+
         </div>
     </main>
 
-    <!-- Modal de Emisión Exitosa de Boleto Digital -->
-    <div id="modal-exito-pago" class="fixed inset-0 z-[100] bg-black/95 hidden flex items-center justify-center p-3 sm:p-4 backdrop-blur-md">
-        <div class="bg-[#e8dbce] text-cinedark p-5 sm:p-8 rounded-2xl max-w-md w-full border-4 sm:border-8 border-double border-[#574433] shadow-2xl relative text-center max-h-[92dvh] overflow-y-auto">
-            <div class="w-12 h-12 sm:w-14 sm:h-14 bg-green-600 text-white rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4 text-xl sm:text-2xl shadow-lg">
-                <i class="fa-solid fa-check"></i>
-            </div>
-            <span class="bg-cinered text-cinegold px-3 sm:px-4 py-1 text-[9px] sm:text-[10px] font-sans font-black uppercase tracking-widest rounded-full inline-block mb-2">
-                Pago Aprobado • Emisión Oficial
-            </span>
-            <h3 class="font-serif font-black text-xl sm:text-2xl uppercase mb-1" id="ticket-modal-peli">Película</h3>
-            <p class="text-[11px] sm:text-xs font-sans font-bold text-[#574433] mb-3 sm:mb-4" id="ticket-modal-horario">Función</p>
+    <!-- Footer Simple -->
+    <footer class="bg-cneCard border-t border-cneBorder py-4 text-center text-cneMuted text-[10px] font-sans">
+        <span>Cine Teatro Xilotzin • Sin cobro en línea • Pago exclusivo en taquilla • Tlaxcala, México</span>
+    </footer>
 
-            <div class="bg-[#261c14] text-[#e8dbce] p-3.5 sm:p-4 rounded-xl border border-cinegold mb-4 text-left font-sans text-xs space-y-2">
-                <div class="flex justify-between">
-                    <span class="text-[#a69b8d]">Folio de Venta:</span>
-                    <span class="font-mono font-bold text-cinegold" id="ticket-modal-folio">VT-0000</span>
-                </div>
-                <div class="flex justify-between">
-                    <span class="text-[#a69b8d]">Localidades / Butacas:</span>
-                    <span class="font-bold text-white" id="ticket-modal-asientos">B4, B5</span>
-                </div>
-                <div class="flex justify-between">
-                    <span class="text-[#a69b8d]">Autorización Gateway:</span>
-                    <span class="font-mono text-green-400 font-bold" id="ticket-modal-auth">MP-928410</span>
-                </div>
-                <div class="flex justify-between border-t border-[#574433] pt-2">
-                    <span class="font-bold">Total Pagado:</span>
-                    <span class="font-serif font-black text-cinegold text-sm sm:text-base" id="ticket-modal-total">$0 MXN</span>
-                </div>
-            </div>
-
-            <!-- Código de barras del boleto -->
-            <div class="h-10 bg-black/80 rounded mb-4 flex items-center justify-center p-1 overflow-hidden">
-                <div class="w-full h-full bg-[repeating-linear-gradient(90deg,#fff,#fff_2px,transparent_2px,transparent_4px,#fff_4px,#fff_7px,transparent_7px,transparent_10px)]"></div>
-            </div>
-
-            <div class="flex gap-3">
-                <button onclick="window.print()" class="flex-1 bg-cinedark text-cinegold py-3 rounded-xl border border-cinegold font-sans font-bold text-xs uppercase tracking-wider hover:bg-[#38281b] transition-colors">
-                    <i class="fa-solid fa-print mr-1"></i> Imprimir
-                </button>
-                <a href="index.html" class="flex-1 bg-cinered text-cinegold py-3 rounded-xl border border-cinegold font-sans font-bold text-xs uppercase tracking-wider hover:bg-[#5a0000] transition-colors flex items-center justify-center">
-                    Finalizar
-                </a>
-            </div>
-        </div>
-    </div>
-
-    <script src="js/data.js"></script>
-    <script src="js/app.js"></script>
     <script>
         const urlParams = new URLSearchParams(window.location.search);
-        const peliTitulo = urlParams.get('peli') || 'The Super Mario Bros. Movie';
-        const peliId = parseInt(urlParams.get('peliId')) || 1;
-        const horario = urlParams.get('horario') || '16:00';
-        const asientos = urlParams.get('asientos') || 'D4, D5';
-        const boletos = parseInt(urlParams.get('boletos')) || 2;
-        const total = parseInt(urlParams.get('total')) || (boletos * 50);
+        const peliId = urlParams.get('peliId');
+        const peliTitulo = urlParams.get('peli');
+        const horario = urlParams.get('horario');
+
+        let urlDestino = 'preorden.html';
+        if (peliId || horario) {
+            urlDestino = `preorden.html?peli=${encodeURIComponent(peliId || 1)}&horario=${encodeURIComponent(horario || '16:00')}`;
+        }
+
+        const btnPreorden = document.getElementById('btn-ir-preorden');
+        if (btnPreorden) {
+            btnPreorden.href = urlDestino;
+        }
+
+        if (peliTitulo) {
+            const panel = document.getElementById('panel-detalle-peli');
+            const nomElem = document.getElementById('info-peli-nombre');
+            const horElem = document.getElementById('info-peli-horario');
+            if (panel && nomElem && horElem) {
+                panel.classList.remove('hidden');
+                nomElem.innerText = decodeURIComponent(peliTitulo);
+                horElem.innerText = horario ? `${decodeURIComponent(horario)} hrs` : 'Función programada';
+            }
+        }
+
+        let segundos = 4;
+        let timer = null;
+
+        function iniciarCuentaRegresiva() {
+            timer = setInterval(() => {
+                segundos--;
+                const elem = document.getElementById('segundos-restantes');
+                if (elem) elem.innerText = segundos;
+
+                if (segundos <= 0) {
+                    clearInterval(timer);
+                    window.location.replace(urlDestino);
+                }
+            }, 1000);
+        }
+
+        function cancelarRedireccion() {
+            if (timer) clearInterval(timer);
+            const elem = document.getElementById('segundos-restantes');
+            if (elem && elem.parentElement) {
+                elem.parentElement.innerHTML = '<span class="text-green-400 font-sans"><i class="fa-solid fa-check mr-1"></i> Redirección pausada. Elige una de las opciones anteriores.</span>';
+            }
+        }
 
         document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('resumen-titulo').innerText = peliTitulo;
-            document.getElementById('resumen-horario').innerText = `Función ${horario} hrs • Sala 1`;
-            document.getElementById('resumen-boletos').innerText = `Boletos (${boletos} Accesos)`;
-            document.getElementById('resumen-asientos').innerText = asientos;
-            document.getElementById('resumen-total').innerText = total;
-            document.getElementById('btn-total').innerText = total;
+            iniciarCuentaRegresiva();
         });
-
-        function procesarPago(e) {
-            e.preventDefault();
-            const btn = document.getElementById('btnSubmit');
-            const originalHTML = btn.innerHTML;
-            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> AUTORIZANDO GATEWAY BANCARIO...';
-            btn.disabled = true;
-
-            setTimeout(() => {
-                const folio = `VT-ONLINE-${Math.floor(1000 + Math.random() * 9000)}`;
-                const authCode = `MP-${Math.floor(100000 + Math.random() * 900000)}`;
-                const hoy = new Date();
-
-                // Registrar en inventario de ventas históricas
-                const ventas = XilotzinDB.get('ventas') || [];
-                ventas.unshift({
-                    folio: folio,
-                    fecha: hoy.toISOString().split('T')[0],
-                    hora: hoy.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' }),
-                    tipo: 'Taquilla',
-                    concepto: `${peliTitulo} (Butacas: ${asientos})`,
-                    cantidad: boletos,
-                    total: total,
-                    metodo: 'Tarjeta Mercado Pago',
-                    cajero: 'Terminal Web Online'
-                });
-                XilotzinDB.set('ventas', ventas);
-
-                // Ocupar asientos en sala
-                const asientosArr = asientos.split(',').map(s => s.trim());
-                XilotzinDB.ocuparAsientos(peliId, horario, asientosArr);
-
-                // Llenar datos de modal
-                document.getElementById('ticket-modal-peli').innerText = peliTitulo;
-                document.getElementById('ticket-modal-horario').innerText = `Horario ${horario} • Sala 1`;
-                document.getElementById('ticket-modal-folio').innerText = folio;
-                document.getElementById('ticket-modal-asientos').innerText = asientos;
-                document.getElementById('ticket-modal-auth').innerText = authCode;
-                document.getElementById('ticket-modal-total').innerText = `$${total}.00 MXN`;
-
-                document.getElementById('modal-exito-pago').classList.remove('hidden');
-                btn.innerHTML = originalHTML;
-                btn.disabled = false;
-            }, 1200);
-        }
     </script>
 </body>
 </html>
