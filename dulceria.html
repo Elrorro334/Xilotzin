@@ -52,12 +52,18 @@
             </a>
 
             <div class="hidden md:flex items-center gap-8">
-                <nav class="flex gap-8 font-sans font-bold text-xs tracking-widest uppercase">
+                <nav class="flex items-center gap-6 font-sans font-bold text-xs tracking-widest uppercase">
                     <a href="index.html" class="flex items-center gap-2 text-cneMuted hover:text-white transition-colors">
                         <i class="fa-solid fa-clapperboard text-cneRed"></i> Cartelera
                     </a>
+                    <a href="asientos.html" class="flex items-center gap-2 text-cneMuted hover:text-white transition-colors">
+                        <i class="fa-solid fa-chair text-cneRed"></i> Butacas Online
+                    </a>
                     <a href="dulceria.html" class="flex items-center gap-2 text-white border-b-2 border-cneRed pb-1 transition-colors">
                         <i class="fa-solid fa-store text-cneRed"></i> Dulcería & Combos
+                    </a>
+                    <a href="perfil.html" class="flex items-center gap-2 text-cneMuted hover:text-white transition-colors">
+                        <i class="fa-solid fa-ticket text-cneRed"></i> Mis Tickets
                     </a>
                 </nav>
                 <a href="preorden.html" class="bg-cneRed/20 border border-cneRed text-white text-xs font-bold uppercase tracking-wider px-4 py-2 rounded-xl hover:bg-cneRed transition-all">
@@ -129,22 +135,30 @@
     </footer>
 
     <!-- Navegación móvil -->
-    <nav class="md:hidden fixed bottom-0 left-0 w-full bg-cneDark/95 backdrop-blur-lg border-t border-cneBorder flex justify-around z-50 h-16 shadow-[0_-10px_30px_rgba(0,0,0,0.5)] px-2 mobile-bottom-nav">
-        <a href="index.html" class="flex-1 flex flex-col items-center justify-center gap-1 text-cneMuted hover:text-white transition-colors">
-            <i class="fa-solid fa-clapperboard text-lg"></i>
-            <span class="text-[9px] font-sans font-bold uppercase tracking-widest mt-0.5">Cartelera</span>
+    <nav class="md:hidden fixed bottom-0 left-0 w-full bg-cneDark/95 backdrop-blur-lg border-t border-cneBorder flex justify-around items-center z-50 h-16 shadow-[0_-10px_30px_rgba(0,0,0,0.5)] px-1 mobile-bottom-nav">
+        <a href="index.html" class="flex-1 flex flex-col items-center justify-center text-cneMuted hover:text-white transition-colors">
+            <i class="fa-solid fa-clapperboard text-sm"></i>
+            <span class="text-[8px] font-sans font-bold uppercase tracking-wider mt-0.5">Cartelera</span>
         </a>
-        <a href="dulceria.html" class="flex-1 flex flex-col items-center justify-center gap-1 text-cneRed">
-            <i class="fa-solid fa-store text-lg"></i>
-            <span class="text-[9px] font-sans font-bold uppercase tracking-widest mt-0.5">Dulcería</span>
+        <a href="asientos.html" class="flex-1 flex flex-col items-center justify-center text-cneMuted hover:text-white transition-colors">
+            <i class="fa-solid fa-chair text-sm"></i>
+            <span class="text-[8px] font-sans font-bold uppercase tracking-wider mt-0.5">Butacas</span>
         </a>
-        <a href="preorden.html" class="flex-1 flex flex-col items-center justify-center gap-1 text-cneGold">
-            <i class="fa-solid fa-qrcode text-lg"></i>
-            <span class="text-[9px] font-sans font-bold uppercase tracking-widest mt-0.5">Pre-orden</span>
+        <a href="dulceria.html" class="flex-1 flex flex-col items-center justify-center text-cneRed">
+            <i class="fa-solid fa-store text-sm"></i>
+            <span class="text-[8px] font-sans font-bold uppercase tracking-wider mt-0.5">Dulcería</span>
         </a>
-        <a href="login.html" class="flex-1 flex flex-col items-center justify-center gap-1 text-cneMuted hover:text-white transition-colors">
-            <i class="fa-solid fa-cash-register text-lg"></i>
-            <span class="text-[9px] font-sans font-bold uppercase tracking-widest mt-0.5">POS</span>
+        <a href="preorden.html" class="flex-1 flex flex-col items-center justify-center text-cneGold">
+            <i class="fa-solid fa-qrcode text-sm"></i>
+            <span class="text-[8px] font-sans font-bold uppercase tracking-wider mt-0.5">Pre-orden</span>
+        </a>
+        <a href="perfil.html" class="flex-1 flex flex-col items-center justify-center text-cneMuted hover:text-white transition-colors">
+            <i class="fa-solid fa-ticket text-sm"></i>
+            <span class="text-[8px] font-sans font-bold uppercase tracking-wider mt-0.5">Tickets</span>
+        </a>
+        <a href="login.html" class="flex-1 flex flex-col items-center justify-center text-cneMuted hover:text-white transition-colors">
+            <i class="fa-solid fa-cash-register text-sm"></i>
+            <span class="text-[8px] font-sans font-bold uppercase tracking-wider mt-0.5">POS</span>
         </a>
     </nav>
 

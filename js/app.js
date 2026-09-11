@@ -465,6 +465,16 @@ function abrirPreorden(idPeli, horario) {
     window.location.href = `preorden.html?peli=${idParam}&horario=${encodeURIComponent(horParam)}`;
 }
 
+function abrirSeleccionAsientos(idPeli, horario) {
+    closeModal();
+    const peli = (typeof cineData !== 'undefined' && cineData.peliculas) 
+        ? (cineData.peliculas.find(p => p.id == idPeli) || peliculaModalActual)
+        : null;
+    const idParam = peli ? peli.id : (idPeli || 1);
+    const horParam = horario || (peli && peli.horarios ? peli.horarios[0] : '16:00');
+    window.location.href = `asientos.html?peli=${idParam}&horario=${encodeURIComponent(horParam)}`;
+}
+
 function cerrarModalPreorden() {
     const modal = document.getElementById('modal-preorden');
     if (modal) modal.classList.add('hidden');
@@ -530,7 +540,10 @@ function actualizarResumenPreordenUI() {
 }
 
 function generarCodigoQRUnico(codigo) {
-    // Generador de QR visual de alta definición mediante QuickChart / QRServer API con respaldo seguro
+    // Generador de QR autónomo offline con respaldo online transparente
+    if (window.XilotzinQR && typeof window.XilotzinQR.generateSVG === 'function') {
+        return window.XilotzinQR.generateSVG(`CINE_XILOTZIN_PREORDEN:${codigo}`, 280);
+    }
     const urlEncoded = encodeURIComponent(`CINE_XILOTZIN_PREORDEN:${codigo}`);
     return `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${urlEncoded}&bgcolor=FFFFFF&color=000000`;
 }
@@ -552,11 +565,15 @@ function confirmarPreorden(event) {
 
     const formatoFecha = (d) => d.toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' });
 
-    const combosArray = Object.values(preordenEnCurso.combosSeleccionados);
-    const subtotalBoletos = preordenEnCurso.boletosGeneral * preordenEnCurso.precioBoleto;
+    const combosArray = Object.values(preordenEnCurso.combosSeleccionados || {});
+    const subtotalBoletos = preordenEnCurso.boletosGeneral * (preordenEnCurso.precioBoleto || 50);
     let totalCombos = 0;
     combosArray.forEach(c => totalCombos += c.precio * c.cantidad);
     const total = subtotalBoletos + totalCombos;
+
+    const asientosAsignados = preordenEnCurso.asientos && preordenEnCurso.asientos.length > 0
+        ? preordenEnCurso.asientos
+        : [`D${Math.floor(1 + Math.random() * 7)}`, `D${Math.floor(1 + Math.random() * 7) + 1}`];
 
     const nuevaPreorden = {
         codigo: folioUnico,
@@ -565,7 +582,8 @@ function confirmarPreorden(event) {
         pelicula: preordenEnCurso.pelicula,
         horario: preordenEnCurso.horario,
         boletosGeneral: preordenEnCurso.boletosGeneral,
-        precioBoleto: preordenEnCurso.precioBoleto,
+        asientos: asientosAsignados,
+        precioBoleto: preordenEnCurso.precioBoleto || 50,
         combos: combosArray,
         total: total,
         fechaCreacion: hoy.toISOString().split('T')[0],
@@ -593,7 +611,16 @@ function mostrarTicketDigital(preorden) {
     document.getElementById('ticket-folio').innerText = preorden.codigo;
     document.getElementById('ticket-pelicula').innerText = preorden.pelicula;
     document.getElementById('ticket-horario').innerText = preorden.horario;
-    document.getElementById('ticket-boletos').innerText = `${preorden.boletosGeneral} Accesos Generales`;
+    
+    const txtBoletos = document.getElementById('ticket-boletos');
+    if (txtBoletos) {
+        if (preorden.asientos && preorden.asientos.length > 0) {
+            txtBoletos.innerText = `${preorden.boletosGeneral || preorden.asientos.length} Boletos • Sala 1 (Butacas: ${preorden.asientos.join(', ')})`;
+        } else {
+            txtBoletos.innerText = `${preorden.boletosGeneral} Accesos Generales`;
+        }
+    }
+
     document.getElementById('ticket-cliente').innerText = preorden.cliente;
     document.getElementById('ticket-vigencia').innerText = `Válido del ${preorden.fechaCreacionFormateada || preorden.fechaCreacion} al ${preorden.fechaVencimientoFormateada || preorden.fechaVencimiento} (${preorden.vigenciaDias || 12} días)`;
     document.getElementById('ticket-total').innerText = `$${preorden.total} MXN`;
@@ -676,7 +703,7 @@ function mostrarAlertaToast(mensaje) {
     if (!alerta) {
         alerta = document.createElement('div');
         alerta.id = 'alerta-flotante-global';
-        alerta.className = 'fixed top-6 right-6 z-[9999] bg-cneCard border border-cneRed text-white px-5 py-3.5 rounded-xl shadow-2xl transition-all duration-300 transform -translate-y-10 opacity-0 flex items-center gap-3 text-xs font-sans font-bold uppercase tracking-wider';
+        alerta.className = 'fixed top-4 left-3 right-3 sm:left-auto sm:right-6 sm:top-6 z-[9999] max-w-sm bg-cneCard border border-cneRed text-white px-4 sm:px-5 py-3 sm:py-3.5 rounded-xl shadow-2xl transition-all duration-300 transform -translate-y-10 opacity-0 flex items-center gap-2.5 sm:gap-3 text-[11px] sm:text-xs font-sans font-bold uppercase tracking-wider backdrop-blur-md';
         document.body.appendChild(alerta);
     }
 

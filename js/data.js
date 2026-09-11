@@ -38,7 +38,57 @@ const XilotzinDB = {
             console.error('Error guardando en LocalStorage:', e);
             return false;
         }
+    },
+    // Gestión interactiva de Butacas / Asientos por Función
+    getAsientosOcupados: (peliId, horario) => {
+        const key = `asientos_${peliId}_${horario}`;
+        const guardados = XilotzinDB.get(key);
+        if (guardados) return guardados;
+        // Asientos pre-ocupados demo para dar realismo a la sala
+        const defaultOcupados = ['B3', 'B4', 'C4', 'C5', 'D2', 'E7'];
+        XilotzinDB.set(key, defaultOcupados);
+        return defaultOcupados;
+    },
+    ocuparAsientos: (peliId, horario, nuevosAsientos) => {
+        const key = `asientos_${peliId}_${horario}`;
+        const actuales = XilotzinDB.getAsientosOcupados(peliId, horario);
+        const combinados = Array.from(new Set([...actuales, ...nuevosAsientos]));
+        XilotzinDB.set(key, combinados);
+        return combinados;
+    },
+    liberarAsientos: (peliId, horario, asientosALiberar) => {
+        const key = `asientos_${peliId}_${horario}`;
+        const actuales = XilotzinDB.getAsientosOcupados(peliId, horario);
+        const restantes = actuales.filter(a => !asientosALiberar.includes(a));
+        XilotzinDB.set(key, restantes);
+        return restantes;
+    },
+    obtenerSiguientesAsientosDisponibles: (peliId, horario, cantidad = 1) => {
+        const ocupados = new Set(XilotzinDB.getAsientosOcupados(peliId, horario));
+        const filas = ['C', 'D', 'B', 'E', 'A', 'F'];
+        const disponibles = [];
+        for (const f of filas) {
+            for (let num = 1; num <= 8; num++) {
+                const code = `${f}${num}`;
+                if (!ocupados.has(code) && !disponibles.includes(code)) {
+                    disponibles.push(code);
+                    if (disponibles.length === cantidad) return disponibles;
+                }
+            }
+        }
+        return disponibles;
     }
+};
+
+window.XilotzinDB = XilotzinDB;
+
+// Telemetría simulada de Backend .NET 8 y SQL Server para la maqueta
+window.XilotzinBackend = {
+    framework: '.NET 8.0 Web API (ASP.NET Core)',
+    database: 'SQL Server 2022 (xilotzin_prod)',
+    status: 'ONLINE',
+    latencyMs: 14,
+    lastPing: new Date().toISOString()
 };
 
 // Inventario inicial con lógica de fraccionamiento para Pizza
@@ -124,6 +174,7 @@ function generarPreordenesDemo() {
             pelicula: 'The Super Mario Bros. Movie',
             horario: '16:00',
             boletosGeneral: 2,
+            asientos: ['C4', 'C5'],
             precioBoleto: 50,
             combos: [{ nombre: 'Combo Pareja Xilotzin', cantidad: 1, precio: 110 }],
             total: 210,
@@ -139,6 +190,7 @@ function generarPreordenesDemo() {
             pelicula: 'Spiderman',
             horario: '16:30',
             boletosGeneral: 3,
+            asientos: ['D3', 'D4', 'D5'],
             precioBoleto: 50,
             combos: [{ nombre: 'Combo Mega Cine', cantidad: 1, precio: 135 }],
             total: 285,
@@ -321,5 +373,7 @@ generarCineData().then(data => {
     if (data && data.peliculas && data.peliculas.length > 0) {
         window.cineData = data;
     }
-    document.dispatchEvent(new Event('CarteleraLista'));
+    if (typeof document !== 'undefined') {
+        document.dispatchEvent(new Event('CarteleraLista'));
+    }
 });

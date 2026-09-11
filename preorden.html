@@ -36,6 +36,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Montserrat:wght@400;500;600;700;800;900&family=Mountains+of+Christmas:wght@700&family=Orbitron:wght@700;900&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/styles.css">
+    <script src="js/qrcode.min.js"></script>
 </head>
 
 <body class="theme-traditional bg-cneDark text-cneLight antialiased selection:bg-cneRed selection:text-white max-w-[1600px] mx-auto min-h-screen shadow-2xl flex flex-col relative overflow-x-hidden pb-24 md:pb-0">
@@ -55,15 +56,21 @@
             </a>
 
             <div class="hidden md:flex items-center gap-8">
-                <nav class="flex gap-8 font-sans font-bold text-xs tracking-widest text-cneText uppercase">
+                <nav class="flex items-center gap-6 lg:gap-8 font-sans font-bold text-xs tracking-widest text-cneText uppercase">
                     <a href="index.html" class="flex items-center gap-2 hover:text-white transition-colors">
                         <i class="fa-solid fa-clapperboard text-cneRed"></i> Cartelera
+                    </a>
+                    <a href="asientos.html" class="flex items-center gap-2 hover:text-white transition-colors">
+                        <i class="fa-solid fa-chair text-cneRed"></i> Butacas Online
                     </a>
                     <a href="dulceria.html" class="flex items-center gap-2 hover:text-white transition-colors">
                         <i class="fa-solid fa-store text-cneRed"></i> Dulcería & Combos
                     </a>
                     <a href="preorden.html" class="flex items-center gap-2 text-white border-b-2 border-cneRed pb-1 transition-colors">
                         <i class="fa-solid fa-qrcode text-cneRed"></i> Pre-orden QR
+                    </a>
+                    <a href="perfil.html" class="flex items-center gap-2 hover:text-white transition-colors">
+                        <i class="fa-solid fa-ticket text-cneRed"></i> Mis Tickets
                     </a>
                 </nav>
             </div>
@@ -130,23 +137,63 @@
                     </div>
                 </div>
 
-                <!-- Paso 3: Cantidad de Boletos (Acceso General $50 MXN) -->
-                <div class="bg-cneCard border border-cneBorder rounded-2xl p-6 shadow-xl">
-                    <div class="flex items-center justify-between">
+                <!-- Paso 3: Selección Visual de Butacas en Sala (Pantalla Gigante) -->
+                <div class="bg-cneCard border border-cneBorder rounded-2xl p-5 sm:p-6 shadow-xl space-y-4">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-cneBorder pb-3">
                         <div class="flex items-center gap-3">
                             <span class="w-7 h-7 rounded-full bg-cneRed text-white font-bold text-xs flex items-center justify-center">3</span>
                             <div>
-                                <h3 class="text-lg font-serif font-black uppercase text-white">Boletos de Taquilla</h3>
-                                <p class="text-xs text-cneMuted font-sans">Acceso General • Sin asignación de butacas ($50 MXN c/u)</p>
+                                <h3 class="text-base sm:text-lg font-serif font-black uppercase text-white">Selección de Butacas en Sala</h3>
+                                <p class="text-[11px] sm:text-xs text-cneMuted font-sans">Sala 1 • $50 MXN por boleto con butaca numerada</p>
                             </div>
                         </div>
 
+                        <div class="flex items-center gap-2 bg-cneDark px-3 py-1.5 rounded-xl border border-cneBorder text-xs self-start sm:self-auto">
+                            <span class="text-cneMuted font-bold text-[10px]">Butacas:</span>
+                            <span id="txt-butacas-seleccionadas" class="font-black text-cneGold font-mono text-xs">C4, C5</span>
+                        </div>
+                    </div>
+
+                    <!-- Representación de la Pantalla Gigante -->
+                    <div class="text-center py-1">
+                        <div class="h-1.5 w-3/4 mx-auto bg-gradient-to-r from-transparent via-cneRed to-transparent rounded-full shadow-[0_0_15px_rgba(225,29,47,0.8)] mb-1"></div>
+                        <span class="text-[9px] font-sans font-bold uppercase tracking-[0.3em] text-cneMuted">
+                            <i class="fa-solid fa-film text-cneRed mr-1"></i> Pantalla Gigante
+                        </span>
+                    </div>
+
+                    <!-- Leyenda de Sala -->
+                    <div class="flex flex-wrap justify-center gap-4 text-[10px] font-sans font-bold uppercase text-cneMuted">
+                        <div class="flex items-center gap-1.5">
+                            <span class="w-3.5 h-3.5 rounded bg-cneDark border border-cneBorder inline-block"></span>
+                            <span>Disponible</span>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <span class="w-3.5 h-3.5 rounded bg-cneRed text-white flex items-center justify-center text-[8px]"><i class="fa-solid fa-check"></i></span>
+                            <span class="text-white">Seleccionada</span>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <span class="w-3.5 h-3.5 rounded bg-white/10 text-white/20 flex items-center justify-center text-[8px]"><i class="fa-solid fa-xmark"></i></span>
+                            <span>Ocupada</span>
+                        </div>
+                    </div>
+
+                    <!-- Grilla de Butacas Dinámica (A-F x 1-8) -->
+                    <div class="w-full overflow-x-auto pb-1 select-none">
+                        <div class="min-w-[270px] space-y-2 py-2" id="grid-butacas-preorden">
+                            <!-- Inyectado por renderButacasPreorden() -->
+                        </div>
+                    </div>
+
+                    <!-- Contador Rápido Sincronizado -->
+                    <div class="pt-3 border-t border-cneBorder flex items-center justify-between">
+                        <span class="text-xs text-cneMuted font-medium">Boletos seleccionados:</span>
                         <div class="flex items-center gap-3 bg-cneDark p-1.5 rounded-xl border border-cneBorder">
-                            <button type="button" onclick="modificarBoletos(-1)" class="w-9 h-9 rounded-lg bg-cneCard hover:bg-cneRed text-white flex items-center justify-center font-bold text-base transition-colors">
+                            <button type="button" onclick="modificarBoletos(-1)" class="w-8 h-8 rounded-lg bg-cneCard hover:bg-cneRed text-white flex items-center justify-center font-bold text-sm transition-colors">
                                 <i class="fa-solid fa-minus"></i>
                             </button>
-                            <span id="txt-cant-boletos" class="w-8 text-center text-lg font-black text-white">2</span>
-                            <button type="button" onclick="modificarBoletos(1)" class="w-9 h-9 rounded-lg bg-cneCard hover:bg-cneRed text-white flex items-center justify-center font-bold text-base transition-colors">
+                            <span id="txt-cant-boletos" class="w-8 text-center text-base font-black text-white font-mono">2</span>
+                            <button type="button" onclick="modificarBoletos(1)" class="w-8 h-8 rounded-lg bg-cneCard hover:bg-cneRed text-white flex items-center justify-center font-bold text-sm transition-colors">
                                 <i class="fa-solid fa-plus"></i>
                             </button>
                         </div>
@@ -268,25 +315,25 @@
     <!-- ==========================================================
          MODAL OFICIAL: TICKET DIGITAL QR GENERADO CON ÉXITO
          ========================================================== -->
-    <div id="modal-ticket-qr" class="fixed inset-0 z-[120] hidden flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
-        <div class="bg-cneCard border-2 border-cneRed rounded-3xl max-w-md w-full max-h-[92vh] overflow-y-auto relative shadow-2xl p-6 md:p-8 text-center hide-scroll">
+    <div id="modal-ticket-qr" class="fixed inset-0 z-[120] hidden flex items-center justify-center p-3 sm:p-4 bg-black/90 backdrop-blur-md">
+        <div class="bg-cneCard border-2 border-cneRed rounded-3xl max-w-md w-full max-h-[92vh] overflow-y-auto relative shadow-2xl p-4 sm:p-6 md:p-8 text-center hide-scroll">
             
-            <button onclick="cerrarModalTicketQR()" class="absolute top-4 right-4 w-9 h-9 bg-cneDark rounded-full flex items-center justify-center text-white hover:bg-cneRed transition-colors border border-cneBorder">
+            <button onclick="cerrarModalTicketQR()" class="absolute top-3.5 right-3.5 sm:top-4 sm:right-4 w-8 h-8 sm:w-9 sm:h-9 bg-cneDark rounded-full flex items-center justify-center text-white hover:bg-cneRed transition-colors border border-cneBorder text-sm">
                 <i class="fa-solid fa-xmark"></i>
             </button>
 
             <!-- Encabezado Ticket -->
-            <div class="flex flex-col items-center mb-4">
-                <div class="w-12 h-12 rounded-full bg-green-950/80 border border-green-500/50 flex items-center justify-center text-green-400 mb-2">
-                    <i class="fa-solid fa-check text-xl"></i>
+            <div class="flex flex-col items-center mb-3 sm:mb-4">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-green-950/80 border border-green-500/50 flex items-center justify-center text-green-400 mb-2">
+                    <i class="fa-solid fa-check text-lg sm:text-xl"></i>
                 </div>
-                <span class="text-[10px] font-mono font-bold text-cneRed tracking-[0.25em] uppercase" id="ticket-modal-folio">PRE-XIL-00000</span>
-                <h3 class="text-2xl font-serif font-black uppercase text-white mt-1 leading-tight" id="ticket-modal-pelicula">Película</h3>
-                <p class="text-xs text-cneMuted font-sans mt-1" id="ticket-modal-sub">Horario: 16:30 • 2 Boletos</p>
+                <span class="text-[9px] sm:text-[10px] font-mono font-bold text-cneRed tracking-[0.2em] sm:tracking-[0.25em] uppercase" id="ticket-modal-folio">PRE-XIL-00000</span>
+                <h3 class="text-xl sm:text-2xl font-serif font-black uppercase text-white mt-1 leading-tight" id="ticket-modal-pelicula">Película</h3>
+                <p class="text-[11px] sm:text-xs text-cneMuted font-sans mt-1" id="ticket-modal-sub">Horario: 16:30 • 2 Boletos</p>
             </div>
 
             <!-- Código QR de Alta Definición -->
-            <div class="bg-white p-4 rounded-2xl w-60 h-60 mx-auto mb-4 shadow-2xl flex items-center justify-center border-4 border-black/10">
+            <div class="bg-white p-3 sm:p-4 rounded-2xl w-48 h-48 sm:w-60 sm:h-60 mx-auto mb-4 shadow-2xl flex items-center justify-center border-4 border-black/10">
                 <img id="ticket-modal-qr-img" src="" alt="Código QR Pre-orden" class="w-full h-full object-contain">
             </div>
 
@@ -327,22 +374,6 @@
         </div>
     </div>
 
-    <!-- Navegación Móvil Inferior -->
-    <nav class="md:hidden fixed bottom-0 left-0 w-full bg-cneDark/95 backdrop-blur-lg border-t border-cneBorder flex justify-around z-50 h-16 shadow-[0_-10px_30px_rgba(0,0,0,0.5)] px-2">
-        <a href="index.html" class="flex-1 flex flex-col items-center justify-center gap-1 text-cneMuted hover:text-white transition-colors">
-            <i class="fa-solid fa-clapperboard text-lg"></i>
-            <span class="text-[9px] font-sans font-bold uppercase tracking-widest mt-0.5">Cartelera</span>
-        </a>
-        <a href="dulceria.html" class="flex-1 flex flex-col items-center justify-center gap-1 text-cneMuted hover:text-white transition-colors">
-            <i class="fa-solid fa-store text-lg"></i>
-            <span class="text-[9px] font-sans font-bold uppercase tracking-widest mt-0.5">Dulcería</span>
-        </a>
-        <a href="preorden.html" class="flex-1 flex flex-col items-center justify-center gap-1 text-cneGold">
-            <i class="fa-solid fa-qrcode text-lg"></i>
-            <span class="text-[9px] font-sans font-bold uppercase tracking-widest mt-0.5">Pre-orden</span>
-        </a>
-    </nav>
-
     <!-- Scripts de Datos y Lógica de Pre-orden -->
     <script src="js/data.js"></script>
     <script src="js/app.js"></script>
@@ -352,6 +383,7 @@
             pelicula: null,
             horario: null,
             boletos: 2,
+            asientosSeleccionados: ['C4', 'C5'],
             precioBoleto: 50,
             combosSeleccionados: {} // { comboId: { nombre, precio, cantidad } }
         };
@@ -432,6 +464,7 @@
             document.getElementById('resumen-titulo-peli').innerText = peli.titulo;
             document.getElementById('resumen-clasif-peli').innerText = peli.clasificacion;
 
+            renderButacasPreorden();
             actualizarTotalesUI();
         }
 
@@ -454,6 +487,7 @@
             }).join('');
 
             document.getElementById('resumen-horario-peli').innerText = estadoPreorden.horario;
+            renderButacasPreorden();
         }
 
         function seleccionarHorario(h) {
@@ -468,15 +502,113 @@
                     btn.className = 'horario-btn-item px-4 py-2.5 rounded-xl border text-xs font-bold font-sans uppercase tracking-wider transition-all bg-cneDark text-cneText border-cneBorder hover:border-white/40';
                 }
             });
+
+            renderButacasPreorden();
         }
 
         // ==========================================================
-        // 3. CONTROL DE BOLETOS Y COMBOS
+        // 3. MAPA DE BUTACAS Y CONTROL DE BOLETOS
         // ==========================================================
-        function modificarBoletos(delta) {
-            estadoPreorden.boletos = Math.max(1, Math.min(10, estadoPreorden.boletos + delta));
+        function renderButacasPreorden() {
+            const cont = document.getElementById('grid-butacas-preorden');
+            if (!cont || !estadoPreorden.pelicula) return;
+
+            const peliId = estadoPreorden.pelicula.id;
+            const horario = estadoPreorden.horario || '16:00';
+            const ocupados = XilotzinDB.getAsientosOcupados(peliId, horario);
+
+            const filas = ['A', 'B', 'C', 'D', 'E', 'F'];
+            const cols = [1, 2, 3, 4, 5, 6, 7, 8];
+
+            cont.innerHTML = filas.map(fila => `
+                <div class="flex items-center justify-between gap-1 sm:gap-2">
+                    <span class="w-4 text-[10px] font-bold text-cneMuted font-mono text-center">${fila}</span>
+                    <div class="flex items-center justify-center gap-1 sm:gap-1.5 flex-grow">
+                        ${cols.map(col => {
+                            const id = `${fila}${col}`;
+                            const estaOcupado = ocupados.includes(id);
+                            const estaSeleccionado = estadoPreorden.asientosSeleccionados.includes(id);
+
+                            if (col === 5) {
+                                return `
+                                    <div class="w-2 sm:w-3"></div>
+                                    <button type="button" onclick="toggleButacaPreorden('${id}')" ${estaOcupado ? 'disabled' : ''} class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg text-[10px] font-bold font-mono transition-all flex items-center justify-center ${estaOcupado ? 'bg-white/10 text-white/20 cursor-not-allowed' : (estaSeleccionado ? 'bg-cneRed text-white shadow-lg shadow-cneRed/50 scale-105' : 'bg-cneDark border border-cneBorder hover:border-cneRed text-cneMuted hover:text-white')}">
+                                        ${estaOcupado ? '<i class="fa-solid fa-xmark text-[8px]"></i>' : col}
+                                    </button>
+                                `;
+                            }
+
+                            return `
+                                <button type="button" onclick="toggleButacaPreorden('${id}')" ${estaOcupado ? 'disabled' : ''} class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg text-[10px] font-bold font-mono transition-all flex items-center justify-center ${estaOcupado ? 'bg-white/10 text-white/20 cursor-not-allowed' : (estaSeleccionado ? 'bg-cneRed text-white shadow-lg shadow-cneRed/50 scale-105' : 'bg-cneDark border border-cneBorder hover:border-cneRed text-cneMuted hover:text-white')}">
+                                    ${estaOcupado ? '<i class="fa-solid fa-xmark text-[8px]"></i>' : col}
+                                </button>
+                            `;
+                        }).join('')}
+                    </div>
+                    <span class="w-4 text-[10px] font-bold text-cneMuted font-mono text-center">${fila}</span>
+                </div>
+            `).join('');
+
+            const txtButacas = document.getElementById('txt-butacas-seleccionadas');
+            if (txtButacas) {
+                txtButacas.innerText = estadoPreorden.asientosSeleccionados.length > 0
+                    ? estadoPreorden.asientosSeleccionados.join(', ')
+                    : 'Sin asignar';
+            }
+        }
+
+        function toggleButacaPreorden(id) {
+            const peliId = estadoPreorden.pelicula?.id || 1;
+            const horario = estadoPreorden.horario || '16:00';
+            const ocupados = XilotzinDB.getAsientosOcupados(peliId, horario);
+            if (ocupados.includes(id)) return;
+
+            const index = estadoPreorden.asientosSeleccionados.indexOf(id);
+            if (index > -1) {
+                estadoPreorden.asientosSeleccionados.splice(index, 1);
+            } else {
+                if (estadoPreorden.asientosSeleccionados.length >= 8) {
+                    alert('Límite de 8 butacas por pre-orden.');
+                    return;
+                }
+                estadoPreorden.asientosSeleccionados.push(id);
+                estadoPreorden.asientosSeleccionados.sort();
+            }
+
+            estadoPreorden.boletos = Math.max(1, estadoPreorden.asientosSeleccionados.length);
             document.getElementById('txt-cant-boletos').innerText = estadoPreorden.boletos;
             document.getElementById('resumen-cant-boletos').innerText = estadoPreorden.boletos;
+            renderButacasPreorden();
+            actualizarTotalesUI();
+        }
+
+        function modificarBoletos(delta) {
+            const nuevo = Math.max(1, Math.min(8, estadoPreorden.boletos + delta));
+            if (nuevo === estadoPreorden.boletos) return;
+
+            estadoPreorden.boletos = nuevo;
+
+            // Ajustar automáticamente las butacas seleccionadas
+            if (delta > 0) {
+                const posibles = ['A1','A2','B3','B4','C3','C4','C5','D4','D5','E3','E4','F5'];
+                const peliId = estadoPreorden.pelicula?.id || 1;
+                const horario = estadoPreorden.horario || '16:00';
+                const ocupados = XilotzinDB.getAsientosOcupados(peliId, horario);
+
+                for (let a of posibles) {
+                    if (!ocupados.includes(a) && !estadoPreorden.asientosSeleccionados.includes(a)) {
+                        estadoPreorden.asientosSeleccionados.push(a);
+                        estadoPreorden.asientosSeleccionados.sort();
+                        break;
+                    }
+                }
+            } else if (estadoPreorden.asientosSeleccionados.length > nuevo) {
+                estadoPreorden.asientosSeleccionados.pop();
+            }
+
+            document.getElementById('txt-cant-boletos').innerText = estadoPreorden.boletos;
+            document.getElementById('resumen-cant-boletos').innerText = estadoPreorden.boletos;
+            renderButacasPreorden();
             actualizarTotalesUI();
         }
 
@@ -577,6 +709,9 @@
             vencimiento.setDate(hoy.getDate() + 12); // Validez oficial de 12 días
 
             const nuevoFolio = `PRE-XIL-${Math.floor(10000 + Math.random() * 90000)}`;
+            const asientosAsignados = estadoPreorden.asientosSeleccionados.length > 0
+                ? estadoPreorden.asientosSeleccionados
+                : ['C4', 'C5'];
 
             const nuevaPreorden = {
                 codigo: nuevoFolio,
@@ -585,6 +720,7 @@
                 pelicula: estadoPreorden.pelicula.titulo,
                 horario: estadoPreorden.horario || '16:30',
                 boletosGeneral: estadoPreorden.boletos,
+                asientos: asientosAsignados,
                 precioBoleto: estadoPreorden.precioBoleto,
                 combos: combosArr,
                 total: total,
@@ -594,6 +730,9 @@
                 estado: 'PENDIENTE',
                 vigenciaDias: 12
             };
+
+            // Ocupar asientos en sala
+            XilotzinDB.ocuparAsientos(estadoPreorden.pelicula.id, estadoPreorden.horario || '16:30', asientosAsignados);
 
             // Guardar en la base de datos persistente
             const preordenes = XilotzinDB.get('preordenes') || [];
@@ -608,13 +747,19 @@
         function mostrarModalTicketGenerado(p) {
             document.getElementById('ticket-modal-folio').innerText = p.codigo;
             document.getElementById('ticket-modal-pelicula').innerText = p.pelicula;
-            document.getElementById('ticket-modal-sub').innerText = `Función: ${p.horario} • ${p.boletosGeneral} Boletos de Taquilla`;
+            const butacasTxt = (p.asientos && p.asientos.length > 0) ? ` • Butacas: ${p.asientos.join(', ')}` : '';
+            document.getElementById('ticket-modal-sub').innerText = `Función: ${p.horario} • ${p.boletosGeneral} Boletos${butacasTxt}`;
             document.getElementById('ticket-modal-vencimiento').innerText = p.fechaVencimientoFormateada || p.fechaVencimiento;
             document.getElementById('ticket-modal-total').innerText = `$${p.total} MXN`;
 
-            // QR con protocolo oficial
-            const qrData = encodeURIComponent(`CINE_XILOTZIN_PREORDEN:${p.codigo}:${p.total}MXN:${p.boletosGeneral}BOLETOS`);
-            document.getElementById('ticket-modal-qr-img').src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${qrData}`;
+            // QR autónomo offline (con fallback online transparente)
+            const qrImg = document.getElementById('ticket-modal-qr-img');
+            const qrCodeStr = `CINE_XILOTZIN_PREORDEN:${p.codigo}`;
+            if (window.XilotzinQR && typeof window.XilotzinQR.generateSVG === 'function') {
+                qrImg.src = window.XilotzinQR.generateSVG(qrCodeStr, 260);
+            } else {
+                qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(qrCodeStr)}`;
+            }
 
             document.getElementById('modal-ticket-qr').classList.remove('hidden');
         }
@@ -678,11 +823,19 @@
                 return;
             }
 
-            cont.innerHTML = preordenes.map(p => `
+            cont.innerHTML = preordenes.map(p => {
+                const qrSrc = (window.XilotzinQR && typeof window.XilotzinQR.generateSVG === 'function')
+                    ? window.XilotzinQR.generateSVG(`CINE_XILOTZIN_PREORDEN:${p.codigo}`, 120)
+                    : `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=CINE_XILOTZIN_PREORDEN:${p.codigo}`;
+                const butacasInfo = (p.asientos && p.asientos.length > 0)
+                    ? ` • Butacas: <strong class="text-white">${p.asientos.join(', ')}</strong>`
+                    : '';
+
+                return `
                 <div class="bg-cneCard border border-cneBorder rounded-3xl p-6 shadow-xl flex flex-col md:flex-row items-center justify-between gap-6 hover:border-cneRed/50 transition-all">
                     <div class="flex items-center gap-4 w-full md:w-auto">
-                        <div class="w-16 h-16 rounded-2xl bg-white p-1.5 shrink-0 shadow border border-black/10">
-                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=CINE_XILOTZIN_PREORDEN:${p.codigo}" class="w-full h-full object-contain">
+                        <div class="w-16 h-16 rounded-2xl bg-white p-1.5 shrink-0 shadow border border-black/10 flex items-center justify-center">
+                            <img src="${qrSrc}" class="w-full h-full object-contain">
                         </div>
                         <div class="flex flex-col">
                             <div class="flex items-center gap-2 mb-1">
@@ -691,7 +844,7 @@
                             </div>
                             <h3 class="text-lg font-serif font-black uppercase text-white leading-tight">${p.pelicula}</h3>
                             <p class="text-xs text-cneMuted font-sans mt-1">
-                                Horario: <strong>${p.horario}</strong> • ${p.boletosGeneral} Accesos Generales
+                                Horario: <strong>${p.horario}</strong> • ${p.boletosGeneral} Boletos${butacasInfo}
                             </p>
                             <span class="text-[10px] text-cneGold mt-1 font-semibold">
                                 Válido hasta: ${p.fechaVencimientoFormateada || p.fechaVencimiento} (12 días de vigencia)
@@ -704,12 +857,13 @@
                             <span class="text-[10px] text-cneMuted uppercase font-bold tracking-wider block">Importe en Caja</span>
                             <span class="text-2xl font-serif font-black text-white">$${p.total} MXN</span>
                         </div>
-                        <button onclick="mostrarModalTicketGenerado(${JSON.stringify(p).replace(/"/g, '&quot;')})" class="bg-cneDark hover:bg-cneRed text-white text-xs font-bold uppercase tracking-wider px-5 py-3 rounded-xl border border-cneBorder hover:border-cneRed transition-all flex items-center gap-2 shadow">
+                        <button onclick='mostrarModalTicketGenerado(${JSON.stringify(p).replace(/'/g, "\\'")})' class="bg-cneDark hover:bg-cneRed text-white text-xs font-bold uppercase tracking-wider px-5 py-3 rounded-xl border border-cneBorder hover:border-cneRed transition-all flex items-center gap-2 shadow">
                             <i class="fa-solid fa-qrcode"></i> Ver QR
                         </button>
                     </div>
                 </div>
-            `).join('');
+                `;
+            }).join('');
         }
     </script>
 
@@ -731,22 +885,30 @@
     </div>
 
     <!-- Navegación Móvil Inferior -->
-    <nav class="md:hidden fixed bottom-0 left-0 w-full bg-cneDark/95 backdrop-blur-lg border-t border-cneBorder flex justify-around z-50 h-16 shadow-[0_-10px_30px_rgba(0,0,0,0.5)] px-2 mobile-bottom-nav">
-        <a href="index.html" class="flex-1 flex flex-col items-center justify-center gap-1 text-cneMuted hover:text-white transition-colors">
-            <i class="fa-solid fa-clapperboard text-lg"></i>
-            <span class="text-[9px] font-sans font-bold uppercase tracking-widest mt-0.5">Cartelera</span>
+    <nav class="md:hidden fixed bottom-0 left-0 w-full bg-cneDark/95 backdrop-blur-lg border-t border-cneBorder flex justify-around items-center z-50 h-16 shadow-[0_-10px_30px_rgba(0,0,0,0.5)] px-1 mobile-bottom-nav">
+        <a href="index.html" class="flex-1 flex flex-col items-center justify-center text-cneMuted hover:text-white transition-colors">
+            <i class="fa-solid fa-clapperboard text-sm"></i>
+            <span class="text-[8px] font-sans font-bold uppercase tracking-wider mt-0.5">Cartelera</span>
         </a>
-        <a href="dulceria.html" class="flex-1 flex flex-col items-center justify-center gap-1 text-cneMuted hover:text-white transition-colors">
-            <i class="fa-solid fa-store text-lg"></i>
-            <span class="text-[9px] font-sans font-bold uppercase tracking-widest mt-0.5">Dulcería</span>
+        <a href="asientos.html" class="flex-1 flex flex-col items-center justify-center text-cneMuted hover:text-white transition-colors">
+            <i class="fa-solid fa-chair text-sm"></i>
+            <span class="text-[8px] font-sans font-bold uppercase tracking-wider mt-0.5">Butacas</span>
         </a>
-        <a href="preorden.html" class="flex-1 flex flex-col items-center justify-center gap-1 text-cneGold">
-            <i class="fa-solid fa-qrcode text-lg"></i>
-            <span class="text-[9px] font-sans font-bold uppercase tracking-widest mt-0.5">Pre-orden</span>
+        <a href="dulceria.html" class="flex-1 flex flex-col items-center justify-center text-cneMuted hover:text-white transition-colors">
+            <i class="fa-solid fa-store text-sm"></i>
+            <span class="text-[8px] font-sans font-bold uppercase tracking-wider mt-0.5">Dulcería</span>
         </a>
-        <a href="login.html" class="flex-1 flex flex-col items-center justify-center gap-1 text-cneMuted hover:text-white transition-colors">
-            <i class="fa-solid fa-cash-register text-lg"></i>
-            <span class="text-[9px] font-sans font-bold uppercase tracking-widest mt-0.5">POS</span>
+        <a href="preorden.html" class="flex-1 flex flex-col items-center justify-center text-cneGold">
+            <i class="fa-solid fa-qrcode text-sm"></i>
+            <span class="text-[8px] font-sans font-bold uppercase tracking-wider mt-0.5">Pre-orden</span>
+        </a>
+        <a href="perfil.html" class="flex-1 flex flex-col items-center justify-center text-cneMuted hover:text-white transition-colors">
+            <i class="fa-solid fa-ticket text-sm"></i>
+            <span class="text-[8px] font-sans font-bold uppercase tracking-wider mt-0.5">Tickets</span>
+        </a>
+        <a href="login.html" class="flex-1 flex flex-col items-center justify-center text-cneMuted hover:text-white transition-colors">
+            <i class="fa-solid fa-cash-register text-sm"></i>
+            <span class="text-[8px] font-sans font-bold uppercase tracking-wider mt-0.5">POS</span>
         </a>
     </nav>
 </body>

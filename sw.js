@@ -1,7 +1,11 @@
-const CACHE_NAME = 'xilotzin-pos-cache-v1';
+const CACHE_NAME = 'xilotzin-pos-cache-v2';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
+  './preorden.html',
+  './perfil.html',
+  './asientos.html',
+  './pago.html',
   './taquilla.html',
   './dulceria.html',
   './dashboard.html',
@@ -9,7 +13,9 @@ const ASSETS_TO_CACHE = [
   './css/styles.css',
   './js/data.js',
   './js/app.js',
-  './manifest.json'
+  './js/qrcode.min.js',
+  './manifest.json',
+  './CINE.png'
 ];
 
 self.addEventListener('install', (event) => {
