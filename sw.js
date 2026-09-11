@@ -1,4 +1,4 @@
-const CACHE_NAME = 'xilotzin-pos-cache-v2';
+const CACHE_NAME = 'xilotzin-pos-cache-v3';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -14,6 +14,7 @@ const ASSETS_TO_CACHE = [
   './js/data.js',
   './js/app.js',
   './js/qrcode.min.js',
+  './js/html5-qrcode.min.js',
   './manifest.json',
   './CINE.png'
 ];

@@ -41,12 +41,48 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700;900&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/styles.css">
+    <script src="js/html5-qrcode.min.js"></script>
     <script src="js/qrcode.min.js"></script>
     <style>
         .step-active { color: #fff; border-bottom: 2px solid #D81B60; }
         .step-inactive { color: #a3a3a3; border-bottom: 2px solid transparent; }
         .toggle-checkbox:checked { right: 0; border-color: #D81B60; }
         .toggle-checkbox:checked + .toggle-label { background-color: #D81B60; }
+
+        @keyframes laserScan {
+            0% { top: 6%; opacity: 0.8; }
+            50% { top: 90%; opacity: 1; }
+            100% { top: 6%; opacity: 0.8; }
+        }
+        .laser-scanner-line {
+            position: absolute;
+            left: 4%;
+            right: 4%;
+            height: 2.5px;
+            background: #D81B60;
+            box-shadow: 0 0 15px 3px #D81B60;
+            animation: laserScan 2.4s infinite ease-in-out;
+            z-index: 20;
+            pointer-events: none;
+        }
+        #qr-reader-container {
+            width: 100% !important;
+            height: 100% !important;
+            position: relative;
+            background: #000;
+        }
+        #qr-reader-container video {
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: cover !important;
+            border-radius: 1rem;
+        }
+        #qr-reader-container__scan_region {
+            background: transparent !important;
+        }
+        #qr-reader-container__dashboard {
+            display: none !important;
+        }
     </style>
 </head>
 
@@ -429,13 +465,36 @@
             <h3 class="text-base sm:text-xl font-serif font-black uppercase text-white mb-1">Lectura de Código QR en Caja</h3>
             <p class="text-[10px] sm:text-xs text-pmtext mb-4">Escanea el ticket digital del cliente o selecciona una pre-orden activa</p>
 
-            <!-- Animación de Cámara / Láser QR -->
-            <div class="relative w-44 h-44 sm:w-56 sm:h-56 mx-auto bg-black rounded-2xl border-2 border-dashed border-pmmagenta/70 flex items-center justify-center overflow-hidden mb-4">
-                <i class="fa-solid fa-qrcode text-5xl sm:text-7xl text-pmtext/20"></i>
-                <div class="laser-scanner-line"></div>
-                <div class="absolute bottom-2 text-[9px] sm:text-[10px] text-pmmagenta font-mono uppercase font-bold tracking-wider bg-black/70 px-2 py-0.5 rounded">
-                    Buscando código QR...
+            <!-- Visor de Cámara Real para Escaneo QR -->
+            <div class="relative w-full max-w-[280px] sm:max-w-[320px] aspect-square mx-auto bg-black rounded-2xl border-2 border-pmmagenta overflow-hidden mb-3 shadow-[0_0_30px_rgba(216,27,96,0.35)] flex items-center justify-center">
+                <!-- Contenedor donde Html5Qrcode monta la cámara real -->
+                <div id="qr-reader-container" class="w-full h-full flex items-center justify-center"></div>
+
+                <!-- Overlay de escaneo con marco guía y línea láser -->
+                <div id="qr-scanner-overlay" class="absolute inset-0 pointer-events-none flex items-center justify-center">
+                    <div class="w-44 h-44 sm:w-52 sm:h-52 border-2 border-dashed border-pmmagenta/70 rounded-2xl relative flex items-center justify-center">
+                        <div class="laser-scanner-line"></div>
+                        <div class="absolute -top-1.5 -left-1.5 w-4 h-4 border-t-2 border-l-2 border-pink-400"></div>
+                        <div class="absolute -top-1.5 -right-1.5 w-4 h-4 border-t-2 border-r-2 border-pink-400"></div>
+                        <div class="absolute -bottom-1.5 -left-1.5 w-4 h-4 border-b-2 border-l-2 border-pink-400"></div>
+                        <div class="absolute -bottom-1.5 -right-1.5 w-4 h-4 border-b-2 border-r-2 border-pink-400"></div>
+                    </div>
                 </div>
+
+                <!-- Estado dinámico de la cámara -->
+                <div id="qr-camera-status" class="absolute bottom-2 inset-x-2 text-center text-[10px] text-pmtext font-mono bg-black/85 py-1.5 px-2.5 rounded-lg border border-white/10 flex items-center justify-center gap-1.5 z-30">
+                    <i class="fa-solid fa-spinner fa-spin text-pmmagenta text-xs"></i> <span>Iniciando cámara...</span>
+                </div>
+            </div>
+
+            <!-- Controles de Cámara (Cambiar Cámara / Reintentar) -->
+            <div class="flex items-center justify-center gap-2 mb-3">
+                <button type="button" id="btn-cambiar-camara" onclick="alternarCamaraPOS()" class="hidden bg-pmdark hover:bg-neutral-800 text-pmtext hover:text-white text-[10px] font-bold py-1.5 px-3 rounded-lg border border-pmborder items-center gap-1.5 transition-all">
+                    <i class="fa-solid fa-camera-rotate text-pmmagenta"></i> <span>Cambiar Cámara</span>
+                </button>
+                <button type="button" onclick="iniciarCamaraEscaner()" class="bg-pmdark hover:bg-neutral-800 text-pmtext hover:text-white text-[10px] font-bold py-1.5 px-3 rounded-lg border border-pmborder flex items-center gap-1.5 transition-all">
+                    <i class="fa-solid fa-arrows-rotate text-green-400"></i> <span>Reactivar Cámara</span>
+                </button>
             </div>
 
             <!-- Entrada Manual o de Lector Óptico -->
@@ -1375,8 +1434,13 @@
         }
 
         // ==========================================================
-        // 7. VALIDADOR DE PRE-ÓRDENES QR EN CAJA
+        // 7. VALIDADOR DE PRE-ÓRDENES QR EN CAJA (CON CÁMARA REAL)
         // ==========================================================
+        let html5QrScannerInstance = null;
+        let camarasDisponibles = [];
+        let indiceCamaraActual = 0;
+        let camaraActiva = false;
+
         function abrirModalEscanerQR() {
             const modal = document.getElementById('modal-escaner-qr');
             modal.classList.remove('hidden');
@@ -1401,10 +1465,196 @@
                     `).join('');
                 }
             }
+
+            // Iniciar cámara web / móvil
+            setTimeout(() => {
+                iniciarCamaraEscaner();
+            }, 100);
+        }
+
+        async function iniciarCamaraEscaner() {
+            const statusElem = document.getElementById('qr-camera-status');
+            const readerDiv = document.getElementById('qr-reader-container');
+            if (!readerDiv) return;
+
+            if (statusElem) {
+                statusElem.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-pmmagenta mr-1.5"></i> Solicitando acceso a la cámara...';
+            }
+
+            await detenerCamaraEscaner();
+
+            try {
+                if (typeof Html5Qrcode === 'undefined') {
+                    throw new Error('Librería Html5Qrcode no encontrada');
+                }
+
+                html5QrScannerInstance = new Html5Qrcode("qr-reader-container");
+
+                try {
+                    camarasDisponibles = await Html5Qrcode.getCameras();
+                } catch (camErr) {
+                    camarasDisponibles = [];
+                }
+
+                const btnCambiar = document.getElementById('btn-cambiar-camara');
+                if (btnCambiar) {
+                    btnCambiar.style.display = (camarasDisponibles && camarasDisponibles.length > 1) ? 'inline-flex' : 'none';
+                }
+
+                const cameraConfig = (camarasDisponibles.length > 0 && camarasDisponibles[indiceCamaraActual])
+                    ? camarasDisponibles[indiceCamaraActual].id
+                    : { facingMode: "environment" };
+
+                const scanConfig = {
+                    fps: 15,
+                    qrbox: (viewfinderWidth, viewfinderHeight) => {
+                        const minEdge = Math.min(viewfinderWidth, viewfinderHeight);
+                        const edge = Math.max(160, Math.floor(minEdge * 0.75));
+                        return { width: edge, height: edge };
+                    },
+                    aspectRatio: 1.0
+                };
+
+                await html5QrScannerInstance.start(
+                    cameraConfig,
+                    scanConfig,
+                    (decodedText) => {
+                        onQrCodeScanned(decodedText);
+                    },
+                    () => {}
+                );
+
+                camaraActiva = true;
+                if (statusElem) {
+                    statusElem.innerHTML = '<i class="fa-solid fa-circle text-green-400 mr-1.5 animate-pulse"></i> Cámara activa • Enfoca el código QR';
+                }
+
+            } catch (err) {
+                console.warn('Fallo al inicializar Html5Qrcode, aplicando fallback nativo getUserMedia:', err);
+                camaraActiva = false;
+                iniciarCamaraNativaFallback(statusElem, readerDiv);
+            }
+        }
+
+        async function iniciarCamaraNativaFallback(statusElem, readerDiv) {
+            try {
+                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                    throw new Error('getUserMedia no disponible en este contexto');
+                }
+
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: { ideal: "environment" } },
+                    audio: false
+                });
+
+                readerDiv.innerHTML = '';
+                const video = document.createElement('video');
+                video.autoplay = true;
+                video.playsInline = true;
+                video.muted = true;
+                video.srcObject = stream;
+                video.className = 'w-full h-full object-cover rounded-2xl';
+                readerDiv.appendChild(video);
+
+                camaraActiva = true;
+                if (statusElem) {
+                    statusElem.innerHTML = '<i class="fa-solid fa-circle text-green-400 mr-1.5 animate-pulse"></i> Cámara activa • Enfoca el código QR';
+                }
+
+                // BarcodeDetector nativo si está disponible en Chromium
+                if ('BarcodeDetector' in window) {
+                    const detector = new BarcodeDetector({ formats: ['qr_code'] });
+                    const interval = setInterval(async () => {
+                        if (!camaraActiva) {
+                            clearInterval(interval);
+                            return;
+                        }
+                        try {
+                            const barcodes = await detector.detect(video);
+                            if (barcodes.length > 0) {
+                                clearInterval(interval);
+                                onQrCodeScanned(barcodes[0].rawValue);
+                            }
+                        } catch (e) {}
+                    }, 250);
+                }
+
+            } catch (fallbackErr) {
+                console.warn('No se pudo acceder a la cámara:', fallbackErr);
+                camaraActiva = false;
+                if (statusElem) {
+                    statusElem.innerHTML = '<i class="fa-solid fa-camera-slash text-amber-400 mr-1.5"></i> Cámara no disponible o permiso denegado. Ingresa el folio abajo.';
+                }
+            }
+        }
+
+        async function alternarCamaraPOS() {
+            if (camarasDisponibles.length <= 1) return;
+            indiceCamaraActual = (indiceCamaraActual + 1) % camarasDisponibles.length;
+            await iniciarCamaraEscaner();
+        }
+
+        async function detenerCamaraEscaner() {
+            if (html5QrScannerInstance && camaraActiva) {
+                try {
+                    await html5QrScannerInstance.stop();
+                    await html5QrScannerInstance.clear();
+                } catch (e) {}
+                html5QrScannerInstance = null;
+            }
+
+            const readerDiv = document.getElementById('qr-reader-container');
+            if (readerDiv) {
+                const video = readerDiv.querySelector('video');
+                if (video && video.srcObject) {
+                    const tracks = video.srcObject.getTracks();
+                    tracks.forEach(track => track.stop());
+                    video.srcObject = null;
+                }
+                readerDiv.innerHTML = '';
+            }
+            camaraActiva = false;
         }
 
         function cerrarModalEscanerQR() {
+            detenerCamaraEscaner();
             document.getElementById('modal-escaner-qr').classList.add('hidden');
+        }
+
+        function onQrCodeScanned(textoEscaneado) {
+            if (!textoEscaneado) return;
+
+            reproducirBeepExito();
+            detenerCamaraEscaner();
+
+            let codigo = textoEscaneado.trim();
+            if (codigo.includes('CINE_XILOTZIN_PREORDEN:')) {
+                codigo = codigo.replace('CINE_XILOTZIN_PREORDEN:', '').trim();
+            }
+
+            const input = document.getElementById('input-codigo-qr');
+            if (input) input.value = codigo;
+
+            aplicarPreordenACaja(codigo);
+        }
+
+        function reproducirBeepExito() {
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContext) return;
+                const ctx = new AudioContext();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(880, ctx.currentTime);
+                osc.frequency.setValueAtTime(1760, ctx.currentTime + 0.08);
+                gain.gain.setValueAtTime(0.3, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
+                osc.start(ctx.currentTime);
+                osc.stop(ctx.currentTime + 0.2);
+            } catch (e) {}
         }
 
         function procesarCodigoQRManual(e) {
@@ -1415,24 +1665,34 @@
         }
 
         function aplicarPreordenACaja(codigo) {
+            if (!codigo) return;
+            let limpio = codigo.trim().toUpperCase();
+            if (limpio.includes('CINE_XILOTZIN_PREORDEN:')) {
+                limpio = limpio.replace('CINE_XILOTZIN_PREORDEN:', '').trim();
+            }
+
             const preordenes = XilotzinDB.get('preordenes') || [];
-            const encontrada = preordenes.find(p => p.codigo === codigo || p.codigo === `PRE-XIL-${codigo}`);
+            const encontrada = preordenes.find(p => 
+                p.codigo.toUpperCase() === limpio || 
+                p.codigo.toUpperCase() === `PRE-XIL-${limpio}` ||
+                limpio.includes(p.codigo.toUpperCase())
+            );
 
             if (!encontrada) {
-                alert(`Código QR "${codigo}" no encontrado en el sistema.`);
+                alert(`Código QR "${limpio}" no encontrado en la base de datos.`);
                 return;
             }
 
             if (encontrada.estado === 'CANJEADO') {
-                alert(`El ticket "${codigo}" ya fue canjeado previamente.`);
+                alert(`El ticket "${encontrada.codigo}" ya fue canjeado previamente.`);
                 return;
             }
 
-            // Verificar vigencia (Debe estar dentro del rango válido de 8 a 15 días)
+            // Verificar vigencia
             const hoy = new Date();
             const vence = new Date(encontrada.fechaVencimiento);
             if (hoy > vence) {
-                alert(`El ticket "${codigo}" ha expirado (venció el ${encontrada.fechaVencimiento}).`);
+                alert(`El ticket "${encontrada.codigo}" ha expirado (venció el ${encontrada.fechaVencimiento}).`);
                 return;
             }
 
@@ -1440,10 +1700,14 @@
             carrito = [];
             preordenCanjeadaActual = encontrada;
 
-            // Boletos de la pre-orden con asignación de asientos
-            const asientosPreorden = encontrada.asientos && encontrada.asientos.length > 0 
-                ? encontrada.asientos 
-                : ['C4', 'C5'];
+            // Asignar butacas en Sala 1 (o mantener las asignadas)
+            const pelis = (window.cineData && window.cineData.peliculas) ? window.cineData.peliculas : [];
+            const peliObj = pelis.find(p => p.titulo === encontrada.pelicula) || { id: 1 };
+
+            const asientosPreorden = (encontrada.asientos && encontrada.asientos.length > 0)
+                ? encontrada.asientos
+                : XilotzinDB.obtenerSiguientesAsientosDisponibles(peliObj.id, encontrada.horario || '16:00', encontrada.boletosGeneral || 1);
+
             añadirAlCarrito(
                 `pre_bol_${encontrada.codigo}`,
                 'boleto',
@@ -1451,7 +1715,7 @@
                 encontrada.precioBoleto || 50,
                 encontrada.boletosGeneral,
                 {
-                    peliId: encontrada.peliId || 1,
+                    peliId: peliObj.id,
                     horario: encontrada.horario,
                     asientos: asientosPreorden
                 }
@@ -1460,13 +1724,13 @@
             // Combos de la pre-orden
             if (encontrada.combos && encontrada.combos.length > 0) {
                 encontrada.combos.forEach(c => {
-                    añadirAlCarrito(`pre_combo_${c.nombre}`, 'dulceria', c.nombre, c.precio, c.cantidad);
+                    añadirAlCarrito(`pre_combo_${c.nombre}`, 'dulceria', c.nombre, c.precio, c.cantidad || 1);
                 });
             }
 
             cerrarModalEscanerQR();
             cambiarPaso(3); // Saltar directamente a cobro a contra-entrega
-            alert(`¡Pre-orden "${encontrada.codigo}" validada con éxito! Se cargaron ${encontrada.boletosGeneral} boletos y sus combos. Procede a cobrar a contra-entrega.`);
+            mostrarToastPOS(`🎟️ Pre-orden "${encontrada.codigo}" validada. Butacas asignadas en Sala 1: [${asientosPreorden.join(', ')}]`);
         }
     </script>
 </body>
